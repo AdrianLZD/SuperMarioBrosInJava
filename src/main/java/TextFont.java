@@ -26,7 +26,7 @@ public class TextFont {
         return font;
     }
 
-    @SuppressWarnings("unsued")
+    @SuppressWarnings("unused")
     private static void printAvailableFonts(){
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         for(String s : ge.getAvailableFontFamilyNames()){
