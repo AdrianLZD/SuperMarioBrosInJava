@@ -16,10 +16,9 @@ public class GameRunner extends JPanel implements KeyListener {
     private MainThread mainThread;
     private GameState currentGameState;
 
-
     public GameRunner() {
         super();
-        //setBackground(Color.BLACK);
+        // setBackground(Color.BLACK);
         addKeyListener(this);
         setVisible(true);
         setFocusable(true);
@@ -35,16 +34,19 @@ public class GameRunner extends JPanel implements KeyListener {
         setPreferredSize(panelDimension);
     }
 
-    public void paintComponent(Graphics g){
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         currentGameState.paintElements(g);
     }
 
     @Override
-    public void keyTyped(KeyEvent e) { }
+    public void keyTyped(KeyEvent e) {
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        currentGameState.keyPressed(e.getKeyCode());
+
         if (e.getKeyCode() == KeyEvent.VK_W) {
             mainThread.resumeThread();
         } else if (e.getKeyCode() == KeyEvent.VK_K) {
@@ -57,7 +59,7 @@ public class GameRunner extends JPanel implements KeyListener {
 
     }
 
-    public void attachRunnerToMainThread(){
+    public void attachRunnerToMainThread() {
         mainThread.gameRunner = this;
     }
 }

@@ -51,7 +51,7 @@ public class MainThread extends Thread{
         }catch(NullPointerException e){
             Logger logger = Logger.getLogger(MainThread.class.getName());
             logger.setLevel(Level.WARNING);
-            logger.warning("The game runner has not been attached to the main thread.");
+            //logger.warning("The game runner has not been attached to the main thread.");
         }
     }
 

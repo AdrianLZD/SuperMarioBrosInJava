@@ -11,17 +11,20 @@ public class WindowManager extends JFrame {
     public static final int WINDOW_HEIGHT = 800;
     public static final String APP_NAME = "Super Mario Bros In Java";
 
+    public static int windowWidth;
+
     public WindowManager() {
         super(APP_NAME);
         
-        
         add(GameRunner.instance);
         initializeGameRunner();
-
-        setFrameSize(findCurrentScreenDimension());
+        Dimension screenDimension = findCurrentScreenDimension();
+        setFrameSize(screenDimension);
         setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        windowWidth = (int)screenDimension.getWidth();
     }
 
     private void initializeGameRunner(){
