@@ -1,0 +1,45 @@
+package main.java;
+
+import javax.swing.JFrame;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
+public class WindowManager extends JFrame {
+    private static final long serialVersionUID = 001L;
+
+    public static final int WINDOW_HEIGHT = 800;
+    public static final String APP_NAME = "Super Mario Bros In Java";
+
+    public WindowManager() {
+        super(APP_NAME);
+        
+        
+        add(GameRunner.instance);
+        initializeGameRunner();
+
+        setFrameSize(findCurrentScreenDimension());
+        setResizable(false);
+        setVisible(true);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    private void initializeGameRunner(){
+        GameRunner gameRunner = GameRunner.instance;
+        add(gameRunner);
+        gameRunner.attachRunnerToMainThread();
+    }
+
+    private void setFrameSize(Dimension dimension) {
+        int width = (int) dimension.getWidth();
+        this.setSize(width, WINDOW_HEIGHT);
+    }
+
+    public static Dimension findCurrentScreenDimension() {
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        return toolkit.getScreenSize();
+    }
+
+    
+
+}
