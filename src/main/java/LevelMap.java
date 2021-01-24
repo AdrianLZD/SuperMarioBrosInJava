@@ -10,31 +10,27 @@ import java.util.StringTokenizer;
 
 public class LevelMap {
 
-    private int id;
+    private int mapId;
     private Block[][] blocks;
 
-    public LevelMap(int id) {
-        this.id = id;
+    public LevelMap(int mapId) {
+        this.mapId = mapId;
         loadMapFile();
     }
 
     private void loadMapFile() {
-
-        BufferedReader fileBuffer;
         try {
-            fileBuffer = openLevelLayoutFile();
+            BufferedReader fileBuffer = openLevelLayoutFile();
             readLevelLayoutFile(fileBuffer);
             fileBuffer.close();
         } catch ( IOException e) {
-            String message = "The file layout for level " + id + "could not be read.";
+            String message = "The file layout for level " + mapId + "could not be read.";
             ErrorLogger.logErrorMessage(message, e);
         }
-        
-        
     }
 
     private BufferedReader openLevelLayoutFile() throws FileNotFoundException {
-        String mapFilePath = "res/levels/lvl" + id + ".map";
+        String mapFilePath = "res/levels/lvl" + mapId + ".map";
         File mapFile = new File(mapFilePath);
         FileReader mapFileReader = new FileReader(mapFile);
         BufferedReader br = new BufferedReader(mapFileReader);
@@ -59,6 +55,18 @@ public class LevelMap {
                 blocks[i][j] = new Block(newBlockPosition, newBlockId);
             }
         }
+    }
+
+    public void paintBlocks(){
+        for(Block[] arrayB: blocks){
+            for(Block b : arrayB){
+                b.paintBlock();
+            }
+        }
+    }
+
+    public Block[][] getBlocks(){
+        return blocks;
     }
 
 }

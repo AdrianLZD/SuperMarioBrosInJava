@@ -17,7 +17,7 @@ public class WindowManager extends JFrame {
         super(APP_NAME);
         
         add(GameRunner.instance);
-        initializeGameRunner();
+        startGameRunner();
         Dimension screenDimension = findCurrentScreenDimension();
         setFrameSize(screenDimension);
         setResizable(false);
@@ -27,11 +27,12 @@ public class WindowManager extends JFrame {
         windowWidth = (int)screenDimension.getWidth();
     }
 
-    private void initializeGameRunner(){
+    private void startGameRunner(){
         GameRunner gameRunner = GameRunner.instance;
         add(gameRunner);
-        gameRunner.attachRunnerToMainThread();
+        gameRunner.initializeGameRunner();
     }
+
 
     private void setFrameSize(Dimension dimension) {
         int width = (int) dimension.getWidth();
@@ -42,7 +43,4 @@ public class WindowManager extends JFrame {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         return toolkit.getScreenSize();
     }
-
-    
-
 }

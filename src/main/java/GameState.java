@@ -6,12 +6,12 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 public abstract class GameState {
     protected static BufferedImage background;
-    protected static boolean imagesLoaded;
+    protected boolean imagesLoaded;
     protected GameRunner gameRunner;
+    protected LevelMap lvlMap;
 
     public GameState() {
         if(!imagesLoaded){
@@ -43,11 +43,20 @@ public abstract class GameState {
     }
 
     protected void paintBackground(Graphics g){
-
         //offset calculated taking into account images desired position
         //and an arbitrary value previously used in the app
         int backgroundOffset = -((896-WindowManager.WINDOW_HEIGHT)+31);
         g.drawImage(background, 0, backgroundOffset, gameRunner);
+    }
+
+    protected void createLevelMap(int id){
+        if(this instanceof GameStateMenu){
+            ErrorLogger.logInfoMessage("Creating a level map for the menu is unsupported. Aborting task.");
+            return;
+        }
+
+        lvlMap = new LevelMap(id);
+        
     }
 
     

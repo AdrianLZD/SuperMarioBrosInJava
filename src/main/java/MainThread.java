@@ -1,8 +1,5 @@
 package main.java;
 
-import java.util.logging.Level;
-import java.util.logging.Logger; 
-
 public class MainThread extends Thread{
     
     public static final int FPS_TARGET = 60;

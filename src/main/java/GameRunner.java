@@ -16,16 +16,13 @@ public class GameRunner extends JPanel implements KeyListener {
     private MainThread mainThread;
     private GameState currentGameState;
 
-    public GameRunner() {
+    private GameRunner() {
         super();
         // setBackground(Color.BLACK);
         addKeyListener(this);
         setVisible(true);
         setFocusable(true);
         definePanelSize();
-
-        mainThread = new MainThread("MarioThread");
-        currentGameState = new GameStateMenu();
     }
 
     private void definePanelSize() {
@@ -56,10 +53,23 @@ public class GameRunner extends JPanel implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+        currentGameState.keyReleased(e.getKeyCode());
     }
 
-    public void attachRunnerToMainThread() {
+    public void setCurrentGameState(GameState gameState){
+        currentGameState = gameState;
+    }
+
+    public void initializeGameRunner(){
+        attachRunnerToMainThread();
+        GameState menuState = new GameStateMenu();
+        setCurrentGameState(menuState);
+    }
+
+    private void attachRunnerToMainThread() {
+        mainThread = new MainThread("MarioThread");
         mainThread.gameRunner = this;
     }
+
+    
 }

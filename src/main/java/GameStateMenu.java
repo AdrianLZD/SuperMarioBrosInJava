@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 public class GameStateMenu extends GameState {
 
@@ -82,15 +81,28 @@ public class GameStateMenu extends GameState {
                 if (currentOption-- == 0)
                     currentOption = options.length - 1;
                 break;
-            case KeyEvent.VK_0:
-                if (currentOption-- == 0)
-                    currentOption = options.length - 1;
+            case KeyEvent.VK_ENTER:
+                applySelectedOption();
                 break;
-
             default:
                 break;
         }
 
+    }
+
+    private void applySelectedOption() {
+        switch (currentOption) {
+            case 0:
+                GameState newGameState = new GameStateLevel1();
+                gameRunner.setCurrentGameState(newGameState);
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
