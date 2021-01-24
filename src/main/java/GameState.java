@@ -34,8 +34,7 @@ public abstract class GameState {
             background = ImageIO.read(backgroundFile);
         } catch (IOException e) {
             String errorMessage = "The " + backgroundName + " background was not found.";
-            JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            ErrorLogger.logErrorMessage(errorMessage, e);
         }
     }
 

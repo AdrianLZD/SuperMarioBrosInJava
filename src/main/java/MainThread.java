@@ -32,8 +32,7 @@ public class MainThread extends Thread{
                 setFpsCap();
                  
             } catch (InterruptedException e) {
-                System.out.println("There was an error in the main thread.");
-                e.printStackTrace();
+                ErrorLogger.logErrorMessage("There was an error in the main thread.", e);
             }
         }
     }
@@ -47,11 +46,8 @@ public class MainThread extends Thread{
     private void doThreadActions() {
         try{
             gameRunner.repaint();
-            
         }catch(NullPointerException e){
-            Logger logger = Logger.getLogger(MainThread.class.getName());
-            logger.setLevel(Level.WARNING);
-            //logger.warning("The game runner has not been attached to the main thread.");
+            ErrorLogger.logWarningMessage("The game runner has not been attached to the main thread.", e);
         }
     }
 

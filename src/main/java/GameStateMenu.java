@@ -34,9 +34,7 @@ public class GameStateMenu extends GameState {
         try {
             logo = ImageIO.read(logoFile);
         } catch (IOException e) {
-            String errorMessage = "The logo was not found.";
-            JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            ErrorLogger.logErrorMessage("The logo was not found", e);
         }
     }
 
@@ -76,15 +74,19 @@ public class GameStateMenu extends GameState {
     protected void keyPressed(int k) {
         switch (k) {
             case KeyEvent.VK_DOWN:
-                if (currentOption++ == options.length-1)
+                if (currentOption++ == options.length - 1)
                     currentOption = 0;
                 break;
 
             case KeyEvent.VK_UP:
-                if (currentOption-- == 0) 
-                    currentOption = options.length-1;
+                if (currentOption-- == 0)
+                    currentOption = options.length - 1;
                 break;
-                
+            case KeyEvent.VK_0:
+                if (currentOption-- == 0)
+                    currentOption = options.length - 1;
+                break;
+
             default:
                 break;
         }
