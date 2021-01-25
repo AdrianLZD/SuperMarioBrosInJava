@@ -1,7 +1,7 @@
 package main.java;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Block extends Rectangle{
 
@@ -19,18 +19,21 @@ public class Block extends Rectangle{
                             USED = 9,
                             FLAG_POST = 10,
                             FLAG_TOP = 11;
-    public static final int SIZE = 64;
+    public static final int BLOCK_COUNT = 12;
+    public static final int SIZE = WindowManager.WINDOW_HEIGHT/14;
 
+    private BufferedImage currentSprite;
     private int id;
 
     public Block(Point position, int id){
         this.id = id;
+        currentSprite = SpriteAssets.getBlockSprite(id);
         setBounds(position.x, position.y, SIZE, SIZE);
     }
 
-    public void paintBlock(){
+    public void paintBlock(Graphics g){
         if(id!=EMPTY){
-            //TODO paint block
+            g.drawImage(currentSprite, x, y, GameRunner.instance);
         }
     }
 }

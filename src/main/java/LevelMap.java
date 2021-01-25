@@ -1,5 +1,6 @@
 package main.java;
 
+import java.awt.Graphics;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,10 +58,10 @@ public class LevelMap {
         }
     }
 
-    public void paintBlocks(){
+    public void paintBlocks(Graphics g){
         for(Block[] arrayB: blocks){
             for(Block b : arrayB){
-                b.paintBlock();
+                b.paintBlock(g);
             }
         }
     }

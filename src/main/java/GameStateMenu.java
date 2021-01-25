@@ -3,9 +3,6 @@ package main.java;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.*;
-
-import javax.imageio.ImageIO;
 
 public class GameStateMenu extends GameState {
 
@@ -23,18 +20,8 @@ public class GameStateMenu extends GameState {
 
     @Override
     protected void loadImages() {
-        loadBackground("menu");
-        loadLogo();
-    }
-
-    private void loadLogo() {
-        String logoFilePath = "res/backgrounds/logo.png";
-        File logoFile = new File(logoFilePath);
-        try {
-            logo = ImageIO.read(logoFile);
-        } catch (IOException e) {
-            ErrorLogger.logErrorMessage("The logo was not found", e);
-        }
+        getBackground("menu");
+        logo = SpriteAssets.getLogo();
     }
 
     @Override

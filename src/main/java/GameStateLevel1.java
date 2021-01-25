@@ -6,8 +6,6 @@ public class GameStateLevel1 extends GameState {
 
     private int lvlId;
 
-    private LevelMap lvlMap;
-
     public GameStateLevel1(){
         super();
         lvlId = 1;
@@ -16,13 +14,13 @@ public class GameStateLevel1 extends GameState {
 
     @Override
     protected void loadImages() {
-        loadBackground("lvl1");
+        getBackground("lvl1");
     }
 
     @Override
     protected void paintElements(Graphics g) {
         super.paintElements(g);
-        lvlMap.paintBlocks();
+        lvlMap.paintBlocks(g);
     }
 
     @Override

@@ -2,13 +2,12 @@ package main.java;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public abstract class GameState {
-    protected static BufferedImage background;
+
+    private static final int BACKGROUND_OFFSET = -31;
+
+    protected BufferedImage background;
     protected boolean imagesLoaded;
     protected GameRunner gameRunner;
     protected LevelMap lvlMap;
@@ -27,15 +26,8 @@ public abstract class GameState {
 
     protected abstract void keyReleased(int k);
 
-    protected void loadBackground(String backgroundName) {
-        String backgroundFilePath = "res/backgrounds/" + backgroundName + ".png";
-        File backgroundFile = new File(backgroundFilePath);
-        try {
-            background = ImageIO.read(backgroundFile);
-        } catch (IOException e) {
-            String errorMessage = "The " + backgroundName + " background was not found.";
-            ErrorLogger.logErrorMessage(errorMessage, e);
-        }
+    protected void getBackground(String backgroundName) {
+        background = SpriteAssets.getBackground(backgroundName);
     }
 
     protected void paintElements(Graphics g){
@@ -43,10 +35,7 @@ public abstract class GameState {
     }
 
     protected void paintBackground(Graphics g){
-        //offset calculated taking into account images desired position
-        //and an arbitrary value previously used in the app
-        int backgroundOffset = -((896-WindowManager.WINDOW_HEIGHT)+31);
-        g.drawImage(background, 0, backgroundOffset, gameRunner);
+        g.drawImage(background, 0, BACKGROUND_OFFSET, gameRunner);
     }
 
     protected void createLevelMap(int id){
