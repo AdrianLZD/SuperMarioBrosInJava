@@ -52,13 +52,13 @@ public class SpriteAssets {
         for (int i = 0; i < backgrounds.length; i++) {
             int newHeight = WindowManager.WINDOW_HEIGHT * backgrounds[i].getHeight()
                     / PREVIOUS_WINDOW_HEIGHT;
-            int newWidth = backgrounds[i].getWidth() * backgrounds[i].getHeight() / newHeight;
+            int newWidth = backgrounds[i].getWidth() * newHeight / backgrounds[i].getHeight();
             backgrounds[i] = createRescaledImage(backgrounds[i], newWidth, newHeight);
         }
     }
 
     private static BufferedImage createRescaledImage(Image original, int newWidth, int newHeight) {
-        BufferedImage rescaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+        BufferedImage rescaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
         Image image = original.getScaledInstance(newWidth, newHeight, Image.SCALE_DEFAULT);
         rescaledImage.getGraphics().drawImage(image, 0, 0, null);
         return rescaledImage;

@@ -22,13 +22,10 @@ public class GameRunner extends JPanel implements KeyListener {
         addKeyListener(this);
         setVisible(true);
         setFocusable(true);
-        definePanelSize();
     }
 
-    private void definePanelSize() {
-        int panelWidth = (int) WindowManager.findCurrentScreenDimension().getWidth();
-        Dimension panelDimension = new Dimension(panelWidth, WindowManager.WINDOW_HEIGHT);
-        setPreferredSize(panelDimension);
+    public void definePanelSize(Dimension dimension) {
+        setPreferredSize(dimension);
     }
 
     public void paintComponent(Graphics g) {
@@ -43,7 +40,6 @@ public class GameRunner extends JPanel implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         currentGameState.keyPressed(e.getKeyCode());
-
         if (e.getKeyCode() == KeyEvent.VK_W) {
             mainThread.resumeThread();
         } else if (e.getKeyCode() == KeyEvent.VK_K) {

@@ -10,6 +10,7 @@ public class GameStateLevel1 extends GameState {
         super();
         lvlId = 1;
         createLevelMap(lvlId);
+        definePanelSize(SpriteAssets.getBackground("lvl1").getWidth(), WindowManager.WINDOW_HEIGHT);
     }
 
     @Override

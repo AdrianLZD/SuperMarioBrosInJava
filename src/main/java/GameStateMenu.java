@@ -16,6 +16,7 @@ public class GameStateMenu extends GameState {
     public GameStateMenu() {
         super();
         textFont = TextFont.getFont();
+        definePanelSize(WindowManager.windowWidth, WindowManager.WINDOW_HEIGHT);
     }
 
     @Override
