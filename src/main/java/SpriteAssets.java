@@ -20,12 +20,14 @@ public class SpriteAssets {
     private static BufferedImage gameLogo;
     private static BufferedImage[] backgrounds;
     private static BufferedImage[] blockSprites;
+    private static BufferedImage[] marioSprites;
 
     static {
         try {
             loadGameLogo();
             loadBackgrounds();
             loadBlockSprites();
+            loadMarioSprites();
         } catch (IOException e) {
             ErrorLogger.logErrorMessage("The sprites of the game could not be loaded.", e);
         }
@@ -88,6 +90,49 @@ public class SpriteAssets {
                 toResize[i] = createRescaledImage(toResize[i], width, height);
             }
         }
+    }
+
+    private static void loadMarioSprites() throws IOException{
+        marioSprites = new BufferedImage[Animator.MARIO_SPRITE_COUNT];
+        marioSprites[Animator.M_DEAD] = ImageIO.read(new File("res/mario/mDead.png"));
+        marioSprites[Animator.M_SMALL_RIGHT_IDLE] = ImageIO.read(new File("res/mario/mSmallRightIdle.png"));
+        marioSprites[Animator.M_SMALL_RIGHT_WALK1] = ImageIO.read(new File("res/mario/mSmallRightWalk1.png"));
+        marioSprites[Animator.M_SMALL_RIGHT_WALK2] = ImageIO.read(new File("res/mario/mSmallRightWalk2.png"));
+        marioSprites[Animator.M_SMALL_RIGHT_JUMP] = ImageIO.read(new File("res/mario/mSmallRightJump.png"));
+        marioSprites[Animator.M_SMALL_RIGHT_FLAG] = ImageIO.read(new File("res/mario/mSmallRightFlag.png"));
+        marioSprites[Animator.M_SMALL_RIGHT_TRANSITION] = ImageIO.read(new File("res/mario/mSmallRightTransition.png"));
+        marioSprites[Animator.M_SMALL_LEFT_IDLE] = ImageIO.read(new File("res/mario/mSmallLeftIdle.png"));
+        marioSprites[Animator.M_SMALL_LEFT_WALK1] = ImageIO.read(new File("res/mario/mSmallLeftWalk1.png"));
+        marioSprites[Animator.M_SMALL_LEFT_WALK2] = ImageIO.read(new File("res/mario/mSmallLeftWalk2.png"));
+        marioSprites[Animator.M_SMALL_LEFT_JUMP] = ImageIO.read(new File("res/mario/mSmallLeftJump.png"));
+        marioSprites[Animator.M_SMALL_LEFT_FLAG] = ImageIO.read(new File("res/mario/mSmallLeftFlag.png"));
+        marioSprites[Animator.M_SMALL_LEFT_TRANSITION] = ImageIO.read(new File("res/mario/mSmallLefttransition.png"));
+
+        marioSprites[Animator.M_BIG_RIGHT_IDLE] = ImageIO.read(new File("res/mario/mBigRightIdle.png"));
+        marioSprites[Animator.M_BIG_RIGHT_WALK1] = ImageIO.read(new File("res/mario/mBigRightWalk1.png"));
+        marioSprites[Animator.M_BIG_RIGHT_WALK2] = ImageIO.read(new File("res/mario/mBigRightWalk2.png"));
+        marioSprites[Animator.M_BIG_RIGHT_JUMP] = ImageIO.read(new File("res/mario/mBigRightJump.png"));
+        marioSprites[Animator.M_BIG_RIGHT_FLAG] = ImageIO.read(new File("res/mario/mBigRightFlag.png"));
+        marioSprites[Animator.M_BIG_LEFT_IDLE] = ImageIO.read(new File("res/mario/mBigLeftIdle.png"));
+        marioSprites[Animator.M_BIG_LEFT_WALK1] = ImageIO.read(new File("res/mario/mBigLeftWalk1.png"));
+        marioSprites[Animator.M_BIG_LEFT_WALK2] = ImageIO.read(new File("res/mario/mBigLeftWalk2.png"));
+        marioSprites[Animator.M_BIG_LEFT_JUMP] = ImageIO.read(new File("res/mario/mBigLeftJump.png"));
+        marioSprites[Animator.M_BIG_LEFT_FLAG] = ImageIO.read(new File("res/mario/mBigLeftFlag.png"));
+
+        marioSprites[Animator.M_FIRE_RIGHT_IDLE] = ImageIO.read(new File("res/mario/mFireRightIdle.png"));
+        marioSprites[Animator.M_FIRE_RIGHT_WALK1] = ImageIO.read(new File("res/mario/mFireRightWalk1.png"));
+        marioSprites[Animator.M_FIRE_RIGHT_WALK2] = ImageIO.read(new File("res/mario/mFireRightWalk2.png"));
+        marioSprites[Animator.M_FIRE_RIGHT_JUMP] = ImageIO.read(new File("res/mario/mFireRightJump.png"));
+        marioSprites[Animator.M_FIRE_RIGHT_FLAG] = ImageIO.read(new File("res/mario/mFireRightFlag.png"));
+        marioSprites[Animator.M_FIRE_LEFT_IDLE] = ImageIO.read(new File("res/mario/mFireLeftIdle.png"));
+        marioSprites[Animator.M_FIRE_LEFT_WALK1] = ImageIO.read(new File("res/mario/mFireLeftWalk1.png"));
+        marioSprites[Animator.M_FIRE_LEFT_WALK2] = ImageIO.read(new File("res/mario/mFireLeftWalk2.png"));
+        marioSprites[Animator.M_FIRE_LEFT_JUMP] = ImageIO.read(new File("res/mario/mFireLeftJump.png"));
+        marioSprites[Animator.M_FIRE_LEFT_FLAG] = ImageIO.read(new File("res/mario/mFireLeftFlag.png"));
+    }
+
+    public static BufferedImage getMarioSprite(int id){
+        return marioSprites[id];
     }
 
     public static BufferedImage getLogo() {

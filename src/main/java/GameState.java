@@ -11,6 +11,7 @@ public abstract class GameState {
     protected BufferedImage background;
     protected GameRunner gameRunner;
     protected LevelMap lvlMap;
+    protected Mario mario;
     protected boolean imagesLoaded;
 
 
@@ -24,6 +25,8 @@ public abstract class GameState {
     protected abstract void keyPressed(int k);
 
     protected abstract void keyReleased(int k);
+
+    protected abstract void tick();
 
     protected void getBackground(String backgroundName) {
         background = SpriteAssets.getBackground(backgroundName);
@@ -47,11 +50,6 @@ public abstract class GameState {
             ErrorLogger.logInfoMessage("Creating a level map for the menu is unsupported. Aborting task.");
             return;
         }
-
         lvlMap = new LevelMap(id);
-        
     }
-
-    
-
 }

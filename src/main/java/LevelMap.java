@@ -24,6 +24,7 @@ public class LevelMap {
             BufferedReader fileBuffer = openLevelLayoutFile();
             readLevelLayoutFile(fileBuffer);
             fileBuffer.close();
+            setPhysicsBlocks();
         } catch ( IOException e) {
             String message = "The file layout for level " + mapId + "could not be read.";
             ErrorLogger.logErrorMessage(message, e);
@@ -54,6 +55,16 @@ public class LevelMap {
                 newBlockPosition = new Point(j*Block.SIZE,i*Block.SIZE);
                 newBlockId = Integer.parseInt(stringTokenizer.nextToken());
                 blocks[i][j] = new Block(newBlockPosition, newBlockId);
+            }
+        }
+    }
+
+    private void setPhysicsBlocks(){
+        for(Block[] blockArray : blocks){
+            for(Block block : blockArray){
+                if(block.getId()!=0){
+                    PhysicObject.addMapBlock(block);
+                }
             }
         }
     }

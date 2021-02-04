@@ -53,8 +53,8 @@ public class WindowManager extends JFrame {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         InputMap inputMap = scrollPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        //inputMap.put(KeyStroke.getKeyStroke("RIGHT"), "do-nothing");
-        //inputMap.put(KeyStroke.getKeyStroke("LEFT"), "do-nothing");
+        inputMap.put(KeyStroke.getKeyStroke("RIGHT"), "do-nothing");
+        inputMap.put(KeyStroke.getKeyStroke("LEFT"), "do-nothing");
         inputMap.put(KeyStroke.getKeyStroke("UP"), "do-nothing");
         inputMap.put(KeyStroke.getKeyStroke("DOWN"), "do-nothing");
 

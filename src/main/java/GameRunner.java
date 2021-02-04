@@ -52,6 +52,10 @@ public class GameRunner extends JPanel implements KeyListener {
         currentGameState.keyReleased(e.getKeyCode());
     }
 
+    public void tick(){
+        currentGameState.tick();
+    }
+
     public void setCurrentGameState(GameState gameState){
         currentGameState = gameState;
     }

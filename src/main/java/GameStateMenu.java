@@ -96,4 +96,9 @@ public class GameStateMenu extends GameState {
     @Override
     protected void keyReleased(int k) {
     }
+
+    @Override
+    protected void tick() {
+
+    }
 }

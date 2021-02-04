@@ -36,4 +36,8 @@ public class Block extends Rectangle{
             g.drawImage(currentSprite, x, y, GameRunner.instance);
         }
     }
+
+    public int getId(){
+        return id;
+    }
 }
