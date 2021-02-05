@@ -1,20 +1,21 @@
 package main.java;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 public class Mario extends PhysicObject {
     private static final long serialVersionUID = 1L;
     
-    private MarioState state;
+    protected MarioState state;
+    private MarioController controller;
+
     private int currentSprite;
 
     public Mario(){
         initializeVariables();
         setLocation(150, 400);
         updateSize();
-        gravityOn = true;
+        controller = new MarioController(this);
     }
 
     private void initializeVariables(){
@@ -37,6 +38,8 @@ public class Mario extends PhysicObject {
     }
 
     public void paintMario(Graphics g){
+        g.setColor(Color.GREEN);
+        g.drawRect(x, y, width, height);
         paintSprite(g);
     }
 
@@ -44,14 +47,18 @@ public class Mario extends PhysicObject {
         g.drawImage(Animator.getMarioSprite(currentSprite), x, y, null);
     }
 
-    public void keyPressed(int k){
-        if(k==KeyEvent.VK_UP){
-            setLocation(100,500);
-            gravityOn = true;
-        }
+    public void tick(){
+        super.tick();
+        controller.tick();
     }
-    
-    
+
+    public void keyPressed(int k){
+        controller.keyPressed(k);
+    }
+
+    public void keyReleased(int k){
+        controller.keyReleased(k);
+    }
 }
 
 enum MarioState {

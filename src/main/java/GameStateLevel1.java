@@ -34,6 +34,7 @@ public class GameStateLevel1 extends GameState {
 
     @Override
     protected void keyReleased(int k) {
+        mario.keyReleased(k);
     }
 
     @Override

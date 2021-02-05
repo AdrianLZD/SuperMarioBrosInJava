@@ -7,19 +7,15 @@ import java.util.ArrayList;
 public class PhysicObject extends Rectangle {
 
     private static final long serialVersionUID = 1L;
-    private static final int gravity = 3;
+    private static final int gravity = 8;
     private static final int collisionOffset = 1;
 
     private static ArrayList<Block> mapBlocks = new ArrayList<>();
 
-    protected boolean gravityOn;
-    protected boolean grounded;
+    private boolean grounded;
 
     protected void tick() {
-        if (gravityOn) {
-            applyGravity();
-            checkIfGrounded();
-        }
+        checkIfGrounded();
     }
 
     protected void applyGravity() {
@@ -27,25 +23,18 @@ public class PhysicObject extends Rectangle {
     }
 
     protected void checkIfGrounded() {
-        if (checkBlockDownCollision()) {
-            gravityOn = false;
-            grounded = true;
-        }
+        grounded = downBlockCollision();
     }
 
-    protected boolean checkBlockDownCollision() {
+    protected boolean downBlockCollision() {
         Point leftBottom = new Point(x - collisionOffset, y + (int) getHeight() + collisionOffset);
         Point rightBottom = new Point(x + (int) getWidth() + collisionOffset, y + (int) getHeight() + collisionOffset);
         for (Block block : mapBlocks) {
             if (pointCollision(leftBottom, block) || pointCollision(rightBottom, block)) {
-                System.out.println("true");
-                System.out.println(leftBottom);
-                System.out.println(rightBottom);
+                setLocation(x, block.y- (int)getHeight() - 1);
                 return true;
-
             }
         }
-        System.out.println("false");
         return false;
     }
 
@@ -65,4 +54,15 @@ public class PhysicObject extends Rectangle {
         mapBlocks.add(block);
     }
 
+    public boolean isGrounded(){
+        return grounded;
+    }
+
+    public void setGrounded(boolean value){
+        grounded = value;
+    }
+
+    public static int getGravity(){
+        return gravity;
+    }
 }
