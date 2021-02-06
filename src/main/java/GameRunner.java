@@ -13,12 +13,12 @@ public class GameRunner extends JPanel implements KeyListener {
 
     public static final GameRunner instance = new GameRunner();
 
+    private WindowManager window;
     private MainThread mainThread;
     private GameState currentGameState;
 
     private GameRunner() {
         super();
-        // setBackground(Color.BLACK);
         addKeyListener(this);
         setVisible(true);
         setFocusable(true);
@@ -30,7 +30,9 @@ public class GameRunner extends JPanel implements KeyListener {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.setClip(window.getXPaintingPosition(), getY(), window.getWidth(), window.getHeight());
         currentGameState.paintElements(g);
+        
     }
 
     @Override
@@ -53,6 +55,7 @@ public class GameRunner extends JPanel implements KeyListener {
     }
 
     public void tick(){
+        repaint();
         currentGameState.tick();
     }
 
@@ -60,15 +63,21 @@ public class GameRunner extends JPanel implements KeyListener {
         currentGameState = gameState;
     }
 
-    public void initializeGameRunner(){
+    public void initializeGameRunner(WindowManager wManager){
         attachRunnerToMainThread();
         GameState menuState = new GameStateMenu();
         setCurrentGameState(menuState);
+        window = wManager;
     }
 
     private void attachRunnerToMainThread() {
         mainThread = new MainThread("MarioThread");
         mainThread.gameRunner = this;
+    }
+
+
+    public void moveHorizontalScroll(int newPosition){
+        window.moveHorizontalScroll(newPosition);
     }
 
     

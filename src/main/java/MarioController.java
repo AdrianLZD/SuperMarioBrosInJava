@@ -8,6 +8,7 @@ public class MarioController {
     private final int jumpSpeed = 8;
     private final int gravity = PhysicObject.getGravity();
 
+    private GameRunner gameRunner;
     private Mario mario;
     
     private int horizontalVelocity;
@@ -20,9 +21,9 @@ public class MarioController {
 
     public MarioController(Mario mario){
         this.mario = mario;
-        verticalVelocity = gravity;
-        mario.horizontalOffset = walkSpeed;
-        mario.verticalOffset = gravity;
+        mario.hCollisionOffset = walkSpeed;
+        mario.vCollisionOffset = gravity;
+        gameRunner = GameRunner.instance;
     }
 
     public void keyPressed(int k){
@@ -113,13 +114,15 @@ public class MarioController {
         else
             horizontalVelocity = 0;
         
-        mario.setLocation(mario.x + horizontalVelocity, mario.y + verticalVelocity);
-        
+        mario.setLocation(mario.x + horizontalVelocity, mario.y + verticalVelocity);   
+        gameRunner.moveHorizontalScroll(mario.x);
     }
 
     public boolean isMoving(){
         return moveRight || moveLeft;
     }
+
+
 
     
 

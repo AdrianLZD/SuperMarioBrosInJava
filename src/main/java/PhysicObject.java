@@ -15,8 +15,8 @@ public class PhysicObject extends Rectangle {
 
     private static ArrayList<Block> mapBlocks = new ArrayList<>();
 
-    protected int horizontalOffset;
-    protected int verticalOffset;
+    protected int hCollisionOffset;
+    protected int vCollisionOffset;
 
     private boolean[] collisions = new boolean[4];
 
@@ -65,26 +65,26 @@ public class PhysicObject extends Rectangle {
 
 
     private Rectangle getTopCollider() {
-        Point coordinate = new Point(x+horizontalOffset, y - verticalOffset);
-        Dimension collisionSize = new Dimension((int) getWidth() - horizontalOffset* 2, verticalOffset * 2);
+        Point coordinate = new Point(x+hCollisionOffset, y - vCollisionOffset);
+        Dimension collisionSize = new Dimension((int) getWidth() - hCollisionOffset* 2, vCollisionOffset * 2);
         return new Rectangle(coordinate, collisionSize);
     }
 
     private Rectangle getRightCollider() {
-        Point coordinate = new Point(x + (int) getWidth() - horizontalOffset, y + verticalOffset);
-        Dimension collisionSize = new Dimension(horizontalOffset * 2, (int) getHeight() - verticalOffset*2);
+        Point coordinate = new Point(x + (int) getWidth() - hCollisionOffset, y + vCollisionOffset);
+        Dimension collisionSize = new Dimension(hCollisionOffset * 2, (int) getHeight() - vCollisionOffset*2);
         return new Rectangle(coordinate, collisionSize);
     }
 
     private Rectangle getBottomCollider(){
-        Point coordinate = new Point(x+horizontalOffset, y + (int) getHeight() - verticalOffset);
-        Dimension collisionSize = new Dimension((int) getWidth()-horizontalOffset*2, verticalOffset * 2);
+        Point coordinate = new Point(x+hCollisionOffset, y + (int) getHeight() - vCollisionOffset);
+        Dimension collisionSize = new Dimension((int) getWidth()-hCollisionOffset*2, vCollisionOffset * 2);
         return new Rectangle(coordinate, collisionSize);
     }
 
     private Rectangle getLeftCollider() {
-        Point coordinate = new Point(x - horizontalOffset, y + verticalOffset);
-        Dimension collisionSize = new Dimension(horizontalOffset*2, (int)getHeight() - verticalOffset*2);
+        Point coordinate = new Point(x - hCollisionOffset, y + vCollisionOffset);
+        Dimension collisionSize = new Dimension(hCollisionOffset*2, (int)getHeight() - vCollisionOffset*2);
         return new Rectangle(coordinate, collisionSize);
     }
 
