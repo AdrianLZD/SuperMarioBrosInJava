@@ -21,6 +21,8 @@ public class MarioController {
     public MarioController(Mario mario){
         this.mario = mario;
         verticalVelocity = gravity;
+        mario.horizontalOffset = horizontalVelocity;
+        mario.verticalOffset = verticalVelocity;
     }
 
     public void keyPressed(int k){
@@ -97,13 +99,10 @@ public class MarioController {
     private void applyVelocities() {
         
         if(jumping){
-            //System.out.println("jump");
             verticalVelocity = -jumpSpeed;
         }else if(mario.isGrounded()){
-            //System.out.println("ground");
             verticalVelocity = 0;
         }else{
-            //System.out.println("falling");
             verticalVelocity = gravity;
         }
         
