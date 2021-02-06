@@ -21,8 +21,8 @@ public class MarioController {
     public MarioController(Mario mario){
         this.mario = mario;
         verticalVelocity = gravity;
-        mario.horizontalOffset = horizontalVelocity;
-        mario.verticalOffset = verticalVelocity;
+        mario.horizontalOffset = walkSpeed;
+        mario.verticalOffset = gravity;
     }
 
     public void keyPressed(int k){
@@ -44,7 +44,6 @@ public class MarioController {
     private void activateJump(){
         jumpTime = 0;
         jumping = true;
-        mario.setGrounded(false);
         mario.setLocation(mario.x, mario.y-jumpSpeed);
     }
 
