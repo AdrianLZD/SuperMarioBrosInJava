@@ -3,9 +3,9 @@ package main.java;
 import java.awt.event.KeyEvent;
 
 public class MarioController {
-    private final int maxJumpTime = 32;
+    private final int maxJumpTime = 34;
     private final int walkSpeed = 5;
-    private final int jumpSpeed = 8;
+    private final int jumpSpeed = 7;
     private final int gravity = PhysicObject.getGravity();
 
     private GameRunner gameRunner;
@@ -86,6 +86,7 @@ public class MarioController {
         if(jumping)
             jump();
 
+        findCurrentAction();
         applyVelocities();
     }
 
@@ -96,25 +97,35 @@ public class MarioController {
         jumpTime++;
     }
 
-    private void applyVelocities() {
+    private void findCurrentAction() {
         
         if(jumping){
-            verticalVelocity = -jumpSpeed;
+            if(mario.isTopColliding()){
+                deactivateJump();
+                verticalVelocity = gravity;
+            }else{
+                verticalVelocity = -jumpSpeed;
+            }
         }else if(mario.isGrounded()){
             verticalVelocity = 0;
         }else{
             verticalVelocity = gravity;
         }
         
+    }
 
-        if(moveRight)
+    private void applyVelocities(){
+        if (moveRight)
             horizontalVelocity = walkSpeed;
-        else if(moveLeft)
+        else if (moveLeft)
             horizontalVelocity = -walkSpeed;
         else
             horizontalVelocity = 0;
-        
-        mario.setLocation(mario.x + horizontalVelocity, mario.y + verticalVelocity);   
+
+        mario.setLocation(mario.x + horizontalVelocity, mario.y + verticalVelocity);
+    }
+
+    public void moveCamera(){
         gameRunner.moveHorizontalScroll(mario.x);
     }
 

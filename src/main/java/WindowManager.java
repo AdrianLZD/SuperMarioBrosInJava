@@ -11,11 +11,12 @@ public class WindowManager extends JFrame {
     public static final String APP_NAME = "Super Mario Bros In Java";
     public static int windowWidth;
 
+    private JScrollPane scrollPane;
+    private Runnable scrollPaneThread;
     private int movementOffset;
     private int xPaintingPosition;
-    private JScrollPane scrollPane;
+    private int xScrollPosition;
 
-    
     public WindowManager() {
         super(APP_NAME);
         findWindowSize();
@@ -26,10 +27,10 @@ public class WindowManager extends JFrame {
         setJFrameRules();
     }
 
-    private void findWindowSize(){
+    private void findWindowSize() {
         Dimension screenDimension = findCurrentScreenDimension();
         windowWidth = (int) screenDimension.getWidth();
-     }
+    }
 
     private void startGameRunner() {
         GameRunner gameRunner = GameRunner.instance;
@@ -38,15 +39,14 @@ public class WindowManager extends JFrame {
         add(gameRunner);
     }
 
-    private void setJFrameRules(){
+    private void setJFrameRules() {
         setSize(windowWidth, WINDOW_HEIGHT);
         setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    
-    private void initializeScrollPane(){
+    private void initializeScrollPane() {
         scrollPane = new JScrollPane(GameRunner.instance);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -55,7 +55,11 @@ public class WindowManager extends JFrame {
         inputMap.put(KeyStroke.getKeyStroke("LEFT"), "do-nothing");
         inputMap.put(KeyStroke.getKeyStroke("UP"), "do-nothing");
         inputMap.put(KeyStroke.getKeyStroke("DOWN"), "do-nothing");
-
+        scrollPaneThread = new Runnable(){
+            public void run(){
+                scrollPane.getHorizontalScrollBar().setValue(xScrollPosition);
+            }
+        };
         add(scrollPane);
     }
 
@@ -64,14 +68,15 @@ public class WindowManager extends JFrame {
         return toolkit.getScreenSize();
     }
 
-    public void moveHorizontalScroll(int xNewPosition){
-        if(xNewPosition > movementOffset){
-            scrollPane.getHorizontalScrollBar().setValue(xNewPosition - movementOffset);
+    public void moveHorizontalScroll(int xNewPosition) {
+        if (xNewPosition > movementOffset) {
+            xScrollPosition = xNewPosition - movementOffset;
+            SwingUtilities.invokeLater(scrollPaneThread);
         }
         xPaintingPosition = scrollPane.getHorizontalScrollBar().getValue();
     }
 
-    public int getXPaintingPosition(){
+    public int getXPaintingPosition() {
         return xPaintingPosition;
     }
 

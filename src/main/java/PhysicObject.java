@@ -10,8 +10,8 @@ import java.util.ArrayList;
 public class PhysicObject extends Rectangle {
 
     private static final long serialVersionUID = 1L;
-    private static final int GRAVITY = 8;
-    private static final int collisionOffset = 1;
+    private static final int GRAVITY = 7;
+    private static final int collisionOffset = 0;
 
     private static ArrayList<Block> mapBlocks = new ArrayList<>();
 
@@ -89,7 +89,7 @@ public class PhysicObject extends Rectangle {
     }
 
     protected void paint(Graphics g){
-        
+        //paintColliders(g);
     }
 
     @SuppressWarnings("unused")
@@ -118,6 +118,10 @@ public class PhysicObject extends Rectangle {
 
     public boolean isGrounded(){
         return collisions[CollisionSide.BOTTOM];
+    }
+
+    public boolean isTopColliding(){
+        return collisions[CollisionSide.TOP];
     }
 
     public static int getGravity(){

@@ -51,6 +51,7 @@ public class Mario extends PhysicObject {
     public void tick(){
         controller.tick();
         checkCollisions();
+        controller.moveCamera();
     }
 
     public void keyPressed(int k){

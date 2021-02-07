@@ -42,8 +42,8 @@ public class MainThread extends Thread{
 
     private void doThreadActions() {
         try{
-            gameRunner.repaint();
             gameRunner.tick();
+            gameRunner.repaint();
         }catch(NullPointerException e){
             //ErrorLogger.logWarningMessage("The game runner has not been attached to the main thread.", e);
         }
