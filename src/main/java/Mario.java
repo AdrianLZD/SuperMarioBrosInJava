@@ -5,29 +5,30 @@ import java.awt.image.BufferedImage;
 
 public class Mario extends PhysicObject {
     private static final long serialVersionUID = 1L;
-    
+
     protected MarioState state;
     private MarioController controller;
 
     private int currentSprite;
+    private int animationTimer;
 
-    public Mario(){
+    public Mario() {
         initializeVariables();
-        setLocation(150, 400);
+        setLocation(150, 600);
         updateSize();
         controller = new MarioController(this);
     }
 
-    private void initializeVariables(){
+    private void initializeVariables() {
         state = MarioState.SMALL;
         currentSprite = Animator.M_SMALL_RIGHT_IDLE;
     }
 
-    private void updateSize(){
+    private void updateSize() {
         int marioSpriteId;
-        if(state.getSize()==0){
+        if (state.getSize() == 0) {
             marioSpriteId = Animator.M_SMALL_LEFT_IDLE;
-        }else{
+        } else {
             marioSpriteId = Animator.M_BIG_LEFT_IDLE;
         }
         BufferedImage sizeReference = Animator.getMarioSprite(marioSpriteId);
@@ -37,28 +38,80 @@ public class Mario extends PhysicObject {
         setSize(width, height);
     }
 
-    public void paintMario(Graphics g){
+    public void paintMario(Graphics g) {
         super.paint(g);
-        //g.setColor(Color.GREEN);
-        //g.drawRect(x, y, width, height);
+        // g.setColor(Color.GREEN);
+        // g.drawRect(x, y, width, height);
         paintSprite(g);
     }
 
-    private void paintSprite(Graphics g){
+    private void paintSprite(Graphics g) {
         g.drawImage(Animator.getMarioSprite(currentSprite), x, y, null);
     }
 
-    public void tick(){
+    public void tick() {
         controller.tick();
         checkCollisions();
+        selectSprite();
         controller.moveCamera();
     }
 
-    public void keyPressed(int k){
+    private void selectSprite() {
+        if (animationTimer > Animator.animationSpeed) {
+            switch (state.getSize()) {
+                case 0:
+                    selectSmallSprite();
+                    break;
+                case 1:
+                    break;
+                default:
+                    break;
+            }
+            animationTimer = 0;
+        }
+        animationTimer++;
+    }
+
+    private void selectSmallSprite(){
+        if (controller.isJumping()) {
+            if (controller.getLastDirection() == controller.RIGHT) {
+                currentSprite = Animator.M_SMALL_RIGHT_JUMP;
+                return;
+            }
+            currentSprite = Animator.M_SMALL_LEFT_JUMP;
+            return;
+        }
+
+        if (controller.isMovingRight()) {
+            if (currentSprite == Animator.M_SMALL_RIGHT_WALK1) {
+                currentSprite = Animator.M_SMALL_RIGHT_WALK2;
+                return;
+            }
+            currentSprite = Animator.M_SMALL_RIGHT_WALK1;
+            return;
+        }
+
+        if (controller.isMovingLeft()) {
+            if (currentSprite == Animator.M_SMALL_LEFT_WALK1) {
+                currentSprite = Animator.M_SMALL_LEFT_WALK2;
+                return;
+            }
+            currentSprite = Animator.M_SMALL_LEFT_WALK1;
+            return;
+        }
+
+        if (controller.getLastDirection() == controller.RIGHT) {
+            currentSprite = Animator.M_SMALL_RIGHT_IDLE;
+            return;
+        }
+        currentSprite = Animator.M_SMALL_LEFT_IDLE;
+    }
+
+    public void keyPressed(int k) {
         controller.keyPressed(k);
     }
 
-    public void keyReleased(int k){
+    public void keyReleased(int k) {
         controller.keyReleased(k);
     }
 }

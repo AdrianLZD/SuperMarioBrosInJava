@@ -3,10 +3,14 @@ package main.java;
 import java.awt.event.KeyEvent;
 
 public class MarioController {
+    public final boolean RIGHT = true;
+    public final boolean LEFT = false;
+
     private final int maxJumpTime = 34;
     private final int walkSpeed = 5;
     private final int jumpSpeed = 7;
     private final int gravity = PhysicObject.getGravity();
+    
 
     private GameRunner gameRunner;
     private Mario mario;
@@ -17,22 +21,24 @@ public class MarioController {
     private boolean moveRight;
     private boolean moveLeft;
     private boolean jumping;
+    private boolean lastDirection;
     
 
     public MarioController(Mario mario){
         this.mario = mario;
         mario.hCollisionOffset = walkSpeed;
         mario.vCollisionOffset = gravity;
+        lastDirection = RIGHT;
         gameRunner = GameRunner.instance;
     }
 
     public void keyPressed(int k){
         if (k == KeyEvent.VK_UP) {
             upKeyPressed();
-        } else if (k == KeyEvent.VK_LEFT) {
-            leftKeyPressed();
         } else if (k == KeyEvent.VK_RIGHT) {
             rightKeyPressed();
+        } else if (k == KeyEvent.VK_LEFT) {
+            leftKeyPressed();
         }
     }
 
@@ -48,13 +54,15 @@ public class MarioController {
         mario.setLocation(mario.x, mario.y-jumpSpeed);
     }
 
-    private void leftKeyPressed() {
-        moveLeft = true;
-    }
-
     private void rightKeyPressed() {
         moveRight = true;
-	}    
+        lastDirection = RIGHT;
+    }
+
+    private void leftKeyPressed() {
+        moveLeft = true;
+        lastDirection = LEFT;
+    }
 
     public void keyReleased(int k) {
         if (k == KeyEvent.VK_UP) {
@@ -129,8 +137,20 @@ public class MarioController {
         gameRunner.moveHorizontalScroll(mario.x);
     }
 
-    public boolean isMoving(){
-        return moveRight || moveLeft;
+    public boolean isMovingRight(){
+        return moveRight;
+    }
+
+    public boolean isMovingLeft(){
+        return moveLeft;
+    }
+
+    public boolean isJumping(){
+        return jumping;
+    }
+
+    public boolean getLastDirection(){
+        return lastDirection;
     }
 
 

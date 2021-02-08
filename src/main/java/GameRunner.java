@@ -29,8 +29,9 @@ public class GameRunner extends JPanel implements KeyListener {
     }
 
     public void paintComponent(Graphics g) {
+        g.translate(window.getXScrollPosition(), 0);
+        g.setClip(-window.getXScrollPosition(), getY(), window.getWidth(),window.getHeight());
         currentGameState.paintElements(g);
-        g.setClip(window.getXPaintingPosition(), getY(), window.getWidth(), window.getHeight());
     }
 
     @Override

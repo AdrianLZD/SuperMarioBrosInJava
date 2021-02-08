@@ -7,6 +7,8 @@ public class Animator {
 
     public static final int EMPTY = 0;
 
+    public static final int animationSpeed = 6;
+
     public static final int M_DEAD = 1;
     public static final int M_SMALL_RIGHT_IDLE = 2;
     public static final int M_SMALL_RIGHT_WALK1 = 3;
