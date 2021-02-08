@@ -1,21 +1,18 @@
 package main.java;
 
-import java.awt.Graphics;
-import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.StringTokenizer;
+import java.awt.*;
+import java.io.*;
+import java.util.*;
 
 public class LevelMap {
 
     private int mapId;
     private Block[][] blocks;
+    private ArrayList<BlockInteractable> interactableBlocks;
 
     public LevelMap(int mapId) {
         this.mapId = mapId;
+        interactableBlocks = new ArrayList<>();
         loadMapFile();
     }
 
@@ -24,7 +21,7 @@ public class LevelMap {
             BufferedReader fileBuffer = openLevelLayoutFile();
             readLevelLayoutFile(fileBuffer);
             fileBuffer.close();
-            setPhysicsBlocks();
+            setPhysicsAndInteractableBlocks();
         } catch ( IOException e) {
             String message = "The file layout for level " + mapId + "could not be read.";
             ErrorLogger.logErrorMessage(message, e);
@@ -54,12 +51,18 @@ public class LevelMap {
             for (int j = 0; j < width; j++) {
                 newBlockPosition = new Point(j*Block.SIZE,i*Block.SIZE);
                 newBlockId = Integer.parseInt(stringTokenizer.nextToken());
-                blocks[i][j] = new Block(newBlockPosition, newBlockId);
+                if(BlockInteractable.isInteractable(newBlockId)){
+                    blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId);
+                    interactableBlocks.add((BlockInteractable) blocks[i][j]);
+                }else{
+                    blocks[i][j] = new Block(newBlockPosition, newBlockId);
+                }
+                
             }
         }
     }
 
-    private void setPhysicsBlocks(){
+    private void setPhysicsAndInteractableBlocks(){
         for(Block[] blockArray : blocks){
             for(Block block : blockArray){
                 if(block.getId()!=0){
@@ -67,6 +70,8 @@ public class LevelMap {
                 }
             }
         }
+
+        PhysicObject.setInteractableBlocks(interactableBlocks);
     }
 
     public void paintBlocks(Graphics g){
@@ -74,6 +79,12 @@ public class LevelMap {
             for(Block b : arrayB){
                 b.paintBlock(g);
             }
+        }
+    }
+
+    public void tickInteractableBlocks(){
+        for(BlockInteractable b : interactableBlocks){
+            b.tick();
         }
     }
 

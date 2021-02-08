@@ -14,6 +14,7 @@ public class PhysicObject extends Rectangle {
     private static final int collisionOffset = 0;
 
     private static ArrayList<Block> mapBlocks = new ArrayList<>();
+    private static ArrayList<BlockInteractable> interactableBlocks = new ArrayList<>();
 
     protected int hCollisionOffset;
     protected int vCollisionOffset;
@@ -54,6 +55,14 @@ public class PhysicObject extends Rectangle {
             if (lCollider.intersects(block)) {
                 setLocation(block.x + Block.SIZE + collisionOffset, y);
                 lCollision = true;
+            }
+        }
+
+        for(BlockInteractable block : interactableBlocks){
+            if(block.shouldCollide() && tCollider.intersects(block)) {
+                setLocation(x, block.y + Block.SIZE + collisionOffset);
+                block.activateBlock();
+                tCollision = true;
             }
         }
 
@@ -114,6 +123,10 @@ public class PhysicObject extends Rectangle {
 
     public static void addMapBlock(Block block) {
         mapBlocks.add(block);
+    }
+
+    public static void setInteractableBlocks(ArrayList<BlockInteractable> blocks){
+        interactableBlocks = blocks;
     }
 
     public boolean isGrounded(){

@@ -3,11 +3,10 @@ package main.java;
 import java.awt.image.BufferedImage;
 
 public class Animator {
-    public static final Animator instance = new Animator();
 
     public static final int EMPTY = 0;
 
-    public static final int animationSpeed = 6;
+    public static final int ANIMATION_SPEED = 6;
 
     public static final int M_DEAD = 1;
     public static final int M_SMALL_RIGHT_IDLE = 2;
@@ -47,11 +46,11 @@ public class Animator {
 
     public static final int MARIO_SPRITE_COUNT = 34;
 
-    private Animator(){
-
-    };
-
     public static BufferedImage getMarioSprite(int id){
         return SpriteAssets.getMarioSprite(id);
+    }
+
+    public static BufferedImage getBlockSprite(int id){
+        return SpriteAssets.getBlockSprite(id);
     }
 }

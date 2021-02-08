@@ -9,10 +9,11 @@ public class GameStateLevel1 extends GameState {
     public GameStateLevel1(){
         super();
         lvlId = 1;
+        mario = new Mario();
         createLevelMap(lvlId);
         definePanelSize(SpriteAssets.getBackground("lvl1").getWidth(), WindowManager.WINDOW_HEIGHT);
 
-        mario = new Mario();
+        
     }
 
     @Override
@@ -40,6 +41,7 @@ public class GameStateLevel1 extends GameState {
     @Override
     protected void tick() {
         mario.tick();
+        lvlMap.tickInteractableBlocks();
     }
     
 }

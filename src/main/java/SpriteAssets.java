@@ -81,6 +81,10 @@ public class SpriteAssets {
         blockSprites[Block.FLAG_POST] = ImageIO.read(new File("res/blocks/bFlagPost.png"));
         blockSprites[Block.FLAG_TOP] = ImageIO.read(new File("res/blocks/bFlagTop.png"));
 
+        blockSprites[Block.BREAKABLE_ANIM1] = ImageIO.read(new File("res/blocks/bBroken1.png"));
+        blockSprites[Block.BREAKABLE_ANIM2] = ImageIO.read(new File("res/blocks/bBroken2.png"));
+        blockSprites[Block.BREAKABLE_ANIM3] = ImageIO.read(new File("res/blocks/bBroken3.png"));
+
         rescaleSprites(blockSprites, Block.SIZE, Block.SIZE);
     }
 

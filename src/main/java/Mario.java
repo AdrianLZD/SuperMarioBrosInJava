@@ -1,10 +1,12 @@
 package main.java;
 
+import static main.java.Animator.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Mario extends PhysicObject {
     private static final long serialVersionUID = 1L;
+    private static Mario instance;
 
     protected MarioState state;
     private MarioController controller;
@@ -17,19 +19,20 @@ public class Mario extends PhysicObject {
         setLocation(150, 600);
         updateSize();
         controller = new MarioController(this);
+        instance = this;
     }
 
     private void initializeVariables() {
         state = MarioState.SMALL;
-        currentSprite = Animator.M_SMALL_RIGHT_IDLE;
+        currentSprite = M_SMALL_RIGHT_IDLE;
     }
 
     private void updateSize() {
         int marioSpriteId;
         if (state.getSize() == 0) {
-            marioSpriteId = Animator.M_SMALL_LEFT_IDLE;
+            marioSpriteId = M_SMALL_LEFT_IDLE;
         } else {
-            marioSpriteId = Animator.M_BIG_LEFT_IDLE;
+            marioSpriteId = M_BIG_LEFT_IDLE;
         }
         BufferedImage sizeReference = Animator.getMarioSprite(marioSpriteId);
         int width = sizeReference.getWidth();
@@ -57,7 +60,7 @@ public class Mario extends PhysicObject {
     }
 
     private void selectSprite() {
-        if (animationTimer > Animator.animationSpeed) {
+        if (animationTimer > ANIMATION_SPEED) {
             switch (state.getSize()) {
                 case 0:
                     selectSmallSprite();
@@ -75,36 +78,36 @@ public class Mario extends PhysicObject {
     private void selectSmallSprite(){
         if (controller.isJumping()) {
             if (controller.getLastDirection() == controller.RIGHT) {
-                currentSprite = Animator.M_SMALL_RIGHT_JUMP;
+                currentSprite = M_SMALL_RIGHT_JUMP;
                 return;
             }
-            currentSprite = Animator.M_SMALL_LEFT_JUMP;
+            currentSprite = M_SMALL_LEFT_JUMP;
             return;
         }
 
         if (controller.isMovingRight()) {
-            if (currentSprite == Animator.M_SMALL_RIGHT_WALK1) {
-                currentSprite = Animator.M_SMALL_RIGHT_WALK2;
+            if (currentSprite == M_SMALL_RIGHT_WALK1) {
+                currentSprite = M_SMALL_RIGHT_WALK2;
                 return;
             }
-            currentSprite = Animator.M_SMALL_RIGHT_WALK1;
+            currentSprite = M_SMALL_RIGHT_WALK1;
             return;
         }
 
         if (controller.isMovingLeft()) {
-            if (currentSprite == Animator.M_SMALL_LEFT_WALK1) {
-                currentSprite = Animator.M_SMALL_LEFT_WALK2;
+            if (currentSprite == M_SMALL_LEFT_WALK1) {
+                currentSprite = M_SMALL_LEFT_WALK2;
                 return;
             }
-            currentSprite = Animator.M_SMALL_LEFT_WALK1;
+            currentSprite = M_SMALL_LEFT_WALK1;
             return;
         }
 
         if (controller.getLastDirection() == controller.RIGHT) {
-            currentSprite = Animator.M_SMALL_RIGHT_IDLE;
+            currentSprite = M_SMALL_RIGHT_IDLE;
             return;
         }
-        currentSprite = Animator.M_SMALL_LEFT_IDLE;
+        currentSprite = M_SMALL_LEFT_IDLE;
     }
 
     public void keyPressed(int k) {
@@ -113,6 +116,14 @@ public class Mario extends PhysicObject {
 
     public void keyReleased(int k) {
         controller.keyReleased(k);
+    }
+
+    public static Mario getCurrentInstance(){
+        return instance;
+    }
+
+    public MarioState getCurrentState(){
+        return state;
     }
 }
 
