@@ -70,8 +70,6 @@ public class LevelMap {
                 }
             }
         }
-
-        PhysicObject.setInteractableBlocks(interactableBlocks);
     }
 
     public void paintBlocks(Graphics g){

@@ -18,6 +18,7 @@ public class BlockInteractable extends Block {
         collision = true;
     }
 
+    @Override
     public void activateBlock() {
         animating = true;
         animationTimer = 0;
@@ -32,7 +33,6 @@ public class BlockInteractable extends Block {
         if (animating) {
             animateBlock();
         }
-
     }
 
     private void animateBlock() {

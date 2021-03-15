@@ -1,10 +1,6 @@
 package main.java;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class PhysicObject extends Rectangle {
@@ -14,16 +10,11 @@ public class PhysicObject extends Rectangle {
     private static final int collisionOffset = 0;
 
     private static ArrayList<Block> mapBlocks = new ArrayList<>();
-    private static ArrayList<BlockInteractable> interactableBlocks = new ArrayList<>();
 
     protected int hCollisionOffset;
     protected int vCollisionOffset;
 
     private boolean[] collisions = new boolean[4];
-
-    protected void tick() {
-        
-    }
 
     protected void checkCollisions() {
         Rectangle tCollider = getTopCollider();
@@ -37,32 +28,29 @@ public class PhysicObject extends Rectangle {
         boolean lCollision = false;
 
         for (Block block : mapBlocks) {
-            if (tCollider.intersects(block)) {
-                setLocation(x, block.y + Block.SIZE + collisionOffset);
-                tCollision = true;
-            }
+            if (block.isActive()) {
+                if (tCollider.intersects(block)) {
+                    setLocation(x, block.y + Block.SIZE + collisionOffset);
+                    tCollision = true;
+                    if(block instanceof BlockInteractable){
+                        block.activateBlock();
+                    }
+                }
 
-            if (rCollider.intersects(block)) {
-                setLocation(block.x - (int)getWidth() - collisionOffset, y);
-                rCollision= true;
-            }
+                if (rCollider.intersects(block)) {
+                    setLocation(block.x - (int) getWidth() - collisionOffset, y);
+                    rCollision = true;
+                }
 
-            if (bCollider.intersects(block)) {
-                setLocation(x, block.y - (int) getHeight() - collisionOffset);
-                bCollision = true;
-            }
+                if (bCollider.intersects(block)) {
+                    setLocation(x, block.y - (int) getHeight() - collisionOffset);
+                    bCollision = true;
+                }
 
-            if (lCollider.intersects(block)) {
-                setLocation(block.x + Block.SIZE + collisionOffset, y);
-                lCollision = true;
-            }
-        }
-
-        for(BlockInteractable block : interactableBlocks){
-            if(block.shouldCollide() && tCollider.intersects(block)) {
-                setLocation(x, block.y + Block.SIZE + collisionOffset);
-                block.activateBlock();
-                tCollision = true;
+                if (lCollider.intersects(block)) {
+                    setLocation(block.x + Block.SIZE + collisionOffset, y);
+                    lCollision = true;
+                }
             }
         }
 
@@ -72,37 +60,36 @@ public class PhysicObject extends Rectangle {
         collisions[CollisionSide.LEFT] = lCollision;
     }
 
-
     private Rectangle getTopCollider() {
-        Point coordinate = new Point(x+hCollisionOffset, y - vCollisionOffset);
-        Dimension collisionSize = new Dimension((int) getWidth() - hCollisionOffset* 2, vCollisionOffset * 2);
+        Point coordinate = new Point(x + hCollisionOffset, y - vCollisionOffset);
+        Dimension collisionSize = new Dimension((int) getWidth() - hCollisionOffset * 2, vCollisionOffset * 2);
         return new Rectangle(coordinate, collisionSize);
     }
 
     private Rectangle getRightCollider() {
         Point coordinate = new Point(x + (int) getWidth() - hCollisionOffset, y + vCollisionOffset);
-        Dimension collisionSize = new Dimension(hCollisionOffset * 2, (int) getHeight() - vCollisionOffset*2);
+        Dimension collisionSize = new Dimension(hCollisionOffset * 2, (int) getHeight() - vCollisionOffset * 2);
         return new Rectangle(coordinate, collisionSize);
     }
 
-    private Rectangle getBottomCollider(){
-        Point coordinate = new Point(x+hCollisionOffset, y + (int) getHeight() - vCollisionOffset);
-        Dimension collisionSize = new Dimension((int) getWidth()-hCollisionOffset*2, vCollisionOffset * 2);
+    private Rectangle getBottomCollider() {
+        Point coordinate = new Point(x + hCollisionOffset, y + (int) getHeight() - vCollisionOffset);
+        Dimension collisionSize = new Dimension((int) getWidth() - hCollisionOffset * 2, vCollisionOffset * 2);
         return new Rectangle(coordinate, collisionSize);
     }
 
     private Rectangle getLeftCollider() {
         Point coordinate = new Point(x - hCollisionOffset, y + vCollisionOffset);
-        Dimension collisionSize = new Dimension(hCollisionOffset*2, (int)getHeight() - vCollisionOffset*2);
+        Dimension collisionSize = new Dimension(hCollisionOffset * 2, (int) getHeight() - vCollisionOffset * 2);
         return new Rectangle(coordinate, collisionSize);
     }
 
-    protected void paint(Graphics g){
-        //paintColliders(g);
+    protected void paint(Graphics g) {
+        // paintColliders(g);
     }
 
     @SuppressWarnings("unused")
-    private void paintColliders(Graphics g){
+    private void paintColliders(Graphics g) {
         g.setColor(Color.blue);
         Rectangle rect = getTopCollider();
         g.drawRect(rect.x, rect.y, rect.width, rect.height);
@@ -125,24 +112,21 @@ public class PhysicObject extends Rectangle {
         mapBlocks.add(block);
     }
 
-    public static void setInteractableBlocks(ArrayList<BlockInteractable> blocks){
-        interactableBlocks = blocks;
-    }
 
-    public boolean isGrounded(){
+    public boolean isGrounded() {
         return collisions[CollisionSide.BOTTOM];
     }
 
-    public boolean isTopColliding(){
+    public boolean isTopColliding() {
         return collisions[CollisionSide.TOP];
     }
 
-    public static int getGravity(){
+    public static int getGravity() {
         return GRAVITY;
     }
 }
 
-final class CollisionSide{
+final class CollisionSide {
     public static final int TOP = 0;
     public static final int RIGHT = 1;
     public static final int BOTTOM = 2;
