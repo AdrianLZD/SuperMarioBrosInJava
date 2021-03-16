@@ -21,7 +21,7 @@ public class LevelMap {
             BufferedReader fileBuffer = openLevelLayoutFile();
             readLevelLayoutFile(fileBuffer);
             fileBuffer.close();
-            setPhysicsAndInteractableBlocks();
+            setPhysicsBlocks();
         } catch ( IOException e) {
             String message = "The file layout for level " + mapId + "could not be read.";
             ErrorLogger.logErrorMessage(message, e);
@@ -42,17 +42,25 @@ public class LevelMap {
         blocks = new Block[height][width];
 
         String fileLine;
+        String[] currentToken;
         StringTokenizer stringTokenizer;
         Point newBlockPosition;
         int newBlockId;
+        int pickUpType;
         for (int i = 0; i < height; i++) {
             fileLine = fileBuffer.readLine();
             stringTokenizer = new StringTokenizer(fileLine);
             for (int j = 0; j < width; j++) {
                 newBlockPosition = new Point(j*Block.SIZE,i*Block.SIZE);
-                newBlockId = Integer.parseInt(stringTokenizer.nextToken());
+                currentToken = stringTokenizer.nextToken().split("\\.");
+                newBlockId = Integer.parseInt(currentToken[0]);
                 if(BlockInteractable.isInteractable(newBlockId)){
-                    blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId);
+                    if(currentToken.length > 1){
+                        pickUpType = Integer.parseInt(currentToken[1]);
+                        blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId, PickUp.Type.typeById(pickUpType));
+                    }else{
+                        blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId);
+                    }
                     interactableBlocks.add((BlockInteractable) blocks[i][j]);
                 }else{
                     blocks[i][j] = new Block(newBlockPosition, newBlockId);
@@ -62,7 +70,7 @@ public class LevelMap {
         }
     }
 
-    private void setPhysicsAndInteractableBlocks(){
+    private void setPhysicsBlocks(){
         for(Block[] blockArray : blocks){
             for(Block block : blockArray){
                 if(block.getId()!=0){

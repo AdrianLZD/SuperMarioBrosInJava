@@ -31,11 +31,11 @@ public class Block extends Rectangle {
     protected BufferedImage currentSprite;
     
     private byte id;
-    private boolean active;
+    protected boolean collision;
 
     public Block(Point position, int id) {
         this.id = (byte) id;
-        active = true;
+        collision = true;
         currentSprite = SpriteAssets.getBlockSprite(id);
         setBounds(position.x, position.y, SIZE, SIZE);
     }
@@ -52,16 +52,14 @@ public class Block extends Rectangle {
 
     public void deactivateBlock(){
         currentSprite = SpriteAssets.getBlockSprite(EMPTY);
-        active = false;
+        collision = false;
     }
 
     public boolean isActive(){
-        return active;
+        return collision;
     }
 
-    public void activateBlock(){
-        
-    }
+    public void activateBlock(){}
 
 
 }

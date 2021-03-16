@@ -1,31 +1,42 @@
 package main.java;
 
+import java.awt.Graphics;
 import java.awt.Point;
 
 public class BlockInteractable extends Block {
 
     private static final long serialVersionUID = 1L;
     private static final int UP_SPEED = -2;
-    private static Mario mario;
+    private PickUp pickUp;
     private byte animationTimer;
     private boolean animating;
-    private boolean collision;
     private boolean broken;
 
     public BlockInteractable(Point position, int id) {
         super(position, id);
-        mario = Mario.getCurrentInstance();
         collision = true;
+    }
+
+    public BlockInteractable(Point position, int id, PickUp.Type pType){
+        this(position, id);
+        this.pickUp = new PickUp(pType);
     }
 
     @Override
     public void activateBlock() {
         animating = true;
         animationTimer = 0;
-        if (getId() == Block.BREAKABLE && 
-            mario.getCurrentState().getSize() == MarioState.SMALL.getSize()) {
+        if (getId() == Block.BREAKABLE) {
             collision = false;
             broken = true;
+        }
+        dropPickUp();
+    }  
+
+    private void dropPickUp(){
+        if(pickUp != null){
+            Point p = new Point(x, y-Block.SIZE);
+            pickUp.spawnPickUp(p);
         }
     }
 
@@ -70,6 +81,13 @@ public class BlockInteractable extends Block {
             animating = false;
         }
         animationTimer++;
+    }
+    @Override
+    public void paintBlock(Graphics g){
+        super.paintBlock(g);
+        if(pickUp != null){
+            pickUp.paintPickUp(g);
+        }
     }
 
     public boolean shouldCollide() {

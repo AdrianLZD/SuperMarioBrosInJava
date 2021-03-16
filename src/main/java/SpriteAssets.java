@@ -21,6 +21,7 @@ public class SpriteAssets {
     private static BufferedImage[] backgrounds;
     private static BufferedImage[] blockSprites;
     private static BufferedImage[] marioSprites;
+    private static BufferedImage[] pickUps;
 
     static {
         try {
@@ -28,6 +29,8 @@ public class SpriteAssets {
             loadBackgrounds();
             loadBlockSprites();
             loadMarioSprites();
+            loadPickUpSprites();
+            System.gc();
         } catch (IOException e) {
             ErrorLogger.logErrorMessage("The sprites of the game could not be loaded.", e);
         }
@@ -47,24 +50,9 @@ public class SpriteAssets {
         backgrounds[BACKGROUND_LVL3] = ImageIO.read(new File("res/backgrounds/lvl3.png"));
         backgrounds[BACKGROUND_LVL4] = ImageIO.read(new File("res/backgrounds/lvl4.png"));
 
-        rescaleBackgrounds();
+        rescaleSprites(backgrounds);
     }
 
-    private static void rescaleBackgrounds() {
-        for (int i = 0; i < backgrounds.length; i++) {
-            int newHeight = WindowManager.WINDOW_HEIGHT * backgrounds[i].getHeight()
-                    / PREVIOUS_WINDOW_HEIGHT;
-            int newWidth = backgrounds[i].getWidth() * newHeight / backgrounds[i].getHeight();
-            backgrounds[i] = createRescaledImage(backgrounds[i], newWidth, newHeight);
-        }
-    }
-
-    private static BufferedImage createRescaledImage(Image original, int newWidth, int newHeight) {
-        BufferedImage rescaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-        Image image = original.getScaledInstance(newWidth, newHeight, Image.SCALE_DEFAULT);
-        rescaledImage.getGraphics().drawImage(image, 0, 0, null);
-        return rescaledImage;
-    }
 
     private static void loadBlockSprites() throws IOException {
         blockSprites = new BufferedImage[Block.BLOCK_COUNT];
@@ -86,14 +74,6 @@ public class SpriteAssets {
         blockSprites[Block.BREAKABLE_ANIM3] = ImageIO.read(new File("res/blocks/bBroken3.png"));
 
         rescaleSprites(blockSprites, Block.SIZE, Block.SIZE);
-    }
-
-    private static void rescaleSprites(BufferedImage[] toResize, int width, int height) {
-        for (int i = 0; i < toResize.length; i++) {
-            if (toResize[i] != null) {
-                toResize[i] = createRescaledImage(toResize[i], width, height);
-            }
-        }
     }
 
     private static void loadMarioSprites() throws IOException{
@@ -133,6 +113,44 @@ public class SpriteAssets {
         marioSprites[Animator.M_FIRE_LEFT_WALK2] = ImageIO.read(new File("res/mario/mFireLeftWalk2.png"));
         marioSprites[Animator.M_FIRE_LEFT_JUMP] = ImageIO.read(new File("res/mario/mFireLeftJump.png"));
         marioSprites[Animator.M_FIRE_LEFT_FLAG] = ImageIO.read(new File("res/mario/mFireLeftFlag.png"));
+
+        rescaleSprites(marioSprites);
+    }
+
+    private static void loadPickUpSprites() throws IOException{
+        pickUps = new BufferedImage[PickUp.PICKUP_COUNT];
+        pickUps[PickUp.COIN] = ImageIO.read(new File("res/objects/oCoin.png"));
+        pickUps[PickUp.MOOSHROOM] = ImageIO.read(new File("res/objects/oShroom.png"));
+        pickUps[PickUp.FLOWER] = ImageIO.read(new File("res/objects/oFlower.png"));
+        pickUps[PickUp.LIFE] = ImageIO.read(new File("res/objects/oShroomLife.png"));
+        pickUps[PickUp.STAR] = ImageIO.read(new File("res/objects/oStar.png"));
+
+        rescaleSprites(pickUps);
+    }
+
+    private static void rescaleSprites(BufferedImage[] images) {
+        for (int i = 0; i < images.length; i++) {
+            if(images[i]!=null){
+                int newHeight = WindowManager.WINDOW_HEIGHT * images[i].getHeight() / PREVIOUS_WINDOW_HEIGHT;
+                int newWidth = images[i].getWidth() * newHeight / images[i].getHeight();
+                images[i] = createRescaledImage(images[i], newWidth, newHeight);
+            }
+        }
+    }
+
+    private static void rescaleSprites(BufferedImage[] toResize, int width, int height) {
+        for (int i = 0; i < toResize.length; i++) {
+            if (toResize[i] != null) {
+                toResize[i] = createRescaledImage(toResize[i], width, height);
+            }
+        }
+    }
+
+    private static BufferedImage createRescaledImage(Image original, int newWidth, int newHeight) {
+        BufferedImage rescaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        Image image = original.getScaledInstance(newWidth, newHeight, Image.SCALE_DEFAULT);
+        rescaledImage.getGraphics().drawImage(image, 0, 0, null);
+        return rescaledImage;
     }
 
     public static BufferedImage getMarioSprite(int id){
@@ -163,6 +181,10 @@ public class SpriteAssets {
 
     public static BufferedImage getBlockSprite(int id) {
         return blockSprites[id];
+    }
+
+    public static BufferedImage getPickUpSprite(int id){
+        return pickUps[id];
     }
 
 }
