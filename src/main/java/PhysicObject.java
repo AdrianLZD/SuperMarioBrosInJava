@@ -16,7 +16,7 @@ public class PhysicObject extends Rectangle {
 
     private boolean[] collisions = new boolean[4];
 
-    protected void checkCollisions() {
+    protected void checkCollisions(boolean isFalling) {
         Rectangle tCollider = getTopCollider();
         Rectangle rCollider = getRightCollider();
         Rectangle bCollider = getBottomCollider();
@@ -29,7 +29,7 @@ public class PhysicObject extends Rectangle {
 
         for (Block block : mapBlocks) {
             if (block.isActive()) {
-                if (tCollider.intersects(block)) {
+                if (!isFalling && tCollider.intersects(block)) {
                     setLocation(x, block.y + Block.SIZE + collisionOffset);
                     tCollision = true;
                     if(block instanceof BlockInteractable){
@@ -85,7 +85,7 @@ public class PhysicObject extends Rectangle {
     }
 
     protected void paint(Graphics g) {
-        // paintColliders(g);
+        //paintColliders(g);
     }
 
     @SuppressWarnings("unused")

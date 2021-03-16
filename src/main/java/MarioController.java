@@ -106,7 +106,6 @@ public class MarioController {
     }
 
     private void findCurrentAction() {
-        
         if(jumping){
             if(mario.isTopColliding()){
                 deactivateJump();
@@ -147,6 +146,10 @@ public class MarioController {
 
     public boolean isJumping(){
         return jumping;
+    }
+
+    public boolean isFalling(){
+        return verticalVelocity>0;
     }
 
     public boolean getLastDirection(){

@@ -43,8 +43,8 @@ public class Mario extends PhysicObject {
 
     public void paintMario(Graphics g) {
         super.paint(g);
-        // g.setColor(Color.GREEN);
-        // g.drawRect(x, y, width, height);
+        //g.setColor(Color.GREEN);
+        //g.drawRect(x, y, width, height);
         paintSprite(g);
     }
 
@@ -54,7 +54,7 @@ public class Mario extends PhysicObject {
 
     public void tick() {
         controller.tick();
-        checkCollisions();
+        checkCollisions(controller.isFalling());
         selectSprite();
         controller.moveCamera();
     }
