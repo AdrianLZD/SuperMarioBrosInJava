@@ -11,15 +11,10 @@ public class WindowManager extends JFrame {
     public static final String APP_NAME = "Super Mario Bros In Java";
     public static int windowWidth;
 
-    private int movementOffset;
-    private int xScrollPosition;
-
     public WindowManager() {
         super(APP_NAME);
         findWindowSize();
-        movementOffset = windowWidth / 3;
         startGameRunner();
-
         setJFrameRules();
     }
 
@@ -31,7 +26,6 @@ public class WindowManager extends JFrame {
     private void startGameRunner() {
         GameRunner gameRunner = GameRunner.instance;
         gameRunner.initializeGameRunner(this);
-
         add(gameRunner);
     }
 
@@ -46,15 +40,4 @@ public class WindowManager extends JFrame {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         return toolkit.getScreenSize();
     }
-
-    public void moveHorizontalScroll(int xNewPosition) {
-        if (xNewPosition > movementOffset) {
-            xScrollPosition = -(xNewPosition - movementOffset);
-        }
-    }
-
-    public int getXScrollPosition() {
-        return xScrollPosition;
-    }
-
 }

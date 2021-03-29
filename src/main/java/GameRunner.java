@@ -2,6 +2,7 @@ package main.java;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -16,6 +17,16 @@ public class GameRunner extends JPanel implements KeyListener {
     private WindowManager window;
     private MainThread mainThread;
     private GameState currentGameState;
+    private Score scoreManager;
+
+    private Image dbImage;
+    private Graphics dbGraphics;
+
+    private int cameraOffset;
+    private int cameraX;
+    private int imageWidth;
+    private int imageHeight;
+    private boolean imageUpdate;
 
     private GameRunner() {
         super();
@@ -24,14 +35,36 @@ public class GameRunner extends JPanel implements KeyListener {
         setFocusable(true);
     }
 
-    public void definePanelSize(Dimension dimension) {
-        setPreferredSize(dimension);
+    public void initializeGameRunner(WindowManager wManager) {
+        attachRunnerToMainThread();
+        setCurrentGameState(new GameStateMenu());
+        scoreManager = new Score();
+        window = wManager;
+        cameraOffset = WindowManager.windowWidth / 3;
     }
 
+    public void definePanelSize(Dimension dimension) {
+        setPreferredSize(dimension);
+        imageWidth = (int) dimension.getWidth();
+        imageHeight = (int) dimension.getHeight();
+        imageUpdate = true;
+    }
+
+    @Override
     public void paintComponent(Graphics g) {
-        g.translate(window.getXScrollPosition(), 0);
-        g.setClip(-window.getXScrollPosition(), getY(), window.getWidth(),window.getHeight());
-        currentGameState.paintElements(g);
+        super.paintComponent(g);
+        if(dbImage==null || imageUpdate){
+            dbImage = createImage(imageWidth, imageHeight);
+            dbGraphics = dbImage.getGraphics();
+            imageUpdate = false;
+        }
+        
+        //g.translate(-cameraX, 0);      
+        currentGameState.paintElements(dbGraphics);
+        scoreManager.paint(dbGraphics, cameraX);  
+        
+        g.setClip(0, getY(), window.getWidth(), window.getHeight());    
+        g.drawImage(dbImage, -cameraX, 0, this);  
     }
 
     @Override
@@ -62,13 +95,6 @@ public class GameRunner extends JPanel implements KeyListener {
         currentGameState = gameState;
     }
 
-    public void initializeGameRunner(WindowManager wManager){
-        attachRunnerToMainThread();
-        GameState menuState = new GameStateMenu();
-        setCurrentGameState(menuState);
-        window = wManager;
-    }
-
     private void attachRunnerToMainThread() {
         mainThread = new MainThread("MarioThread");
         mainThread.gameRunner = this;
@@ -76,6 +102,8 @@ public class GameRunner extends JPanel implements KeyListener {
 
 
     public void moveHorizontalScroll(int newPosition){
-        window.moveHorizontalScroll(newPosition);
+        if (newPosition > cameraOffset) {
+            cameraX = newPosition - cameraOffset;
+        }
     }
 }

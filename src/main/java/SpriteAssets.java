@@ -18,6 +18,7 @@ public class SpriteAssets {
     public static final int PREVIOUS_WINDOW_HEIGHT = 896;
 
     private static BufferedImage gameLogo;
+    private static BufferedImage miniCoin;
     private static BufferedImage[] backgrounds;
     private static BufferedImage[] blockSprites;
     private static BufferedImage[] marioSprites;
@@ -26,6 +27,7 @@ public class SpriteAssets {
     static {
         try {
             loadGameLogo();
+            loadMiniCoin();
             loadBackgrounds();
             loadBlockSprites();
             loadMarioSprites();
@@ -37,9 +39,13 @@ public class SpriteAssets {
     }
 
     private static void loadGameLogo() throws IOException {
-        String logoFilePath = "res/backgrounds/logo.png";
-        File logoFile = new File(logoFilePath);
+        File logoFile = new File("res/backgrounds/logo.png");
         gameLogo = ImageIO.read(logoFile);
+    }
+
+    private static void loadMiniCoin() throws IOException{
+        File miniCoinFile = new File("res/objects/oCoinMini.png");
+        miniCoin = ImageIO.read(miniCoinFile);
     }
 
     private static void loadBackgrounds() throws IOException {
@@ -159,6 +165,10 @@ public class SpriteAssets {
 
     public static BufferedImage getLogo() {
         return gameLogo;
+    }
+
+    public static BufferedImage getMiniCoin(){
+        return miniCoin;
     }
 
     public static BufferedImage getBackground(String name) {

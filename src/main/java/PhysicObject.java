@@ -10,17 +10,23 @@ public class PhysicObject extends Rectangle {
     private static final int collisionOffset = 0;
 
     private static ArrayList<Block> mapBlocks = new ArrayList<>();
+    private boolean[] collisions = new boolean[4];
+
+    private Rectangle tCollider;
+    private Rectangle rCollider;
+    private Rectangle bCollider;
+    private Rectangle lCollider;
 
     protected int hCollisionOffset;
     protected int vCollisionOffset;
 
-    private boolean[] collisions = new boolean[4];
+    
 
     protected void checkCollisions(boolean isFalling) {
-        Rectangle tCollider = getTopCollider();
-        Rectangle rCollider = getRightCollider();
-        Rectangle bCollider = getBottomCollider();
-        Rectangle lCollider = getLeftCollider();
+        setTopCollider();
+        setRightCollider();
+        setBottomCollider();
+        setLeftCollider();
 
         boolean tCollision = false;
         boolean rCollision = false;
@@ -60,28 +66,28 @@ public class PhysicObject extends Rectangle {
         collisions[CollisionSide.LEFT] = lCollision;
     }
 
-    private Rectangle getTopCollider() {
+    private void setTopCollider() {
         Point coordinate = new Point(x + hCollisionOffset, y - vCollisionOffset);
         Dimension collisionSize = new Dimension((int) getWidth() - hCollisionOffset * 2, vCollisionOffset * 2);
-        return new Rectangle(coordinate, collisionSize);
+        tCollider = new Rectangle(coordinate, collisionSize);
     }
 
-    private Rectangle getRightCollider() {
+    private void setRightCollider() {
         Point coordinate = new Point(x + (int) getWidth() - hCollisionOffset, y + vCollisionOffset);
         Dimension collisionSize = new Dimension(hCollisionOffset * 2, (int) getHeight() - vCollisionOffset * 2);
-        return new Rectangle(coordinate, collisionSize);
+        rCollider = new Rectangle(coordinate, collisionSize);
     }
 
-    private Rectangle getBottomCollider() {
+    private void setBottomCollider() {
         Point coordinate = new Point(x + hCollisionOffset, y + (int) getHeight() - vCollisionOffset);
         Dimension collisionSize = new Dimension((int) getWidth() - hCollisionOffset * 2, vCollisionOffset * 2);
-        return new Rectangle(coordinate, collisionSize);
+        bCollider = new Rectangle(coordinate, collisionSize);
     }
 
-    private Rectangle getLeftCollider() {
+    private void setLeftCollider() {
         Point coordinate = new Point(x - hCollisionOffset, y + vCollisionOffset);
         Dimension collisionSize = new Dimension(hCollisionOffset * 2, (int) getHeight() - vCollisionOffset * 2);
-        return new Rectangle(coordinate, collisionSize);
+        lCollider =  new Rectangle(coordinate, collisionSize);
     }
 
     protected void paint(Graphics g) {
@@ -91,20 +97,20 @@ public class PhysicObject extends Rectangle {
     @SuppressWarnings("unused")
     private void paintColliders(Graphics g) {
         g.setColor(Color.blue);
-        Rectangle rect = getTopCollider();
-        g.drawRect(rect.x, rect.y, rect.width, rect.height);
+        setTopCollider();
+        g.drawRect(tCollider.x, tCollider.y, tCollider.width, tCollider.height);
 
         g.setColor(Color.red);
-        rect = getRightCollider();
-        g.drawRect(rect.x, rect.y, rect.width, rect.height);
+        setRightCollider();
+        g.drawRect(rCollider.x, rCollider.y, rCollider.width, rCollider.height);
 
         g.setColor(Color.green);
-        rect = getBottomCollider();
-        g.drawRect(rect.x, rect.y, rect.width, rect.height);
+        setBottomCollider();
+        g.drawRect(bCollider.x, bCollider.y, bCollider.width, bCollider.height);
 
         g.setColor(Color.black);
-        rect = getLeftCollider();
-        g.drawRect(rect.x, rect.y, rect.width, rect.height);
+        setLeftCollider();
+        g.drawRect(lCollider.x, lCollider.y, lCollider.width, lCollider.height);
 
     }
 
