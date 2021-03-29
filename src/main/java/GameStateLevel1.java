@@ -12,8 +12,6 @@ public class GameStateLevel1 extends GameState {
         mario = new Mario();
         createLevelMap(lvlId);
         definePanelSize(SpriteAssets.getBackground("lvl1").getWidth(), WindowManager.WINDOW_HEIGHT);
-
-        
     }
 
     @Override
@@ -24,7 +22,7 @@ public class GameStateLevel1 extends GameState {
     @Override
     protected void paintElements(Graphics g) {
         super.paintElements(g);
-        lvlMap.paintBlocks(g);
+        lvlMap.paintBlocks(g, mario.x);
         mario.paintMario(g);
     }
 

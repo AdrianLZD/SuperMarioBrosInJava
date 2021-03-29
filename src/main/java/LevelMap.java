@@ -80,10 +80,14 @@ public class LevelMap {
         }
     }
 
-    public void paintBlocks(Graphics g){
+    public void paintBlocks(Graphics g, int xPos){
         for(Block[] arrayB: blocks){
             for(Block b : arrayB){
-                b.paintBlock(g);
+                if(b.x > xPos-Block.SIZE - WindowManager.windowWidth/3 &&
+                   b.x < xPos+Block.SIZE + WindowManager.windowWidth){
+                    b.paintBlock(g);
+                }
+                
             }
         }
     }
