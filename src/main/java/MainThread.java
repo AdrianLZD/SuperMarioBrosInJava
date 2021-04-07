@@ -6,15 +6,14 @@ public class MainThread extends Thread{
 
     public GameRunner gameRunner;
 
-    private volatile boolean isRunning;
-    private long desiredFramerate;
-    private long startTime;
-    private long elapsedTime;
-    private long waitTime;
+    private boolean isRunning;
+    private long ticksPerSecond;
+    private long nextTickTime;
 
     public MainThread(String name){
         super(name);
-        desiredFramerate = 1000/FPS_TARGET;
+        ticksPerSecond = 1000/FPS_TARGET;
+        nextTickTime = System.currentTimeMillis();
         isRunning = true;
         start();
     }
@@ -22,21 +21,10 @@ public class MainThread extends Thread{
     @Override
     public void run() {
         while (true) {
-            try {
-                startTime = System.currentTimeMillis();
-                waitUntilResumed();
+            if (System.currentTimeMillis() > nextTickTime && isRunning) {
+                nextTickTime = System.currentTimeMillis() + ticksPerSecond;
                 doThreadActions();
-                setFpsCap();
-                 
-            } catch (InterruptedException e) {
-                ErrorLogger.logErrorMessage("There was an error in the main thread.", e);
             }
-        }
-    }
-
-    private synchronized void waitUntilResumed() throws InterruptedException {
-        while (!isRunning) {
-            wait();
         }
     }
 
@@ -45,15 +33,7 @@ public class MainThread extends Thread{
             gameRunner.tick();
             gameRunner.repaint();
         }catch(NullPointerException e){
-            //ErrorLogger.logWarningMessage("The game runner has not been attached to the main thread.", e);
-        }
-    }
-
-    private void setFpsCap() throws InterruptedException {
-        elapsedTime = System.currentTimeMillis() - startTime;
-        waitTime = desiredFramerate - elapsedTime;
-        if(waitTime > 0){
-            Thread.sleep(waitTime);
+            ErrorLogger.logWarningMessage("The game runner has not been attached to the main thread.", e);
         }
     }
 
