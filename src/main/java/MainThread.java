@@ -41,8 +41,7 @@ public class MainThread extends Thread{
         isRunning = false;
     }
 
-    public synchronized void resumeThread() {
+    public void resumeThread() {
         isRunning = true;
-        notifyAll();
     }
 }

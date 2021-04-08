@@ -1,6 +1,5 @@
 package main.java;
 
-import java.awt.Graphics;
 import java.awt.Point;
 
 public class BlockInteractable extends Block {
@@ -11,6 +10,7 @@ public class BlockInteractable extends Block {
     private byte animationTimer;
     private boolean animating;
     private boolean broken;
+    private boolean used;
 
     public BlockInteractable(Point position, int id) {
         super(position, id);
@@ -24,14 +24,20 @@ public class BlockInteractable extends Block {
 
     @Override
     public void activateBlock() {
-        animating = true;
-        animationTimer = 0;
+        if(used)
+            return;
+        
         if (getId() == Block.BREAKABLE) {
             collision = false;
             broken = true;
+        }else{
+            dropPickUp();
+            deactivateBlock();
+            used = true;
         }
-        dropPickUp();
-    }  
+        animating = true;
+        animationTimer = 0;
+    }
 
     private void dropPickUp(){
         if(pickUp != null){
@@ -82,19 +88,20 @@ public class BlockInteractable extends Block {
         }
         animationTimer++;
     }
-    @Override
-    public void paintBlock(Graphics g){
-        super.paintBlock(g);
-        if(pickUp != null){
-            pickUp.paintPickUp(g);
-        }
-    }
 
     public boolean shouldCollide() {
         return collision;
     }
 
-    public static boolean isInteractable(int id) {
+    public PickUp getPickUp(){
+        return pickUp;
+    }
+
+    public static boolean mustBeInteractable(int id) {
         return id == Block.BREAKABLE || id == Block.MISTERY;
+    }
+
+    public static PickUp getPickUp(BlockInteractable block){
+        return block.pickUp;
     }
 }

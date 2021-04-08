@@ -51,8 +51,16 @@ public class Block extends Rectangle {
     }
 
     public void deactivateBlock(){
-        currentSprite = SpriteAssets.getBlockSprite(EMPTY);
-        collision = false;
+        if(id==Block.BREAKABLE){
+            currentSprite = SpriteAssets.getBlockSprite(EMPTY);
+            collision = false;
+            return;
+        }
+        
+        if(id == Block.MISTERY){
+            currentSprite = SpriteAssets.getBlockSprite(USED);
+            return;
+        }
     }
 
     public boolean isActive(){

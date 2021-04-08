@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class Score {
+    private static Score instance;
     private static BufferedImage miniCoin;
     private Font textFont;
     private int points;
@@ -16,6 +17,7 @@ public class Score {
     private int middleScreen;
     
     public Score(){
+        instance = this;
         world = 1;
         level = 1;
         textFont = TextFont.getFont();
@@ -73,5 +75,9 @@ public class Score {
     private void paintTime(Graphics g){
         g.drawString("TIME", middleScreen + 205, 40);
         g.drawString(String.format("%03d", time), middleScreen+230, 65);
+    }
+
+    public static Score getInstance(){
+        return instance;
     }
 }

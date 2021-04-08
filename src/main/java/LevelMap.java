@@ -9,10 +9,12 @@ public class LevelMap {
     private int mapId;
     private Block[][] blocks;
     private ArrayList<BlockInteractable> interactableBlocks;
+    private ArrayList<PickUp> pickUps;
 
     public LevelMap(int mapId) {
         this.mapId = mapId;
         interactableBlocks = new ArrayList<>();
+        pickUps = new ArrayList<>();
         loadMapFile();
     }
 
@@ -54,10 +56,11 @@ public class LevelMap {
                 newBlockPosition = new Point(j*Block.SIZE,i*Block.SIZE);
                 currentToken = stringTokenizer.nextToken().split("\\.");
                 newBlockId = Integer.parseInt(currentToken[0]);
-                if(BlockInteractable.isInteractable(newBlockId)){
+                if(BlockInteractable.mustBeInteractable(newBlockId)){
                     if(currentToken.length > 1){
                         pickUpType = Integer.parseInt(currentToken[1]);
                         blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId, PickUp.Type.typeById(pickUpType));
+                        pickUps.add(BlockInteractable.getPickUp((BlockInteractable)blocks[i][j]));
                     }else{
                         blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId);
                     }
@@ -87,14 +90,25 @@ public class LevelMap {
                    b.x < xPos+Block.SIZE + WindowManager.windowWidth){
                     b.paintBlock(g);
                 }
-                
             }
+        }
+    }
+
+    public void paintPickUps(Graphics g){
+        for (PickUp p : pickUps) {
+            p.paintPickUp(g);
         }
     }
 
     public void tickInteractableBlocks(){
         for(BlockInteractable b : interactableBlocks){
             b.tick();
+        }
+    }
+
+    public void tickPickUps(){
+        for(PickUp p : pickUps){
+            p.tick();
         }
     }
 
