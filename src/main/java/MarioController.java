@@ -15,6 +15,7 @@ public class MarioController {
     private GameRunner gameRunner;
     private Mario mario;
     
+    private boolean[] collisions;
     private int horizontalVelocity;
     private int verticalVelocity;
     private int jumpTime;
@@ -29,6 +30,7 @@ public class MarioController {
         mario.hCollisionOffset = walkSpeed;
         mario.vCollisionOffset = gravity;
         lastDirection = RIGHT;
+        collisions = new boolean[4];
         gameRunner = GameRunner.instance;
     }
 
@@ -43,7 +45,7 @@ public class MarioController {
     }
 
     private void upKeyPressed() {
-        if(mario.isGrounded()) {
+        if(collisions[PhysicObject.COLLISION_BOTTOM]) {
             activateJump();
         }
     }
@@ -107,13 +109,13 @@ public class MarioController {
 
     private void findCurrentAction() {
         if(jumping){
-            if(mario.isTopColliding()){
+            if(collisions[PhysicObject.COLLISION_TOP]){
                 deactivateJump();
                 verticalVelocity = gravity;
             }else{
                 verticalVelocity = -jumpSpeed;
             }
-        }else if(mario.isGrounded()){
+        }else if(collisions[PhysicObject.COLLISION_BOTTOM]){
             verticalVelocity = 0;
         }else{
             verticalVelocity = gravity;
@@ -154,6 +156,10 @@ public class MarioController {
 
     public boolean getLastDirection(){
         return lastDirection;
+    }
+
+    public void setCollisions(boolean[] collisions){
+        this.collisions = collisions;
     }
 
 

@@ -2,10 +2,12 @@ package main.java;
 
 import java.awt.Point;
 
+import main.java.Mario.MarioState;
+
 public class BlockInteractable extends Block {
 
     private static final long serialVersionUID = 1L;
-    private static final int UP_SPEED = -2;
+    private static final int UP_SPEED = 2;
     private PickUp pickUp;
     private byte animationTimer;
     private boolean animating;
@@ -27,9 +29,11 @@ public class BlockInteractable extends Block {
         if(used)
             return;
         
-        if (getId() == Block.BREAKABLE) {
-            collision = false;
-            broken = true;
+        if (getId() == Block.BREAKABLE){
+            if(Mario.getCurrentState().equals(MarioState.BIG)){
+                collision = false;
+                broken = true;
+            }
         }else{
             dropPickUp();
             deactivateBlock();
@@ -58,18 +62,17 @@ public class BlockInteractable extends Block {
         }else{
             upAnimation();
         }
-        
     }
 
     private void breakBlock() {
         if (animationTimer < 10) {
-            setLocation(x, y + UP_SPEED);
+            setLocation(x, y - UP_SPEED);
             currentSprite = Animator.getBlockSprite(Block.BREAKABLE_ANIM1);
         } else if (animationTimer < 20) {
-            setLocation(x, y + UP_SPEED);
+            setLocation(x, y - UP_SPEED);
             currentSprite = Animator.getBlockSprite(Block.BREAKABLE_ANIM2);
         } else if (animationTimer < 30) {
-            setLocation(x, y - UP_SPEED * 2);
+            setLocation(x, y + UP_SPEED * 2);
             currentSprite = Animator.getBlockSprite(Block.BREAKABLE_ANIM3);
         } else {
             deactivateBlock();
@@ -80,9 +83,9 @@ public class BlockInteractable extends Block {
 
     private void upAnimation(){
         if (animationTimer < 8) {
-            setLocation(x, y + UP_SPEED);
-        } else if (animationTimer < 16) {
             setLocation(x, y - UP_SPEED);
+        } else if (animationTimer < 16) {
+            setLocation(x, y + UP_SPEED);
         } else{
             animating = false;
         }

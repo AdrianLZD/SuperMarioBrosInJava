@@ -2,7 +2,7 @@ package main.java;
 
 public class MainThread extends Thread{
     
-    public static final int FPS_TARGET = 60;
+    public static final int FPS_TARGET = 68;
 
     public GameRunner gameRunner;
 
@@ -29,12 +29,8 @@ public class MainThread extends Thread{
     }
 
     private void doThreadActions() {
-        try{
-            gameRunner.tick();
-            gameRunner.repaint();
-        }catch(NullPointerException e){
-            ErrorLogger.logWarningMessage("The game runner has not been attached to the main thread.", e);
-        }
+        gameRunner.tick();
+        gameRunner.repaint();
     }
 
     public void pauseThread() {

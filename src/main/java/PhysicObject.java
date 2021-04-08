@@ -5,11 +5,17 @@ import java.util.ArrayList;
 
 public class PhysicObject extends Rectangle {
 
+    public static final int COLLISION_TOP = 0;
+    public static final int COLLISION_RIGHT = 1;
+    public static final int COLLISION_BOTTOM = 2;
+    public static final int COLLISION_LEFT = 3;
+
     private static final long serialVersionUID = 1L;
     private static final int GRAVITY = 7;
     private static final int collisionOffset = 0;
-
+    
     private static ArrayList<Block> mapBlocks = new ArrayList<>();
+
     private boolean[] collisions = new boolean[4];
 
     private Rectangle tCollider;
@@ -20,9 +26,7 @@ public class PhysicObject extends Rectangle {
     protected int hCollisionOffset;
     protected int vCollisionOffset;
 
-    
-
-    protected void checkCollisions(boolean isFalling) {
+    protected boolean[] checkCollisions(boolean isFalling, boolean activateBlocks) {
         setTopCollider();
         setRightCollider();
         setBottomCollider();
@@ -38,7 +42,7 @@ public class PhysicObject extends Rectangle {
                 if (!isFalling && tCollider.intersects(block)) {
                     setLocation(x, block.y + Block.SIZE + collisionOffset);
                     tCollision = true;
-                    if(block instanceof BlockInteractable){
+                    if(activateBlocks && block instanceof BlockInteractable){
                         block.activateBlock();
                     }
                 }
@@ -50,6 +54,8 @@ public class PhysicObject extends Rectangle {
 
                 if (bCollider.intersects(block)) {
                     setLocation(x, block.y - (int) getHeight() - collisionOffset);
+                    
+                    
                     bCollision = true;
                 }
 
@@ -57,14 +63,18 @@ public class PhysicObject extends Rectangle {
                     setLocation(block.x + Block.SIZE + collisionOffset, y);
                     lCollision = true;
                 }
+                
             }
         }
+        
+        collisions[COLLISION_TOP] = tCollision;
+        collisions[COLLISION_RIGHT] = rCollision;
+        collisions[COLLISION_BOTTOM] = bCollision;
+        collisions[COLLISION_LEFT] = lCollision;
 
-        collisions[CollisionSide.TOP] = tCollision;
-        collisions[CollisionSide.RIGHT] = rCollision;
-        collisions[CollisionSide.BOTTOM] = bCollision;
-        collisions[CollisionSide.LEFT] = lCollision;
+        return collisions;
     }
+
 
     private void setTopCollider() {
         Point coordinate = new Point(x + hCollisionOffset, y - vCollisionOffset);
@@ -118,24 +128,7 @@ public class PhysicObject extends Rectangle {
         mapBlocks.add(block);
     }
 
-
-    public boolean isGrounded() {
-        return collisions[CollisionSide.BOTTOM];
-    }
-
-    public boolean isTopColliding() {
-        return collisions[CollisionSide.TOP];
-    }
-
     public static int getGravity() {
         return GRAVITY;
     }
-}
-
-final class CollisionSide {
-    public static final int TOP = 0;
-    public static final int RIGHT = 1;
-    public static final int BOTTOM = 2;
-    public static final int LEFT = 3;
-
 }
