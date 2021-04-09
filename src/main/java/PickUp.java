@@ -20,13 +20,13 @@ public class PickUp extends PhysicObject {
     private static Score scoreManager;
     private static Mario mario;
 
-    private BufferedImage sprite;
     private Type type;
     private Supplier<Boolean> tickMethod;
     private int stateCounter;
     private int horizontalVelocity;
     private int verticalVelocity;
     private int id;
+    private int sprite;
     
     private boolean[] collisions;
     private boolean active;
@@ -49,13 +49,13 @@ public class PickUp extends PhysicObject {
                 tickMethod = () -> coinTick();
                 verticalVelocity = 5;
                 id = COIN;
-                sprite = SpriteAssets.getPickUpSprite(COIN);
+                sprite = Animator.P_COIN;
                 break;
             case 2:
                 tickMethod = () -> coinTick();
                 id = COIN;
                 verticalVelocity = 5;
-                sprite = SpriteAssets.getPickUpSprite(COIN);
+                sprite = Animator.P_COIN;
                 break;
             case 3:
                 //Type of powerup will change depending on Mario state
@@ -67,7 +67,7 @@ public class PickUp extends PhysicObject {
                 id = LIFE;
                 verticalVelocity = PhysicObject.getGravity();
                 horizontalVelocity = 3;
-                sprite = SpriteAssets.getPickUpSprite(LIFE);
+                sprite = Animator.P_LIFE;
                 hCollisionOffset = horizontalVelocity;
                 vCollisionOffset = verticalVelocity * 2;
                 setColliderSize(SpriteAssets.getPickUpSprite(LIFE));
@@ -103,16 +103,16 @@ public class PickUp extends PhysicObject {
     private void definePowerBehavoir(){
         if (mario.state == MarioState.SMALL) {
             id = MOOSHROOM;
-            sprite = SpriteAssets.getPickUpSprite(MOOSHROOM);
+            sprite = Animator.P_MOOSHROOM;
             verticalVelocity = PhysicObject.getGravity();
             horizontalVelocity = 3;
             hCollisionOffset = horizontalVelocity;
             vCollisionOffset = verticalVelocity * 2;
-            setColliderSize(SpriteAssets.getPickUpSprite(MOOSHROOM));
+            setColliderSize(Animator.getPickUpSprite(Animator.P_MOOSHROOM));
         } else {
             id = FLOWER;
-            sprite = SpriteAssets.getPickUpSprite(FLOWER);
-            setColliderSize(SpriteAssets.getPickUpSprite(LIFE));
+            sprite = Animator.P_FLOWER;
+            setColliderSize(Animator.getPickUpSprite(Animator.P_FLOWER));
             
         }
         
@@ -121,7 +121,7 @@ public class PickUp extends PhysicObject {
     public void paintPickUp(Graphics g){
         super.paint(g);
         if(active){
-            g.drawImage(sprite, x, y, GameRunner.instance);
+            g.drawImage(Animator.getPickUpSprite(sprite), x, y, GameRunner.instance);
         }
     }
 
@@ -178,8 +178,10 @@ public class PickUp extends PhysicObject {
         if(intersects(mario.getBounds())){
             if(id == MOOSHROOM){
                 mario.applyMooshroom();
+                scoreManager.addToPoints(1000);
             }else if(id == FLOWER){
                 mario.applyFire();
+                scoreManager.addToPoints(1000);
             }
            
             active = false;

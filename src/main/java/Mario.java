@@ -12,14 +12,24 @@ public class Mario extends PhysicObject {
     protected MarioState state;
     private MarioController controller;
 
-    private Hashtable<String, Integer> tableSprites;
+    private Hashtable<String, Integer> movingSprites;
+    private Hashtable<String, Integer> transitionSprites;
     private int currentSprite;
+    private int currentAnimSpeed;
     private int animationTimer;
+    private int transitionCounter;
+    
+
+    private boolean canMove;
+    private boolean transitioning;
 
     public Mario() {
-        tableSprites = new Hashtable<>();
+        movingSprites = new Hashtable<>(16);
+        transitionSprites = new Hashtable<>(8);
         controller = new MarioController(this);
         instance = this;
+        canMove = true;
+        currentAnimSpeed = ANIMATION_SPEED;
         convertSmall();
         updateSize();
         setLocation(150, 600);
@@ -27,42 +37,66 @@ public class Mario extends PhysicObject {
 
     private void convertSmall(){
         state = MarioState.SMALL;
-        currentSprite = M_SMALL_RIGHT_IDLE;
-        tableSprites.put("jump_r", M_SMALL_RIGHT_JUMP);
-        tableSprites.put("jump_l", M_SMALL_LEFT_JUMP);
-        tableSprites.put("walk1_r", M_SMALL_RIGHT_WALK1);
-        tableSprites.put("walk2_r", M_SMALL_RIGHT_WALK2);
-        tableSprites.put("walk1_l", M_SMALL_LEFT_WALK1);
-        tableSprites.put("walk2_l", M_SMALL_LEFT_WALK2);
-        tableSprites.put("idle_r", M_SMALL_RIGHT_IDLE);
-        tableSprites.put("idle_l", M_SMALL_LEFT_IDLE);
+        if (controller.getLastDirection() == controller.RIGHT) {
+            currentSprite = M_SMALL_RIGHT_IDLE;
+        } else {
+            currentSprite = M_SMALL_LEFT_IDLE;
+        }
+        
+        movingSprites.put("jump_r", M_SMALL_RIGHT_JUMP);
+        movingSprites.put("jump_l", M_SMALL_LEFT_JUMP);
+        movingSprites.put("walk1_r", M_SMALL_RIGHT_WALK1);
+        movingSprites.put("walk2_r", M_SMALL_RIGHT_WALK2);
+        movingSprites.put("walk1_l", M_SMALL_LEFT_WALK1);
+        movingSprites.put("walk2_l", M_SMALL_LEFT_WALK2);
+        movingSprites.put("idle_r", M_SMALL_RIGHT_IDLE);
+        movingSprites.put("idle_l", M_SMALL_LEFT_IDLE);
     }
 
     private void convertBig(){
         state = MarioState.BIG;
         y-=Block.SIZE;
-        currentSprite = M_BIG_RIGHT_IDLE;
-        tableSprites.put("jump_r", M_BIG_RIGHT_JUMP);
-        tableSprites.put("jump_l", M_BIG_LEFT_JUMP);
-        tableSprites.put("walk1_r", M_BIG_RIGHT_WALK1);
-        tableSprites.put("walk2_r", M_BIG_RIGHT_WALK2);
-        tableSprites.put("walk1_l", M_BIG_LEFT_WALK1);
-        tableSprites.put("walk2_l", M_BIG_LEFT_WALK2);
-        tableSprites.put("idle_r", M_BIG_RIGHT_IDLE);
-        tableSprites.put("idle_l", M_BIG_LEFT_IDLE);
+        if(controller.getLastDirection() == controller.RIGHT){
+            currentSprite = M_BIG_RIGHT_IDLE;
+        }else{
+            currentSprite = M_BIG_LEFT_IDLE;
+        }
+        
+        movingSprites.put("jump_r", M_BIG_RIGHT_JUMP);
+        movingSprites.put("jump_l", M_BIG_LEFT_JUMP);
+        movingSprites.put("walk1_r", M_BIG_RIGHT_WALK1);
+        movingSprites.put("walk2_r", M_BIG_RIGHT_WALK2);
+        movingSprites.put("walk1_l", M_BIG_LEFT_WALK1);
+        movingSprites.put("walk2_l", M_BIG_LEFT_WALK2);
+        movingSprites.put("idle_r", M_BIG_RIGHT_IDLE);
+        movingSprites.put("idle_l", M_BIG_LEFT_IDLE);
+
+        transitionSprites.put("idle_r", M_BIG_RIGHT_IDLE);
+        transitionSprites.put("idle_l", M_BIG_LEFT_IDLE);
+        transitionSprites.put("trans_r", M_SMALL_RIGHT_TRANSITION);
+        transitionSprites.put("trans_l", M_SMALL_LEFT_TRANSITION);
     }
 
     private void convertFire(){
         state = MarioState.BIG;
-        currentSprite = M_FIRE_RIGHT_IDLE;
-        tableSprites.put("jump_r", M_FIRE_RIGHT_JUMP);
-        tableSprites.put("jump_l", M_FIRE_LEFT_JUMP);
-        tableSprites.put("walk1_r", M_FIRE_RIGHT_WALK1);
-        tableSprites.put("walk2_r", M_FIRE_RIGHT_WALK2);
-        tableSprites.put("walk1_l", M_FIRE_LEFT_WALK1);
-        tableSprites.put("walk2_l", M_FIRE_LEFT_WALK2);
-        tableSprites.put("idle_r", M_FIRE_RIGHT_IDLE);
-        tableSprites.put("idle_l", M_FIRE_LEFT_IDLE);
+        if (controller.getLastDirection() == controller.RIGHT) {
+            currentSprite = M_FIRE_RIGHT_IDLE;
+        } else {
+            currentSprite = M_FIRE_LEFT_IDLE;
+        }
+        movingSprites.put("jump_r", M_FIRE_RIGHT_JUMP);
+        movingSprites.put("jump_l", M_FIRE_LEFT_JUMP);
+        movingSprites.put("walk1_r", M_FIRE_RIGHT_WALK1);
+        movingSprites.put("walk2_r", M_FIRE_RIGHT_WALK2);
+        movingSprites.put("walk1_l", M_FIRE_LEFT_WALK1);
+        movingSprites.put("walk2_l", M_FIRE_LEFT_WALK2);
+        movingSprites.put("idle_r", M_FIRE_RIGHT_IDLE);
+        movingSprites.put("idle_l", M_FIRE_LEFT_IDLE);
+
+        transitionSprites.put("idle_r", M_FIRE_RIGHT_IDLE);
+        transitionSprites.put("idle_l", M_FIRE_LEFT_IDLE);
+        transitionSprites.put("trans_r", M_BIG_RIGHT_IDLE);
+        transitionSprites.put("trans_l", M_BIG_LEFT_IDLE);
     }
 
     private void updateSize() {
@@ -80,55 +114,85 @@ public class Mario extends PhysicObject {
     }
 
     public void tick() {
-        controller.tick();
-        controller.setCollisions(checkCollisions(controller.isFalling(), true));
+        if(canMove){
+            controller.tick();
+            controller.setCollisions(checkCollisions(controller.isFalling(), true));
+        }
+        
         animSprite();
         controller.moveCamera();
     }
 
     private void animSprite() {
-        if (animationTimer > ANIMATION_SPEED) {
-            selectAnimSprite();
+        if (animationTimer > currentAnimSpeed) {
+            if(transitioning){
+                updateTransSprite();
+            }else{
+                updateAnimSprite();
+            }
             animationTimer = 0;
         }
         animationTimer++;
     }
 
-    private void selectAnimSprite(){
+    private void updateAnimSprite(){
         if (controller.isJumping()) {
             if (controller.getLastDirection() == controller.RIGHT) {
-                currentSprite = tableSprites.get("jump_r");
+                currentSprite = movingSprites.get("jump_r");
                 return;
             }
-            currentSprite = tableSprites.get("jump_l");
+            currentSprite = movingSprites.get("jump_l");
             return;
         }
 
         if (controller.isMovingRight()) {
-            if (currentSprite == tableSprites.get("walk1_r")) {
-                currentSprite = tableSprites.get("walk2_r");
+            if (currentSprite == movingSprites.get("walk1_r")) {
+                currentSprite = movingSprites.get("walk2_r");
                 return;
             }
-            currentSprite = tableSprites.get("walk1_r");
+            currentSprite = movingSprites.get("walk1_r");
             return;
         }
 
         if (controller.isMovingLeft()) {
-            if (currentSprite == tableSprites.get("walk1_l")) {
-                currentSprite = tableSprites.get("walk2_l");
+            if (currentSprite == movingSprites.get("walk1_l")) {
+                currentSprite = movingSprites.get("walk2_l");
                 return;
             }
-            currentSprite = tableSprites.get("walk1_l");
+            currentSprite = movingSprites.get("walk1_l");
             return;
         }
 
         if (controller.getLastDirection() == controller.RIGHT) {
-            currentSprite = tableSprites.get("idle_r");
+            currentSprite = movingSprites.get("idle_r");
             return;
         }
-        currentSprite = tableSprites.get("idle_l");
+        currentSprite = movingSprites.get("idle_l");
     }
 
+    private void updateTransSprite(){
+        String direction = "r";
+        direction = (controller.getLastDirection() == controller.RIGHT) ? "r" : "l";
+
+        if (currentSprite == transitionSprites.get("idle_"+direction)) {
+            currentSprite = transitionSprites.get("trans_"+direction);
+            return;
+        }
+        currentSprite = transitionSprites.get("idle_"+direction);
+
+        transitionCounter++;
+        if (transitionCounter >= 3) {
+            resetControls();
+            return;
+        }
+    }
+
+    private void resetControls(){
+        transitioning = false;
+        canMove = true;
+        currentAnimSpeed = ANIMATION_SPEED;
+    }
+    
     public void paintMario(Graphics g) {
         super.paint(g);
         // g.setColor(Color.GREEN);
@@ -141,21 +205,37 @@ public class Mario extends PhysicObject {
     }
 
     public void applyMooshroom(){
+        canMove = false;
+        transitioning = true;
+        transitionCounter = 0;
+        animationTimer = 0;
+        currentAnimSpeed = (int) (ANIMATION_SPEED*1.75);
         convertBig();
         updateSize();
     }
 
     public void applyFire(){
+        canMove = false;
+        transitioning = true;
+        transitionCounter = 0;
+        animationTimer = 0;
+        currentAnimSpeed = (int) (ANIMATION_SPEED * 1.75);
         convertFire();
         updateSize();
     }
 
     public void keyPressed(int k) {
-        controller.keyPressed(k);
+        if(canMove){
+            controller.keyPressed(k);
+        }
+        
     }
 
     public void keyReleased(int k) {
-        controller.keyReleased(k);
+        
+            controller.keyReleased(k);
+        
+        
     }
 
     public static Mario getCurrentInstance(){

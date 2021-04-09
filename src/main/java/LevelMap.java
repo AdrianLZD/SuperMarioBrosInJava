@@ -10,11 +10,13 @@ public class LevelMap {
     private Block[][] blocks;
     private ArrayList<BlockInteractable> interactableBlocks;
     private ArrayList<PickUp> pickUps;
+    private ArrayList<Enemy> enemies;
 
     public LevelMap(int mapId) {
         this.mapId = mapId;
         interactableBlocks = new ArrayList<>();
         pickUps = new ArrayList<>();
+        enemies = new ArrayList<>();
         loadMapFile();
     }
 
@@ -49,6 +51,7 @@ public class LevelMap {
         Point newBlockPosition;
         int newBlockId;
         int pickUpType;
+        int enemyType;
         for (int i = 0; i < height; i++) {
             fileLine = fileBuffer.readLine();
             stringTokenizer = new StringTokenizer(fileLine);
@@ -56,6 +59,11 @@ public class LevelMap {
                 newBlockPosition = new Point(j*Block.SIZE,i*Block.SIZE);
                 currentToken = stringTokenizer.nextToken().split("\\.");
                 newBlockId = Integer.parseInt(currentToken[0]);
+                if(Enemy.mustSpawnEnemy(currentToken)){
+                    enemyType = Integer.parseInt(currentToken[1]);
+                    enemies.add(new Enemy(newBlockPosition, enemyType));
+                }
+
                 if(BlockInteractable.mustBeInteractable(newBlockId)){
                     if(currentToken.length > 1){
                         pickUpType = Integer.parseInt(currentToken[1]);
@@ -65,7 +73,7 @@ public class LevelMap {
                         blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId);
                     }
                     interactableBlocks.add((BlockInteractable) blocks[i][j]);
-                }else{
+                }else {
                     blocks[i][j] = new Block(newBlockPosition, newBlockId);
                 }
                 
@@ -100,6 +108,12 @@ public class LevelMap {
         }
     }
 
+    public void paintEnemies(Graphics g, int xPos){
+        for(Enemy e : enemies){
+            e.paintEnemy(g);
+        }
+    }
+
     public void tickInteractableBlocks(){
         for(BlockInteractable b : interactableBlocks){
             b.tick();
@@ -109,6 +123,12 @@ public class LevelMap {
     public void tickPickUps(){
         for(PickUp p : pickUps){
             p.tick();
+        }
+    }
+
+    public void tickEnemies(){
+        for(Enemy e : enemies){
+            e.tick();
         }
     }
 

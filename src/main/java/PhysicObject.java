@@ -13,7 +13,7 @@ public class PhysicObject extends Rectangle {
     private static final long serialVersionUID = 1L;
     private static final int GRAVITY = 7;
     private static final int collisionOffset = 0;
-    
+
     private static ArrayList<Block> mapBlocks = new ArrayList<>();
 
     private boolean[] collisions = new boolean[4];
@@ -42,7 +42,7 @@ public class PhysicObject extends Rectangle {
                 if (!isFalling && tCollider.intersects(block)) {
                     setLocation(x, block.y + Block.SIZE + collisionOffset);
                     tCollision = true;
-                    if(activateBlocks && block instanceof BlockInteractable){
+                    if (activateBlocks && block instanceof BlockInteractable) {
                         block.activateBlock();
                     }
                 }
@@ -54,8 +54,7 @@ public class PhysicObject extends Rectangle {
 
                 if (bCollider.intersects(block)) {
                     setLocation(x, block.y - (int) getHeight() - collisionOffset);
-                    
-                    
+
                     bCollision = true;
                 }
 
@@ -63,10 +62,10 @@ public class PhysicObject extends Rectangle {
                     setLocation(block.x + Block.SIZE + collisionOffset, y);
                     lCollision = true;
                 }
-                
+
             }
         }
-        
+
         collisions[COLLISION_TOP] = tCollision;
         collisions[COLLISION_RIGHT] = rCollision;
         collisions[COLLISION_BOTTOM] = bCollision;
@@ -74,7 +73,6 @@ public class PhysicObject extends Rectangle {
 
         return collisions;
     }
-
 
     private void setTopCollider() {
         Point coordinate = new Point(x + hCollisionOffset, y - vCollisionOffset);
@@ -97,11 +95,11 @@ public class PhysicObject extends Rectangle {
     private void setLeftCollider() {
         Point coordinate = new Point(x - hCollisionOffset, y + vCollisionOffset);
         Dimension collisionSize = new Dimension(hCollisionOffset * 2, (int) getHeight() - vCollisionOffset * 2);
-        lCollider =  new Rectangle(coordinate, collisionSize);
+        lCollider = new Rectangle(coordinate, collisionSize);
     }
 
     protected void paint(Graphics g) {
-        //paintColliders(g);
+        // paintColliders(g);
     }
 
     @SuppressWarnings("unused")

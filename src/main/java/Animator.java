@@ -3,11 +3,10 @@ package main.java;
 import java.awt.image.BufferedImage;
 
 public class Animator {
-
-    public static final int EMPTY = 0;
-
     public static final int ANIMATION_SPEED = 6;
 
+    public static final int M_START = 0;
+    public static final int EMPTY = 0;
     public static final int M_DEAD = 1;
     public static final int M_SMALL_RIGHT_IDLE = 2;
     public static final int M_SMALL_RIGHT_WALK1 = 3;
@@ -46,11 +45,49 @@ public class Animator {
 
     public static final int MARIO_SPRITE_COUNT = 34;
 
+    public static final int P_START = 101;
+    public static final int P_COIN = 101;
+    public static final int P_MOOSHROOM = 102;
+    public static final int P_FLOWER = 103;
+    public static final int P_LIFE = 104;
+    public static final int P_STAR = 105;
+    public static final int PICKUP_COUNT = 5;
+
+    public static final int ENEMY_START = 101;
+    public static final int G_RIGHT = 101;
+    public static final int G_LEFT = 102;
+    public static final int G_SMASH = 103;
+    public static final int G_FLIP = 104;
+    public static final int K_NORMAL_RIGHT_WALK1 = 105;
+    public static final int K_NORMAL_RIGHT_WALK2 = 106;
+    public static final int K_NORMAL_LEFT_WALK1 = 107;
+    public static final int K_NORMAL_LEFT_WALK2 = 108;
+    public static final int K_FLY_RIGHT_WALK1 = 105;
+    public static final int K_FLY_RIGHT_WALK2 = 106;
+    public static final int K_FLY_LEFT_WALK1 = 107;
+    public static final int K_FLY_LEFT_WALK2 = 108;
+    public static final int K_NORMAL_FLIP = 109;
+    public static final int K_SHELL_NORMAL = 110;
+    public static final int K_SHELL_FLIP = 111;
+    public static final int PI_OPEN = 112;
+    public static final int PI_CLOSE = 113;
+
+    public static final int ENEMY_COUNT = 13;
+
     public static BufferedImage getMarioSprite(int id){
-        return SpriteAssets.getMarioSprite(id);
+        return SpriteAssets.getMarioSprite(id-M_START);
     }
 
     public static BufferedImage getBlockSprite(int id){
         return SpriteAssets.getBlockSprite(id);
     }
+
+    public static BufferedImage getPickUpSprite(int id){
+        return SpriteAssets.getPickUpSprite(id-P_START);
+    }
+
+    public static BufferedImage getEnemySprite(int id){
+        return SpriteAssets.getEnemySprite(id-ENEMY_START);
+    }
+
 }
