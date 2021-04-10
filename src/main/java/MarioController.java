@@ -16,8 +16,6 @@ public class MarioController {
     private Mario mario;
     
     private boolean[] collisions;
-    private int horizontalVelocity;
-    private int verticalVelocity;
     private int jumpTime;
     private boolean moveRight;
     private boolean moveLeft;
@@ -111,27 +109,27 @@ public class MarioController {
         if(jumping){
             if(collisions[PhysicObject.COLLISION_TOP]){
                 deactivateJump();
-                verticalVelocity = gravity;
+                mario.verticalVelocity = gravity;
             }else{
-                verticalVelocity = -jumpSpeed;
+                mario.verticalVelocity = -jumpSpeed;
             }
         }else if(collisions[PhysicObject.COLLISION_BOTTOM]){
-            verticalVelocity = 0;
+            mario.verticalVelocity = 0;
         }else{
-            verticalVelocity = gravity;
+            mario.verticalVelocity = gravity;
         }
         
     }
 
     private void applyVelocities(){
         if (moveRight)
-            horizontalVelocity = walkSpeed;
+            mario.horizontalVelocity = walkSpeed;
         else if (moveLeft)
-            horizontalVelocity = -walkSpeed;
+            mario.horizontalVelocity = -walkSpeed;
         else
-            horizontalVelocity = 0;
+            mario.horizontalVelocity = 0;
 
-        mario.setLocation(mario.x + horizontalVelocity, mario.y + verticalVelocity);
+        mario.setLocation(mario.x + mario.horizontalVelocity, mario.y + mario.verticalVelocity);
     }
 
     public void moveCamera(){
@@ -151,7 +149,7 @@ public class MarioController {
     }
 
     public boolean isFalling(){
-        return verticalVelocity>0;
+        return mario.verticalVelocity>0;
     }
 
     public boolean getLastDirection(){

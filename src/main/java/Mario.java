@@ -2,7 +2,6 @@ package main.java;
 
 import static main.java.Animator.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
 public class Mario extends PhysicObject {
@@ -19,7 +18,6 @@ public class Mario extends PhysicObject {
     private int animationTimer;
     private int transitionCounter;
     
-
     private boolean canMove;
     private boolean transitioning;
 
@@ -29,6 +27,7 @@ public class Mario extends PhysicObject {
         controller = new MarioController(this);
         instance = this;
         canMove = true;
+        isBlockActivator = true;
         currentAnimSpeed = ANIMATION_SPEED;
         convertSmall();
         updateSize();
@@ -106,17 +105,15 @@ public class Mario extends PhysicObject {
         } else {
             marioSpriteId = M_BIG_LEFT_IDLE;
         }
-        BufferedImage sizeReference = Animator.getMarioSprite(marioSpriteId);
-        int width = sizeReference.getWidth();
-        int height = sizeReference.getHeight();
-
-        setSize(width, height);
+        setColliderSize(Animator.getMarioSprite(marioSpriteId));
     }
 
     public void tick() {
         if(canMove){
             controller.tick();
-            controller.setCollisions(checkCollisions(controller.isFalling(), true));
+            isFalling = controller.isFalling();
+            checkCollisions();
+            controller.setCollisions(collisions);
         }
         
         animSprite();

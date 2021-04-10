@@ -1,6 +1,7 @@
 package main.java;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class PhysicObject extends Rectangle {
@@ -16,7 +17,7 @@ public class PhysicObject extends Rectangle {
 
     private static ArrayList<Block> mapBlocks = new ArrayList<>();
 
-    private boolean[] collisions = new boolean[4];
+    protected boolean[] collisions = new boolean[4];
 
     private Rectangle tCollider;
     private Rectangle rCollider;
@@ -25,8 +26,13 @@ public class PhysicObject extends Rectangle {
 
     protected int hCollisionOffset;
     protected int vCollisionOffset;
+    protected int horizontalVelocity;
+    protected int verticalVelocity;
 
-    protected boolean[] checkCollisions(boolean isFalling, boolean activateBlocks) {
+    protected boolean isFalling;
+    protected boolean isBlockActivator;
+
+    protected void checkCollisions() {
         setTopCollider();
         setRightCollider();
         setBottomCollider();
@@ -42,7 +48,7 @@ public class PhysicObject extends Rectangle {
                 if (!isFalling && tCollider.intersects(block)) {
                     setLocation(x, block.y + Block.SIZE + collisionOffset);
                     tCollision = true;
-                    if (activateBlocks && block instanceof BlockInteractable) {
+                    if (isBlockActivator && block instanceof BlockInteractable) {
                         block.activateBlock();
                     }
                 }
@@ -70,8 +76,27 @@ public class PhysicObject extends Rectangle {
         collisions[COLLISION_RIGHT] = rCollision;
         collisions[COLLISION_BOTTOM] = bCollision;
         collisions[COLLISION_LEFT] = lCollision;
+    }
 
-        return collisions;
+    protected void applyVelocities() {
+        if (collisions[PhysicObject.COLLISION_BOTTOM]) {
+            verticalVelocity = 0;
+        } else {
+            verticalVelocity = PhysicObject.getGravity();
+        }
+
+        if (collisions[PhysicObject.COLLISION_RIGHT] || collisions[PhysicObject.COLLISION_LEFT]) {
+            horizontalVelocity *= -1;
+        }
+
+        setLocation(x + horizontalVelocity, y + verticalVelocity);
+    }
+
+    protected void setColliderSize(BufferedImage sizeReference) {
+        int width = sizeReference.getWidth();
+        int height = sizeReference.getHeight();
+
+        setSize(width, height);
     }
 
     private void setTopCollider() {
@@ -99,7 +124,7 @@ public class PhysicObject extends Rectangle {
     }
 
     protected void paint(Graphics g) {
-        // paintColliders(g);
+        //paintColliders(g);
     }
 
     @SuppressWarnings("unused")

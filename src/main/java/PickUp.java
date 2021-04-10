@@ -2,7 +2,6 @@ package main.java;
 
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.util.function.Supplier;
 
 import main.java.Mario.MarioState;
@@ -23,21 +22,26 @@ public class PickUp extends PhysicObject {
     private Type type;
     private Supplier<Boolean> tickMethod;
     private int stateCounter;
-    private int horizontalVelocity;
-    private int verticalVelocity;
     private int id;
     private int sprite;
     
-    private boolean[] collisions;
     private boolean active;
-    private boolean isFalling;
 
     public PickUp(Type type){
         this.type = type;
+        isBlockActivator = false;
         defineTypeProperties();
         setScoreManager();
-        collisions = new boolean[4];
+        setMarioInstance();
+    }
 
+    private void setScoreManager() {
+        if (scoreManager == null) {
+            scoreManager = Score.getInstance();
+        }
+    }
+
+    private void setMarioInstance(){
         if (mario == null) {
             mario = Mario.getCurrentInstance();
         }
@@ -76,20 +80,7 @@ public class PickUp extends PhysicObject {
                 break;
         }
     }
-
-    private void setColliderSize(BufferedImage sizeReference){
-        int width = sizeReference.getWidth();
-        int height = sizeReference.getHeight();
-
-        setSize(width, height);
-    }
     
-    private void setScoreManager(){
-        if(scoreManager == null){
-            scoreManager = Score.getInstance();
-        }
-    }
-
     public void spawnPickUp(Point p) {
         x = p.x;
         y = p.y + Block.SIZE/2;
@@ -145,33 +136,18 @@ public class PickUp extends PhysicObject {
     }
 
     private boolean powerTick(){
-        
         if (stateCounter < Block.SIZE / 2 + 1) {
             y -= 1;
             stateCounter++;
         }else if(id == MOOSHROOM || id == LIFE){
             isFalling = verticalVelocity > 0;
             applyVelocities();
-            collisions = checkCollisions(isFalling, false);
+            checkCollisions();
         }
         
         checkMarioCollision();
         
         return true;
-    }
-
-    private void applyVelocities(){
-        if (collisions[PhysicObject.COLLISION_BOTTOM]) {
-            verticalVelocity = 0;
-        } else {
-            verticalVelocity = PhysicObject.getGravity();
-        }
-
-        if(collisions[PhysicObject.COLLISION_RIGHT] || collisions[PhysicObject.COLLISION_LEFT]){
-            horizontalVelocity *= -1;
-        }
-
-        setLocation(x + horizontalVelocity, y + verticalVelocity);
     }
 
     private void checkMarioCollision(){
