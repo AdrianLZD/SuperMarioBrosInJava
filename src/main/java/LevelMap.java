@@ -6,17 +6,23 @@ import java.util.*;
 
 public class LevelMap {
 
+    private static LevelMap instance;
+    private Queue<Object> toRemove;
+    private Object removeAux;
     private int mapId;
     private Block[][] blocks;
     private ArrayList<BlockInteractable> interactableBlocks;
     private ArrayList<PickUp> pickUps;
     private ArrayList<Enemy> enemies;
+    
 
     public LevelMap(int mapId) {
         this.mapId = mapId;
+        instance = this;
         interactableBlocks = new ArrayList<>();
         pickUps = new ArrayList<>();
         enemies = new ArrayList<>();
+        toRemove = new LinkedList<>();
         loadMapFile();
     }
 
@@ -132,8 +138,23 @@ public class LevelMap {
         }
     }
 
+    public void removeUsedObjects(){
+        while(!toRemove.isEmpty()){
+            System.out.println("removing");
+            removeAux = toRemove.poll();
+            if (removeAux instanceof Enemy) {
+                enemies.remove(removeAux);
+            } else if (removeAux instanceof PickUp) {
+                pickUps.remove(removeAux);
+            }
+        }
+    }
     public Block[][] getBlocks(){
         return blocks;
+    }
+
+    public static void deleteObject(Object obj){
+        instance.toRemove.add(obj);
     }
 
 }

@@ -110,8 +110,8 @@ public class PickUp extends PhysicObject {
     }
 
     public void paintPickUp(Graphics g){
-        super.paint(g);
-        if(active){
+        if (active) {    
+            super.paint(g);
             g.drawImage(Animator.getPickUpSprite(sprite), x, y, GameRunner.instance);
         }
     }

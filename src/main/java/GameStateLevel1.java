@@ -23,8 +23,8 @@ public class GameStateLevel1 extends GameState {
     protected void paintElements(Graphics g) {
         super.paintElements(g);
         lvlMap.paintPickUps(g);
-        lvlMap.paintBlocks(g, mario.x);
         lvlMap.paintEnemies(g, mario.x);
+        lvlMap.paintBlocks(g, mario.x);
         mario.paintMario(g);
     }
 
@@ -44,6 +44,7 @@ public class GameStateLevel1 extends GameState {
         lvlMap.tickInteractableBlocks();
         lvlMap.tickPickUps();
         lvlMap.tickEnemies();
+        lvlMap.removeUsedObjects();
     }
     
 }

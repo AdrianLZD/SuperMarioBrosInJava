@@ -62,17 +62,17 @@ public class Animator {
     public static final int K_NORMAL_RIGHT_WALK2 = 106;
     public static final int K_NORMAL_LEFT_WALK1 = 107;
     public static final int K_NORMAL_LEFT_WALK2 = 108;
-    public static final int K_FLY_RIGHT_WALK1 = 105;
-    public static final int K_FLY_RIGHT_WALK2 = 106;
-    public static final int K_FLY_LEFT_WALK1 = 107;
-    public static final int K_FLY_LEFT_WALK2 = 108;
-    public static final int K_NORMAL_FLIP = 109;
-    public static final int K_SHELL_NORMAL = 110;
-    public static final int K_SHELL_FLIP = 111;
-    public static final int PI_OPEN = 112;
-    public static final int PI_CLOSE = 113;
+    public static final int K_FLY_RIGHT_WALK1 = 109;
+    public static final int K_FLY_RIGHT_WALK2 = 110;
+    public static final int K_FLY_LEFT_WALK1 = 111;
+    public static final int K_FLY_LEFT_WALK2 = 112;
+    public static final int K_NORMAL_FLIP = 113;
+    public static final int K_SHELL_NORMAL = 114;
+    public static final int K_SHELL_FLIP = 115;
+    public static final int PI_OPEN = 116;
+    public static final int PI_CLOSE = 117;
 
-    public static final int ENEMY_COUNT = 13;
+    public static final int ENEMY_COUNT = 17;
 
     public static BufferedImage getMarioSprite(int id){
         return SpriteAssets.getMarioSprite(id-M_START);
