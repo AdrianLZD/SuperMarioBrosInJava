@@ -18,7 +18,7 @@ public class GameRunner extends JPanel implements KeyListener {
     private GameState currentGameState;
     private Score scoreManager;
 
-    private int cameraOffset;
+    public int cameraOffset;
     private int cameraX;
 
     private GameRunner() {
@@ -79,6 +79,13 @@ public class GameRunner extends JPanel implements KeyListener {
 
     public void setCurrentGameState(GameState gameState){
         currentGameState = gameState;
+    }
+
+    public void restartCurrentLevel(){
+        if(currentGameState.lvlId == 1){
+            currentGameState = new GameStateLevel1();
+        }
+        System.gc();
     }
 
     public void moveHorizontalScroll(int newPosition){

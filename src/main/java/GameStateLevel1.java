@@ -4,14 +4,12 @@ import java.awt.Graphics;
 
 public class GameStateLevel1 extends GameState {
 
-    private int lvlId;
-
     public GameStateLevel1(){
         super();
         lvlId = 1;
         mario = new Mario();
         createLevelMap(lvlId);
-        definePanelSize(SpriteAssets.getBackground("lvl1").getWidth(), WindowManager.WINDOW_HEIGHT);
+        definePanelSize(SpriteAssets.getBackground("lvl"+lvlId).getWidth(), WindowManager.WINDOW_HEIGHT);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class GameStateLevel1 extends GameState {
         mario.tick();
         lvlMap.tickInteractableBlocks();
         lvlMap.tickPickUps();
-        lvlMap.tickEnemies();
+        lvlMap.tickEnemies(mario.x);
         lvlMap.removeUsedObjects();
     }
     

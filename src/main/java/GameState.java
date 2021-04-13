@@ -13,6 +13,7 @@ public abstract class GameState {
     protected LevelMap lvlMap;
     protected Mario mario;
     protected boolean imagesLoaded;
+    protected int lvlId;
 
 
     public GameState() {

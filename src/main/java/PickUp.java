@@ -32,18 +32,12 @@ public class PickUp extends PhysicObject {
         isBlockActivator = false;
         defineTypeProperties();
         setScoreManager();
-        setMarioInstance();
+        mario = Mario.getCurrentInstance();
     }
 
     private void setScoreManager() {
         if (scoreManager == null) {
             scoreManager = Score.getInstance();
-        }
-    }
-
-    private void setMarioInstance(){
-        if (mario == null) {
-            mario = Mario.getCurrentInstance();
         }
     }
 

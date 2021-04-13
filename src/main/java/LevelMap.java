@@ -15,7 +15,6 @@ public class LevelMap {
     private ArrayList<PickUp> pickUps;
     private ArrayList<Enemy> enemies;
     
-
     public LevelMap(int mapId) {
         this.mapId = mapId;
         instance = this;
@@ -132,15 +131,14 @@ public class LevelMap {
         }
     }
 
-    public void tickEnemies(){
+    public void tickEnemies(int marioXPos){
         for(Enemy e : enemies){
-            e.tick();
+            e.tick(marioXPos);
         }
     }
 
     public void removeUsedObjects(){
         while(!toRemove.isEmpty()){
-            System.out.println("removing");
             removeAux = toRemove.poll();
             if (removeAux instanceof Enemy) {
                 enemies.remove(removeAux);

@@ -6,7 +6,10 @@ import java.util.Hashtable;
 
 public class Mario extends PhysicObject {
     private static final long serialVersionUID = 1L;
+
+    private static final int INVINCIBLE_TICKS = 150;
     private static Mario instance;
+
 
     protected MarioState state;
     private MarioController controller;
@@ -14,12 +17,15 @@ public class Mario extends PhysicObject {
     private Hashtable<String, Integer> movingSprites;
     private Hashtable<String, Integer> transitionSprites;
     private int currentSprite;
+    private int previousSprite;
     private int currentAnimSpeed;
     private int animationTimer;
     private int transitionCounter;
+    private int invincibleCounter;
     
     private boolean canMove;
     private boolean transitioning;
+    private boolean invincible;
 
     public Mario() {
         movingSprites = new Hashtable<>(16);
@@ -36,10 +42,12 @@ public class Mario extends PhysicObject {
 
     private void convertSmall(){
         state = MarioState.SMALL;
-        if (controller.getLastDirection() == controller.RIGHT) {
-            currentSprite = M_SMALL_RIGHT_IDLE;
-        } else {
-            currentSprite = M_SMALL_LEFT_IDLE;
+        if(!transitioning){
+            if (controller.getLastDirection() == controller.RIGHT) {
+                currentSprite = M_SMALL_RIGHT_IDLE;
+            } else {
+                currentSprite = M_SMALL_LEFT_IDLE;
+            }
         }
         
         movingSprites.put("jump_r", M_SMALL_RIGHT_JUMP);
@@ -50,6 +58,11 @@ public class Mario extends PhysicObject {
         movingSprites.put("walk2_l", M_SMALL_LEFT_WALK2);
         movingSprites.put("idle_r", M_SMALL_RIGHT_IDLE);
         movingSprites.put("idle_l", M_SMALL_LEFT_IDLE);
+
+        transitionSprites.put("idle_r", M_BIG_RIGHT_IDLE);
+        transitionSprites.put("idle_l", M_BIG_LEFT_IDLE);
+        transitionSprites.put("trans_r",EMPTY);
+        transitionSprites.put("trans_l", EMPTY);
     }
 
     private void convertBig(){
@@ -115,9 +128,20 @@ public class Mario extends PhysicObject {
             checkCollisions();
             controller.setCollisions(collisions);
         }
+
+        if(invincible && !transitioning){
+            checkIfStillInvincible();
+        }
         
         animSprite();
         controller.moveCamera();
+    }
+
+    private void checkIfStillInvincible(){
+        if (invincibleCounter > INVINCIBLE_TICKS) {
+            invincible = false;
+        }
+        invincibleCounter++;
     }
 
     private void animSprite() {
@@ -133,43 +157,49 @@ public class Mario extends PhysicObject {
     }
 
     private void updateAnimSprite(){
+        if(invincible){
+            if (invincibleCounter % 2 == 0) {
+                previousSprite = currentSprite;
+                currentSprite = EMPTY;
+                return;
+            }else if((invincibleCounter-1)%2 == 0){
+                currentSprite = previousSprite;
+            }
+        }
+
         if (controller.isJumping()) {
             if (controller.getLastDirection() == controller.RIGHT) {
                 currentSprite = movingSprites.get("jump_r");
-                return;
+            }else{
+                currentSprite = movingSprites.get("jump_l");
             }
-            currentSprite = movingSprites.get("jump_l");
-            return;
-        }
+        }else
 
         if (controller.isMovingRight()) {
             if (currentSprite == movingSprites.get("walk1_r")) {
                 currentSprite = movingSprites.get("walk2_r");
-                return;
+            }else{
+                currentSprite = movingSprites.get("walk1_r");
             }
-            currentSprite = movingSprites.get("walk1_r");
-            return;
-        }
+        }else
 
         if (controller.isMovingLeft()) {
             if (currentSprite == movingSprites.get("walk1_l")) {
                 currentSprite = movingSprites.get("walk2_l");
-                return;
+            }else{
+               currentSprite = movingSprites.get("walk1_l");
             }
-            currentSprite = movingSprites.get("walk1_l");
-            return;
-        }
+        }else
 
         if (controller.getLastDirection() == controller.RIGHT) {
             currentSprite = movingSprites.get("idle_r");
-            return;
+        }else{
+            currentSprite = movingSprites.get("idle_l");
         }
-        currentSprite = movingSprites.get("idle_l");
     }
 
     private void updateTransSprite(){
-        String direction = "r";
-        direction = (controller.getLastDirection() == controller.RIGHT) ? "r" : "l";
+        String direction = (controller.getLastDirection() == controller.RIGHT) ? "r" : "l";
 
         if (currentSprite == transitionSprites.get("idle_"+direction)) {
             currentSprite = transitionSprites.get("trans_"+direction);
@@ -180,8 +210,16 @@ public class Mario extends PhysicObject {
         transitionCounter++;
         if (transitionCounter >= 3) {
             resetControls();
+            if(invincible){
+                startInvincibility();
+            }
             return;
         }
+    }
+
+    private void startInvincibility(){
+        invincibleCounter = 0;
+        invincible = true;
     }
 
     private void resetControls(){
@@ -202,23 +240,44 @@ public class Mario extends PhysicObject {
     }
 
     public void applyMooshroom(){
-        canMove = false;
-        transitioning = true;
-        transitionCounter = 0;
-        animationTimer = 0;
-        currentAnimSpeed = (int) (ANIMATION_SPEED*1.75);
+        startChangeStateAnimation();
         convertBig();
         updateSize();
     }
 
     public void applyFire(){
+        startChangeStateAnimation();
+        convertFire();
+        updateSize();
+    }
+
+    public void applyDamage(){
+        if(invincible){
+            return;
+        }
+
+        if(state == MarioState.SMALL){
+            killMario();
+        }else if(state == MarioState.BIG || state == MarioState.FIRE){
+            startChangeStateAnimation();
+            // Override the startChangeStateAnimation currentAnimSpeed
+            currentAnimSpeed = (int) (ANIMATION_SPEED * 1.5);
+            convertSmall();
+            updateSize();
+            startInvincibility();
+        }
+    }
+
+    private void killMario(){
+        GameRunner.instance.restartCurrentLevel();
+    }
+
+    private void startChangeStateAnimation(){
         canMove = false;
         transitioning = true;
         transitionCounter = 0;
         animationTimer = 0;
         currentAnimSpeed = (int) (ANIMATION_SPEED * 1.75);
-        convertFire();
-        updateSize();
     }
 
     public void keyPressed(int k) {
@@ -243,8 +302,12 @@ public class Mario extends PhysicObject {
         return instance.state;
     }
 
+    public boolean isTransitioning(){
+        return transitioning;
+    }
+    
     public enum MarioState {
-        SMALL(0), BIG(1);
+        SMALL(0), BIG(1), FIRE(1);
 
         private int size;
 

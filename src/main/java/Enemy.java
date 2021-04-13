@@ -15,6 +15,8 @@ public class Enemy extends PhysicObject {
 
     private static Score scoreManager;
     private static Mario mario;
+    private static int cameraOffset = GameRunner.instance.cameraOffset * 2;
+
     private Hashtable<String, Integer> tableSprites;
 
     private Supplier<Boolean> tickMethod;
@@ -31,11 +33,9 @@ public class Enemy extends PhysicObject {
         tableSprites = new Hashtable<>(12);
         isBlockActivator = false;
         alive = true;
-        active = true;
-        
         setEnemyProperties(position);
         setScoreManager();
-        setMarioInstace();
+        mario = Mario.getCurrentInstance();
     }
     
     private void setEnemyProperties(Point position) {
@@ -113,12 +113,6 @@ public class Enemy extends PhysicObject {
         }
     }
 
-    private void setMarioInstace(){
-        if (mario == null) {
-            mario = Mario.getCurrentInstance();
-        }
-    }
-
     public void paintEnemy(Graphics g){
         if(active){
             super.paint(g);
@@ -126,11 +120,28 @@ public class Enemy extends PhysicObject {
         }
     }
 
-    public void tick(){
+    public void tick(int marioXPos){
+        if(!active){
+            checkForActivation(marioXPos);
+            return;
+        }
+
+        if(mario.isTransitioning()){
+            return;
+        }
+
         if(alive){
             tickMethod.get();
         }else{
             destroy();
+        }
+    }
+
+    private void checkForActivation(int marioXPos){
+        //Check if enemy is visible
+        if (x - cameraOffset <= marioXPos || x <= WindowManager.windowWidth){
+            active = true;
+            System.out.println("hola " + id + " " + x);
         }
     }
 
@@ -195,10 +206,10 @@ public class Enemy extends PhysicObject {
         behaviorCounter++;
         changeSpriteDirection();
         setLocation(x, y + verticalVelocity);
+        checkMarioCollision();
         
         return true;
     }
-
 
     private void changeSpriteDirection(){
         if(horizontalVelocity<0){
@@ -225,10 +236,14 @@ public class Enemy extends PhysicObject {
 
     private void checkMarioCollision() {
         if(intersects(mario.getBounds())){
+            if (id == PIRANHA){
+                mario.applyDamage();
+                return;
+            }
             if(mario.y + mario.height  <= y + mario.verticalVelocity + verticalVelocity){
                 kill();
             }else{
-                System.out.println("mario deaad");
+                mario.applyDamage();
             }
         }        
     }
