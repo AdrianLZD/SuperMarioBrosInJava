@@ -17,7 +17,7 @@ public class TextFont {
             font = new Font("Press Start 2P", Font.PLAIN, 20);
             //printAvailableFonts();
         } catch (FontFormatException | IOException e) {
-            ErrorLogger.logWarningMessage("The game font could not be loaded properly.", e);
+            MyLogger.logWarningMessage("The game font could not be loaded properly.", e);
         }
     }
 

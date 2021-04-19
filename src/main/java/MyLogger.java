@@ -3,7 +3,7 @@ package main.java;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ErrorLogger {
+public class MyLogger {
     public static Logger logger = Logger.getLogger("ConsoleLogger");
     
     public static void logWarningMessage(String message){

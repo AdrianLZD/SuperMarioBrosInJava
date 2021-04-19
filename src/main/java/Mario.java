@@ -8,8 +8,8 @@ public class Mario extends PhysicObject {
     private static final long serialVersionUID = 1L;
 
     private static final int INVINCIBLE_TICKS = 150;
+    private static final int DEAD_TICKS = 120;
     private static Mario instance;
-
 
     protected MarioState state;
     private MarioController controller;
@@ -22,22 +22,25 @@ public class Mario extends PhysicObject {
     private int animationTimer;
     private int transitionCounter;
     private int invincibleCounter;
+    private int deadCounter;
     
     private boolean canMove;
     private boolean transitioning;
     private boolean invincible;
+    private boolean alive;
 
-    public Mario() {
+    public Mario(Point position) {
         movingSprites = new Hashtable<>(16);
         transitionSprites = new Hashtable<>(8);
         controller = new MarioController(this);
         instance = this;
         canMove = true;
         isBlockActivator = true;
+        alive = true;
         currentAnimSpeed = ANIMATION_SPEED;
         convertSmall();
         updateSize();
-        setLocation(150, 600);
+        setLocation(position);
     }
 
     private void convertSmall(){
@@ -121,20 +124,24 @@ public class Mario extends PhysicObject {
         setColliderSize(Animator.getMarioSprite(marioSpriteId));
     }
 
-    public void tick() {
-        if(canMove){
-            controller.tick();
-            isFalling = controller.isFalling();
-            checkCollisions();
-            controller.setCollisions(collisions);
+    public void tick() { 
+        if(alive){
+            if (canMove) {
+                controller.tick();
+                isFalling = controller.isFalling();
+                checkCollisions();
+                controller.setCollisions(collisions);
+            }
+            if (invincible && !transitioning) {
+                checkIfStillInvincible();
+            }
+            controller.moveCamera();
+        }else{
+            killProcess();
         }
-
-        if(invincible && !transitioning){
-            checkIfStillInvincible();
-        }
-        
+                  
         animSprite();
-        controller.moveCamera();
+        
     }
 
     private void checkIfStillInvincible(){
@@ -144,9 +151,34 @@ public class Mario extends PhysicObject {
         invincibleCounter++;
     }
 
+    private void killProcess(){
+        if(deadCounter++ > DEAD_TICKS ){
+            Score.getInstance().decreaseLives();
+            GameRunner.instance.restartCurrentLevel();
+        }
+        killAnimation();
+        deadCounter++;
+    }
+
+    private void killAnimation(){
+        if(deadCounter < DEAD_TICKS/4){
+            verticalVelocity = -PhysicObject.getGravity();
+        }else if(deadCounter < DEAD_TICKS/2){
+            verticalVelocity = -PhysicObject.getGravity()/2;
+        }else if(deadCounter < DEAD_TICKS/4 * 2){
+            verticalVelocity = PhysicObject.getGravity()/2;
+        }else{
+            verticalVelocity = PhysicObject.getGravity();
+        }
+
+        setLocation(x, y + verticalVelocity);
+    }
+
     private void animSprite() {
         if (animationTimer > currentAnimSpeed) {
-            if(transitioning){
+            if(!alive){
+                currentSprite = M_DEAD;
+            }else if(transitioning){
                 updateTransSprite();
             }else{
                 updateAnimSprite();
@@ -268,8 +300,15 @@ public class Mario extends PhysicObject {
         }
     }
 
-    private void killMario(){
-        GameRunner.instance.restartCurrentLevel();
+    public void killMario(){
+        if(!alive){
+            return;
+        }
+        canMove = false;
+        invincible = false;
+        alive = false;
+        deadCounter = 0;
+        
     }
 
     private void startChangeStateAnimation(){
@@ -306,6 +345,10 @@ public class Mario extends PhysicObject {
         return transitioning;
     }
     
+    public boolean isAlive(){
+        return alive;
+    }
+
     public enum MarioState {
         SMALL(0), BIG(1), FIRE(1);
 

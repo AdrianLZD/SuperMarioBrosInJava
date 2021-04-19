@@ -126,7 +126,7 @@ public class Enemy extends PhysicObject {
             return;
         }
 
-        if(mario.isTransitioning()){
+        if(mario.isTransitioning() || !mario.isAlive()){
             return;
         }
 
@@ -141,7 +141,6 @@ public class Enemy extends PhysicObject {
         //Check if enemy is visible
         if (x - cameraOffset <= marioXPos || x <= WindowManager.windowWidth){
             active = true;
-            System.out.println("hola " + id + " " + x);
         }
     }
 

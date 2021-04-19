@@ -33,7 +33,7 @@ public class LevelMap {
             setPhysicsBlocks();
         } catch ( IOException e) {
             String message = "The file layout for level " + mapId + "could not be read.";
-            ErrorLogger.logErrorMessage(message, e);
+            MyLogger.logErrorMessage(message, e);
         }
     }
 
@@ -147,6 +147,7 @@ public class LevelMap {
             }
         }
     }
+    
     public Block[][] getBlocks(){
         return blocks;
     }

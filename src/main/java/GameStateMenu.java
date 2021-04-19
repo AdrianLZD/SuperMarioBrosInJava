@@ -101,4 +101,9 @@ public class GameStateMenu extends GameState {
     protected void tick() {
 
     }
+
+    @Override
+    protected void spawnMario() {
+        // No need to spawn mario
+    }
 }

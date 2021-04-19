@@ -37,7 +37,7 @@ public class SpriteAssets {
             loadEnemiesSprites();
             System.gc();
         } catch (IOException e) {
-            ErrorLogger.logErrorMessage("The sprites of the game could not be loaded.", e);
+            MyLogger.logErrorMessage("The sprites of the game could not be loaded.", e);
         }
     }
 

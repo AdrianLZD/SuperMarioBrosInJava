@@ -93,4 +93,8 @@ public class GameRunner extends JPanel implements KeyListener {
             cameraX = newPosition - cameraOffset;
         }
     }
+
+    public void moveAbsoluteHorizontalScroll(int newPosition){
+        cameraX = newPosition;
+    }
 }
