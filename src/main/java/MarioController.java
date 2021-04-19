@@ -1,10 +1,13 @@
 package main.java;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 
+import main.java.Mario.MarioState;
+
 public class MarioController {
-    public final boolean RIGHT = true;
-    public final boolean LEFT = false;
+    public static final boolean RIGHT = true;
+    public static final boolean LEFT = false;
 
     private final int maxJumpTime = 34;
     private final int walkSpeed = 5;
@@ -39,6 +42,8 @@ public class MarioController {
             rightKeyPressed();
         } else if (k == KeyEvent.VK_LEFT) {
             leftKeyPressed();
+        } else if (k == KeyEvent.VK_X){
+            powerKeyPressed();
         }
     }
 
@@ -62,6 +67,20 @@ public class MarioController {
     private void leftKeyPressed() {
         moveLeft = true;
         lastDirection = LEFT;
+    }
+
+    private void powerKeyPressed(){
+        if(mario.state != MarioState.FIRE){
+            return;
+        }
+        spawnFireball();
+    }
+
+    private void spawnFireball(){
+        Point firePosition = mario.getLocation();
+        firePosition.y += Block.SIZE;
+        firePosition.x += mario.getWidth()/2;
+        LevelMap.addFireball(new Fireball(firePosition, lastDirection, Fireball.MARIO_FIRE));
     }
 
     public void keyReleased(int k) {

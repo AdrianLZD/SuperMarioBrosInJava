@@ -25,6 +25,7 @@ public class SpriteAssets {
     private static BufferedImage[] marioSprites;
     private static BufferedImage[] pickUps;
     private static BufferedImage[] enemies;
+    private static BufferedImage[] fireball;
 
     static {
         try {
@@ -35,6 +36,7 @@ public class SpriteAssets {
             loadMarioSprites();
             loadPickUpSprites();
             loadEnemiesSprites();
+            loadFireballSprites();
             System.gc();
         } catch (IOException e) {
             MyLogger.logErrorMessage("The sprites of the game could not be loaded.", e);
@@ -160,6 +162,19 @@ public class SpriteAssets {
         
         rescaleSprites(enemies);
     }
+
+    private static void loadFireballSprites() throws IOException{
+        fireball = new BufferedImage[FIREBALL_COUNT];
+        fireball[FIREBALL_1 - FIREBALL_START] = ImageIO.read(new File("res/objects/oFireball1.png"));
+        fireball[FIREBALL_2 - FIREBALL_START] = ImageIO.read(new File("res/objects/oFireball2.png"));
+        fireball[FIREBALL_3 - FIREBALL_START] = ImageIO.read(new File("res/objects/oFireball3.png"));
+        fireball[FIREBALL_4 - FIREBALL_START] = ImageIO.read(new File("res/objects/oFireball4.png"));
+        fireball[FIREBALL_E1 - FIREBALL_START] = ImageIO.read(new File("res/objects/oExplosion1.png"));
+        fireball[FIREBALL_E2 - FIREBALL_START] = ImageIO.read(new File("res/objects/oExplosion2.png"));
+        fireball[FIREBALL_E3 - FIREBALL_START] = ImageIO.read(new File("res/objects/oExplosion3.png"));
+
+        rescaleSprites(fireball);
+    }
     
     private static void rescaleSprites(BufferedImage[] images) {
         for (int i = 0; i < images.length; i++) {
@@ -205,11 +220,11 @@ public class SpriteAssets {
             case "lvl1":
                 return backgrounds[BACKGROUND_LVL1];
             case "lvl2":
-                return backgrounds[BACKGROUND_LVL1];
+                return backgrounds[BACKGROUND_LVL2];
             case "lvl3":
-                return backgrounds[BACKGROUND_LVL1];
+                return backgrounds[BACKGROUND_LVL3];
             case "lvl4":
-                return backgrounds[BACKGROUND_LVL1];
+                return backgrounds[BACKGROUND_LVL4];
             default:
                 throw new NoSuchElementException();
         }
@@ -226,6 +241,10 @@ public class SpriteAssets {
 
     public static BufferedImage getEnemySprite(int id){
         return enemies[id];
+    }
+
+    public static BufferedImage getFireballSprite(int id){
+        return fireball[id];
     }
 
 }

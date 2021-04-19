@@ -1,6 +1,7 @@
 package main.java;
 
 import static main.java.Animator.*;
+import static main.java.MarioController.RIGHT;
 import java.awt.*;
 import java.util.Hashtable;
 
@@ -46,7 +47,7 @@ public class Mario extends PhysicObject {
     private void convertSmall(){
         state = MarioState.SMALL;
         if(!transitioning){
-            if (controller.getLastDirection() == controller.RIGHT) {
+            if (controller.getLastDirection() == RIGHT) {
                 currentSprite = M_SMALL_RIGHT_IDLE;
             } else {
                 currentSprite = M_SMALL_LEFT_IDLE;
@@ -71,7 +72,7 @@ public class Mario extends PhysicObject {
     private void convertBig(){
         state = MarioState.BIG;
         y-=Block.SIZE;
-        if(controller.getLastDirection() == controller.RIGHT){
+        if(controller.getLastDirection() == RIGHT){
             currentSprite = M_BIG_RIGHT_IDLE;
         }else{
             currentSprite = M_BIG_LEFT_IDLE;
@@ -93,8 +94,8 @@ public class Mario extends PhysicObject {
     }
 
     private void convertFire(){
-        state = MarioState.BIG;
-        if (controller.getLastDirection() == controller.RIGHT) {
+        state = MarioState.FIRE;
+        if (controller.getLastDirection() == RIGHT) {
             currentSprite = M_FIRE_RIGHT_IDLE;
         } else {
             currentSprite = M_FIRE_LEFT_IDLE;
@@ -200,7 +201,7 @@ public class Mario extends PhysicObject {
         }
 
         if (controller.isJumping()) {
-            if (controller.getLastDirection() == controller.RIGHT) {
+            if (controller.getLastDirection() == RIGHT) {
                 currentSprite = movingSprites.get("jump_r");
             }else{
                 currentSprite = movingSprites.get("jump_l");
@@ -223,7 +224,7 @@ public class Mario extends PhysicObject {
             }
         }else
 
-        if (controller.getLastDirection() == controller.RIGHT) {
+        if (controller.getLastDirection() == RIGHT) {
             currentSprite = movingSprites.get("idle_r");
         }else{
             currentSprite = movingSprites.get("idle_l");
@@ -231,7 +232,7 @@ public class Mario extends PhysicObject {
     }
 
     private void updateTransSprite(){
-        String direction = (controller.getLastDirection() == controller.RIGHT) ? "r" : "l";
+        String direction = (controller.getLastDirection() == RIGHT) ? "r" : "l";
 
         if (currentSprite == transitionSprites.get("idle_"+direction)) {
             currentSprite = transitionSprites.get("trans_"+direction);

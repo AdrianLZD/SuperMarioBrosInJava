@@ -14,14 +14,16 @@ public class LevelMap {
     private ArrayList<BlockInteractable> interactableBlocks;
     private ArrayList<PickUp> pickUps;
     private ArrayList<Enemy> enemies;
+    private ArrayList<Fireball> fireballs;
     
     public LevelMap(int mapId) {
         this.mapId = mapId;
         instance = this;
+        toRemove = new LinkedList<>();
         interactableBlocks = new ArrayList<>();
         pickUps = new ArrayList<>();
         enemies = new ArrayList<>();
-        toRemove = new LinkedList<>();
+        fireballs = new ArrayList<>();
         loadMapFile();
     }
 
@@ -119,6 +121,12 @@ public class LevelMap {
         }
     }
 
+    public void paintFireballs(Graphics g){
+        for(Fireball f : fireballs){
+            f.paintFireball(g);
+        }
+    }
+
     public void tickInteractableBlocks(){
         for(BlockInteractable b : interactableBlocks){
             b.tick();
@@ -137,6 +145,12 @@ public class LevelMap {
         }
     }
 
+    public void tickFireballs(){
+        for(Fireball f : fireballs){
+            f.tick();
+        }
+    }
+
     public void removeUsedObjects(){
         while(!toRemove.isEmpty()){
             removeAux = toRemove.poll();
@@ -144,12 +158,18 @@ public class LevelMap {
                 enemies.remove(removeAux);
             } else if (removeAux instanceof PickUp) {
                 pickUps.remove(removeAux);
+            }else if(removeAux instanceof Fireball){
+                fireballs.remove(removeAux);
             }
         }
     }
     
     public Block[][] getBlocks(){
         return blocks;
+    }
+
+    public static void addFireball(Fireball f){
+        instance.fireballs.add(f);
     }
 
     public static void deleteObject(Object obj){

@@ -43,6 +43,7 @@ public class GameStateLevel1 extends GameState {
         lvlMap.paintEnemies(g, mario.x);
         lvlMap.paintBlocks(g, mario.x);
         mario.paintMario(g);
+        lvlMap.paintFireballs(g);
     }
 
     @Override
@@ -65,6 +66,7 @@ public class GameStateLevel1 extends GameState {
         lvlMap.tickInteractableBlocks();
         lvlMap.tickPickUps();
         lvlMap.tickEnemies(mario.x);
+        lvlMap.tickFireballs();
         lvlMap.removeUsedObjects();
 
         if(mario.x >= CHECKPOINT_POSITION){

@@ -74,6 +74,16 @@ public class Animator {
 
     public static final int ENEMY_COUNT = 17;
 
+    public static final int FIREBALL_START = 201;
+    public static final int FIREBALL_1 = 201;
+    public static final int FIREBALL_2 = 202;
+    public static final int FIREBALL_3 = 203;
+    public static final int FIREBALL_4 = 204;
+    public static final int FIREBALL_E1 = 205;
+    public static final int FIREBALL_E2 = 206;
+    public static final int FIREBALL_E3 = 207;
+    public static final int FIREBALL_COUNT = 7;
+
     public static BufferedImage getMarioSprite(int id){
         return SpriteAssets.getMarioSprite(id-M_START);
     }
@@ -88,6 +98,10 @@ public class Animator {
 
     public static BufferedImage getEnemySprite(int id){
         return SpriteAssets.getEnemySprite(id-ENEMY_START);
+    }
+
+    public static BufferedImage getFireballSprite(int id){
+        return SpriteAssets.getFireballSprite(id-FIREBALL_START);
     }
 
 }
