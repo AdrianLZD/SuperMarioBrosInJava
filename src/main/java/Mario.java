@@ -53,7 +53,6 @@ public class Mario extends PhysicObject {
                 currentSprite = M_SMALL_LEFT_IDLE;
             }
         }
-        
         movingSprites.put("jump_r", M_SMALL_RIGHT_JUMP);
         movingSprites.put("jump_l", M_SMALL_LEFT_JUMP);
         movingSprites.put("walk1_r", M_SMALL_RIGHT_WALK1);
@@ -242,7 +241,10 @@ public class Mario extends PhysicObject {
 
         transitionCounter++;
         if (transitionCounter >= 3) {
-            resetControls();
+            resetControls();       
+            currentSprite = movingSprites.get("idle_"+direction);
+            if (state == MarioState.SMALL)
+                y += Block.SIZE;
             if(invincible){
                 startInvincibility();
             }

@@ -26,7 +26,6 @@ public class Enemy extends PhysicObject {
     private static int cameraOffset = GameRunner.instance.cameraOffset * 2;
 
     private Hashtable<String, Integer> tableSprites;
-
     private Supplier<Boolean> tickMethod;
     private int id;
     private int sprite;
@@ -115,9 +114,9 @@ public class Enemy extends PhysicObject {
         case SHELL:
             sprite = Animator.K_SHELL_NORMAL;
             tickMethod = () -> shellTick();
-            horizontalVelocity = SHELL_VEL;
+            horizontalVelocity = 0;
             verticalVelocity = 0;
-            hCollisionOffset = horizontalVelocity;
+            hCollisionOffset = SHELL_VEL;
             vCollisionOffset = PhysicObject.getGravity();
             tableSprites.put("right1", Animator.K_SHELL_NORMAL);
             tableSprites.put("right2", Animator.K_SHELL_NORMAL);
@@ -158,6 +157,9 @@ public class Enemy extends PhysicObject {
 
         if(alive){
             tickMethod.get();
+            if(id != SHELL){
+                checkEnemiesCollisions(enemies);
+            }
         }else{
             destroy();
         }
@@ -268,7 +270,7 @@ public class Enemy extends PhysicObject {
     }
 
     private void checkMarioCollisions() {
-        if(intersects(mario.getBounds())){
+        if(intersects(mario)){
             if (id == PIRANHA){
                 mario.applyDamage();
                 return;
@@ -302,10 +304,23 @@ public class Enemy extends PhysicObject {
     }
 
     private void checkEnemiesCollisions(ArrayList<Enemy> enemies){
-
+        for(Enemy e : enemies){
+            if(e.isInteractable() && intersects(e) && e!=this){
+                if(e.id == SHELL && e.horizontalVelocity != 0){
+                    killFlip();
+                }else{
+                    int direction = 1;
+                    if (e.x > x + width / 2) {
+                        direction = -1;
+                    }
+                    e.horizontalVelocity *= direction;
+                    horizontalVelocity *= direction;
+                }
+                
+            }
+        }
     }
 
-    
     private void replaceEnemy(int id){
         Enemy replacement = new Enemy(getLocation(), id);
         if(horizontalVelocity != 0){
