@@ -320,18 +320,18 @@ public class Mario extends PhysicObject {
         currentAnimSpeed = (int) (ANIMATION_SPEED * 1.75);
     }
 
+    public void activateMiniJump(){
+        controller.activateMiniJump();
+    }
+
     public void keyPressed(int k) {
         if(canMove){
             controller.keyPressed(k);
         }
-        
     }
 
     public void keyReleased(int k) {
-        
-            controller.keyReleased(k);
-        
-        
+        controller.keyReleased(k);
     }
 
     public static Mario getCurrentInstance(){

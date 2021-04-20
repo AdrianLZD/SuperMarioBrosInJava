@@ -2,6 +2,7 @@ package main.java;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.function.Supplier;
 
@@ -12,6 +13,13 @@ public class Enemy extends PhysicObject {
     private static final int KOOPA = 2;
     private static final int KOOPA_FLYING = 3;
     private static final int PIRANHA = 4;
+    private static final int SHELL = 5;
+
+    private static final int GOOMBA_VEL = 2;
+    private static final int KOOPA_VEL = 2;
+    private static final int KOOPA_FLYING_VEL = 2;
+    private static final int PIRANHA_VEL = 1;
+    private static final int SHELL_VEL = 6;
 
     private static Score scoreManager;
     private static Mario mario;
@@ -45,7 +53,7 @@ public class Enemy extends PhysicObject {
         case GOOMBA:
             sprite = Animator.G_LEFT;
             tickMethod = () -> goombaTick();
-            horizontalVelocity = -2;
+            horizontalVelocity = -GOOMBA_VEL;
             verticalVelocity = PhysicObject.getGravity();
             hCollisionOffset = -horizontalVelocity;
             vCollisionOffset = verticalVelocity * 2;
@@ -61,7 +69,7 @@ public class Enemy extends PhysicObject {
         case KOOPA:
             sprite = Animator.K_NORMAL_LEFT_WALK1;
             tickMethod = () -> koopaTick();
-            horizontalVelocity = -2;
+            horizontalVelocity = -KOOPA_VEL;
             verticalVelocity = PhysicObject.getGravity();
             hCollisionOffset = -horizontalVelocity;
             vCollisionOffset = verticalVelocity * 2;
@@ -77,8 +85,8 @@ public class Enemy extends PhysicObject {
         case KOOPA_FLYING:
             sprite = Animator.K_FLY_LEFT_WALK1;
             tickMethod = () -> flyingKoopaTick();
-            horizontalVelocity = -2;
-            verticalVelocity = -2;
+            horizontalVelocity = -KOOPA_FLYING_VEL;
+            verticalVelocity = -KOOPA_FLYING_VEL;
             hCollisionOffset = -horizontalVelocity;
             vCollisionOffset = -verticalVelocity;
             tableSprites.put("right1", Animator.K_FLY_RIGHT_WALK1);
@@ -94,7 +102,7 @@ public class Enemy extends PhysicObject {
             sprite = Animator.PI_CLOSE;
             tickMethod = () -> piranhaTick();
             horizontalVelocity = 0;
-            verticalVelocity = -1;
+            verticalVelocity = -PIRANHA_VEL;
             tableSprites.put("right1", Animator.PI_CLOSE);
             tableSprites.put("right2", Animator.PI_OPEN);
             tableSprites.put("left1", Animator.PI_CLOSE);
@@ -103,6 +111,22 @@ public class Enemy extends PhysicObject {
             tableSprites.put("flip", Animator.G_LEFT);
             setColliderSize(Animator.getEnemySprite(Animator.PI_OPEN));
             setLocation(position.x+Block.SIZE/2 + (Block.SIZE - width)/2, position.y + Block.SIZE);
+            break;
+        case SHELL:
+            sprite = Animator.K_SHELL_NORMAL;
+            tickMethod = () -> shellTick();
+            horizontalVelocity = SHELL_VEL;
+            verticalVelocity = 0;
+            hCollisionOffset = horizontalVelocity;
+            vCollisionOffset = PhysicObject.getGravity();
+            tableSprites.put("right1", Animator.K_SHELL_NORMAL);
+            tableSprites.put("right2", Animator.K_SHELL_NORMAL);
+            tableSprites.put("left1", Animator.K_SHELL_NORMAL);
+            tableSprites.put("left2", Animator.K_SHELL_NORMAL);
+            tableSprites.put("dead", Animator.K_SHELL_NORMAL);
+            tableSprites.put("flip", Animator.K_SHELL_FLIP);
+            setColliderSize(Animator.getEnemySprite(Animator.K_SHELL_NORMAL));
+            setLocation(position.x, position.y);
             break;
         default:
             break;
@@ -122,7 +146,7 @@ public class Enemy extends PhysicObject {
         }
     }
 
-    public void tick(){
+    public void tick(ArrayList<Enemy> enemies){
         if(!active){
             checkForActivation(mario.x);
             return;
@@ -151,7 +175,7 @@ public class Enemy extends PhysicObject {
         applyVelocities();
         changeSpriteDirection();
         checkCollisions();
-        checkMarioCollision();
+        checkMarioCollisions();
         return true;
     }
 
@@ -164,25 +188,25 @@ public class Enemy extends PhysicObject {
         flyingKoopaApplyVelocities();
         changeSpriteDirection();
         checkCollisions();
-        checkMarioCollision();
+        checkMarioCollisions();
         return true;
     }
 
     private void flyingKoopaApplyVelocities(){
         if (behaviorCounter == 48) {
-            verticalVelocity = 2;
+            verticalVelocity = KOOPA_FLYING_VEL;
         }else if(behaviorCounter > 48){
             behaviorCounter = 0;
         }
         behaviorCounter++;
 
         if(collisions[PhysicObject.COLLISION_BOTTOM]){
-            verticalVelocity = -2;
+            verticalVelocity = -KOOPA_FLYING_VEL;
             behaviorCounter = 0;
         }
 
         if (collisions[PhysicObject.COLLISION_TOP]) {
-            verticalVelocity = 2;
+            verticalVelocity = KOOPA_FLYING_VEL;
             behaviorCounter = 0;
         }
 
@@ -207,8 +231,16 @@ public class Enemy extends PhysicObject {
         behaviorCounter++;
         changeSpriteDirection();
         setLocation(x, y + verticalVelocity);
-        checkMarioCollision();
+        checkMarioCollisions();
         
+        return true;
+    }
+
+    private boolean shellTick(){
+        isFalling = verticalVelocity > 0;
+        applyVelocities();
+        checkCollisions();
+        checkMarioCollisions();
         return true;
     }
 
@@ -235,18 +267,53 @@ public class Enemy extends PhysicObject {
         animCounter++;
     }
 
-    private void checkMarioCollision() {
+    private void checkMarioCollisions() {
         if(intersects(mario.getBounds())){
             if (id == PIRANHA){
                 mario.applyDamage();
                 return;
             }
-            if(mario.y + mario.height  <= y + mario.verticalVelocity + verticalVelocity){
-                kill();
-            }else{
-                mario.applyDamage();
+            //Mario is on top of the enemy
+            if (mario.y + mario.height <= y + mario.verticalVelocity - verticalVelocity) {
+                if (id == KOOPA_FLYING) {
+                    replaceEnemy(KOOPA);
+                } else if (id == KOOPA) {
+                    replaceEnemy(SHELL);
+                } else if (id == SHELL) {
+                    mario.activateMiniJump();
+                    horizontalVelocity = 0;
+                } else {
+                    kill();
+                }
+            } else {
+                //Shell not moving will not kill mario
+                if (id == SHELL && horizontalVelocity == 0) {
+                    int direction = 1;
+                    if (mario.x > x + width / 2) {
+                        direction = -1;
+                    }
+                    horizontalVelocity = SHELL_VEL * direction;
+                    x+=horizontalVelocity*2;
+                } else {
+                    mario.applyDamage();
+                }
             }
         }        
+    }
+
+    private void checkEnemiesCollisions(ArrayList<Enemy> enemies){
+
+    }
+
+    
+    private void replaceEnemy(int id){
+        Enemy replacement = new Enemy(getLocation(), id);
+        if(horizontalVelocity != 0){
+            replacement.horizontalVelocity = Math.abs(replacement.horizontalVelocity) * Integer.signum(horizontalVelocity);
+        }
+        mario.activateMiniJump();
+        LevelMap.addObject(replacement);
+        LevelMap.deleteObject(this);
     }
 
     private void kill(){
@@ -259,7 +326,7 @@ public class Enemy extends PhysicObject {
         alive = false;      
     }
 
-    public void killFire(){
+    public void killFlip(){
         if(id == PIRANHA){
             return;
         }

@@ -8,7 +8,8 @@ public class LevelMap {
 
     private static LevelMap instance;
     private Queue<Object> toRemove;
-    private Object removeAux;
+    private Queue<Object> toAdd;
+    private Object auxObject;
     private int mapId;
     private Block[][] blocks;
     private ArrayList<BlockInteractable> interactableBlocks;
@@ -19,6 +20,7 @@ public class LevelMap {
     public LevelMap(int mapId) {
         this.mapId = mapId;
         instance = this;
+        toAdd = new LinkedList<>();
         toRemove = new LinkedList<>();
         interactableBlocks = new ArrayList<>();
         pickUps = new ArrayList<>();
@@ -141,7 +143,7 @@ public class LevelMap {
 
     public void tickEnemies(){
         for(Enemy e : enemies){
-            e.tick();
+            e.tick(enemies);
         }
     }
 
@@ -153,23 +155,34 @@ public class LevelMap {
 
     public void removeUsedObjects(){
         while(!toRemove.isEmpty()){
-            removeAux = toRemove.poll();
-            if (removeAux instanceof Enemy) {
-                enemies.remove(removeAux);
-            } else if (removeAux instanceof PickUp) {
-                pickUps.remove(removeAux);
-            }else if(removeAux instanceof Fireball){
-                fireballs.remove(removeAux);
+            auxObject = toRemove.poll();
+            if (auxObject instanceof Enemy) {
+                enemies.remove(auxObject);
+            } else if (auxObject instanceof PickUp) {
+                pickUps.remove(auxObject);
+            }else if(auxObject instanceof Fireball){
+                fireballs.remove(auxObject);
             }
         }
     }
     
+    public void addNewObjects(){
+        while (!toAdd.isEmpty()) {
+            auxObject = toAdd.poll();
+            if (auxObject instanceof Enemy) {
+                enemies.add((Enemy)auxObject);
+            } else if (auxObject instanceof Fireball) {
+                fireballs.add((Fireball)auxObject);
+            }
+        }
+    }
+
     public Block[][] getBlocks(){
         return blocks;
     }
 
-    public static void addFireball(Fireball f){
-        instance.fireballs.add(f);
+    public static void addObject(Object o){
+        instance.toAdd.add(o);
     }
 
     public static void deleteObject(Object obj){

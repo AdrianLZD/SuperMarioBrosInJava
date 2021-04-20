@@ -68,6 +68,7 @@ public class GameStateLevel1 extends GameState {
         lvlMap.tickEnemies();
         lvlMap.tickFireballs();
         lvlMap.removeUsedObjects();
+        lvlMap.addNewObjects();
 
         if(mario.x >= CHECKPOINT_POSITION){
             checkpointReached = true;

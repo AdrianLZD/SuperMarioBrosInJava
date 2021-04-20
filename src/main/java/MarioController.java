@@ -80,7 +80,7 @@ public class MarioController {
         Point firePosition = mario.getLocation();
         firePosition.y += Block.SIZE;
         firePosition.x += mario.getWidth()/2;
-        LevelMap.addFireball(new Fireball(firePosition, lastDirection, Fireball.MARIO_FIRE));
+        LevelMap.addObject(new Fireball(firePosition, lastDirection, Fireball.MARIO_FIRE));
     }
 
     public void keyReleased(int k) {
@@ -122,6 +122,12 @@ public class MarioController {
             deactivateJump();
         }
         jumpTime++;
+    }
+
+    public void activateMiniJump(){
+        jumpTime = maxJumpTime/2;
+        jumping = true;
+        mario.setLocation(mario.x, mario.y - jumpSpeed);
     }
 
     private void findCurrentAction() {

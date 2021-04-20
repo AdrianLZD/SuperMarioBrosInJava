@@ -123,7 +123,7 @@ public class Fireball extends PhysicObject{
         for(Enemy e : enemies){
             if(e.isInteractable()){
                 if(intersects(e)){
-                    e.killFire();
+                    e.killFlip();
                     startExplosion();
                 }
             }

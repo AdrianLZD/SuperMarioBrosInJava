@@ -124,7 +124,7 @@ public class PhysicObject extends Rectangle {
     }
 
     protected void paint(Graphics g) {
-        //paintColliders(g);
+        paintColliders(g);
     }
 
     @SuppressWarnings("unused")

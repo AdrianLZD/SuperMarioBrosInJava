@@ -145,6 +145,9 @@ public class PickUp extends PhysicObject {
     }
 
     private void checkMarioCollision(){
+        if(!mario.isAlive()){
+            return;
+        }
         if(intersects(mario.getBounds())){
             if(id == MOOSHROOM){
                 mario.applyMooshroom();
