@@ -25,8 +25,10 @@ public class Enemy extends PhysicObject {
     private int destroyCounter;
     private int animCounter;
     private int behaviorCounter;
+    private int destroyTime;
     private boolean alive;
     private boolean active;
+    private boolean flipAnimation;
 
     public Enemy(Point position, int id){
         this.id = id;
@@ -120,9 +122,9 @@ public class Enemy extends PhysicObject {
         }
     }
 
-    public void tick(int marioXPos){
+    public void tick(){
         if(!active){
-            checkForActivation(marioXPos);
+            checkForActivation(mario.x);
             return;
         }
 
@@ -253,14 +255,37 @@ public class Enemy extends PhysicObject {
         horizontalVelocity = 0;
         verticalVelocity = 0;
         destroyCounter = 0;
+        destroyTime = 30;
         alive = false;      
     }
 
+    public void killFire(){
+        if(id == PIRANHA){
+            return;
+        }
+        kill();
+        //Override the sprite and destroyTime set by the kill method
+        sprite = tableSprites.get("flip");
+        destroyTime = 60;
+        flipAnimation = true;
+    }
+
     private void destroy(){
-        if(destroyCounter>30){
+        if(flipAnimation){
+            if(destroyCounter<10){
+                setLocation(x, y-2);
+            }else{
+                setLocation(x, y+4);
+            }
+        }
+        if(destroyCounter>destroyTime){
             LevelMap.deleteObject(this);
         }
         destroyCounter++;
+    }
+
+    public boolean isInteractable(){
+        return alive && active;
     }
 
     public static boolean mustSpawnEnemy(String[] token){

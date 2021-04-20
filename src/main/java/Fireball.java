@@ -4,6 +4,7 @@ import static main.java.MarioController.RIGHT;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.function.Supplier;
 
@@ -74,11 +75,12 @@ public class Fireball extends PhysicObject{
         g.drawImage(Animator.getFireballSprite(currentSprite), x, y, GameRunner.instance);
     }
 
-    public void tick(){
+    public void tick(ArrayList<Enemy> enemies){
         if(!exploting){
             checkCollisions();
             velocitiesMethod.get();
             updateSprite();
+            enemiesCollisions(enemies);
             return;
         }
         updateExplosion();       
@@ -116,12 +118,18 @@ public class Fireball extends PhysicObject{
         }
         spriteCounter++;
     }
-
-    public void destroyFireball(){
-        LevelMap.deleteObject(this);
+    
+    private void enemiesCollisions(ArrayList<Enemy> enemies){
+        for(Enemy e : enemies){
+            if(e.isInteractable()){
+                if(intersects(e)){
+                    e.killFire();
+                    startExplosion();
+                }
+            }
+        }
     }
 
-    
     private boolean marioFireVelocities(){
         
         if(behaviorCounter == 15){
@@ -142,15 +150,24 @@ public class Fireball extends PhysicObject{
         }
 
         if (collisions[PhysicObject.COLLISION_RIGHT] || collisions[PhysicObject.COLLISION_LEFT]) {
-            spriteCounter = 0;
-            exploting = true;
+            startExplosion();
         }
 
         setLocation(x + horizontalVelocity, y + verticalVelocity);
         return true;
-    }    
+    }
 
-    private boolean enemyFireVelocities(){
+    private boolean enemyFireVelocities() {
+        // TODO
         return true;
+    }
+
+    private void startExplosion(){
+        spriteCounter = 0;
+        exploting = true;
+    }
+    
+    public void destroyFireball() {
+        LevelMap.deleteObject(this);
     }
 }

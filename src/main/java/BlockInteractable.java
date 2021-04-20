@@ -30,7 +30,7 @@ public class BlockInteractable extends Block {
             return;
         
         if (getId() == Block.BREAKABLE){
-            if(Mario.getCurrentState().equals(MarioState.BIG)){
+            if(Mario.getCurrentState().getSize() == MarioState.BIG.getSize()){
                 collision = false;
                 broken = true;
             }

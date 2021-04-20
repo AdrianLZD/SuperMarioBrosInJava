@@ -115,7 +115,7 @@ public class LevelMap {
         }
     }
 
-    public void paintEnemies(Graphics g, int xPos){
+    public void paintEnemies(Graphics g){
         for(Enemy e : enemies){
             e.paintEnemy(g);
         }
@@ -139,15 +139,15 @@ public class LevelMap {
         }
     }
 
-    public void tickEnemies(int marioXPos){
+    public void tickEnemies(){
         for(Enemy e : enemies){
-            e.tick(marioXPos);
+            e.tick();
         }
     }
 
     public void tickFireballs(){
         for(Fireball f : fireballs){
-            f.tick();
+            f.tick(enemies);
         }
     }
 
