@@ -8,11 +8,15 @@ public class BlockInteractable extends Block {
 
     private static final long serialVersionUID = 1L;
     private static final int UP_SPEED = 2;
+    private static final int MAX_COINS_TICKS = 300;
     private PickUp pickUp;
-    private byte animationTimer;
+    private byte animationCounter;
+    private int multipleCoinCounter;
     private boolean animating;
     private boolean broken;
     private boolean used;
+    private boolean multipleCoin;
+    private boolean spawnCoins;
 
     public BlockInteractable(Point position, int id) {
         super(position, id);
@@ -22,6 +26,7 @@ public class BlockInteractable extends Block {
     public BlockInteractable(Point position, int id, PickUp.Type pType){
         this(position, id);
         this.pickUp = new PickUp(pType, position);
+        multipleCoin = (pType == PickUp.Type.COIN_MULTIPLE) ? true : false;
     }
 
     @Override
@@ -29,12 +34,31 @@ public class BlockInteractable extends Block {
         if(used)
             return;
 
+        if (spawnCoins) {
+            checkForAnimation();
+            if(!multipleCoin){
+                used = true;
+                currentSprite = Animator.getBlockSprite(Block.USED);
+                dropPickUp();
+            }else{
+                dropCoin();
+            }
+            return;
+        }
+
         switch(getId()){
         case Block.BREAKABLE:
+            if(multipleCoin && !spawnCoins){
+                spawnCoins = true;
+                dropCoin();
+                break;
+            }
+
             if(Mario.getCurrentState().getSize() == MarioState.BIG.getSize()){
                 collision = false;
                 broken = true;
             }
+            dropPickUp();
             break;
         case Block.MISTERY:
             dropPickUp();
@@ -45,9 +69,21 @@ public class BlockInteractable extends Block {
             GameRunner.instance.endCurrentLevel();
             return;
         }
+        checkForAnimation();
+              
+    }
 
-        animating = true;
-        animationTimer = 0;        
+    private void checkForAnimation(){
+        if(!animating){
+            animating = true;
+            animationCounter = 0;
+        }
+    }
+
+    private void dropCoin(){
+        PickUp coin = new PickUp(PickUp.Type.COIN, getLocation());
+        LevelMap.addObject(coin);
+        coin.spawnPickUp(new Point(x, y - Block.SIZE));
     }
 
     private void dropPickUp(){
@@ -61,6 +97,10 @@ public class BlockInteractable extends Block {
         if (animating) {
             animateBlock();
         }
+
+        if(spawnCoins){
+            tickCoins();
+        }
     }
 
     private void animateBlock() {
@@ -71,32 +111,39 @@ public class BlockInteractable extends Block {
         }
     }
 
+    private void tickCoins(){
+        if(multipleCoinCounter > MAX_COINS_TICKS){
+            multipleCoin = false;            
+        }
+        multipleCoinCounter++;
+    }
+
     private void breakBlock() {
-        if (animationTimer < 10) {
+        if (animationCounter < 10) {
             setLocation(x, y - UP_SPEED);
             currentSprite = Animator.getBlockSprite(Block.BREAKABLE_ANIM1);
-        } else if (animationTimer < 20) {
+        } else if (animationCounter < 20) {
             setLocation(x, y - UP_SPEED);
             currentSprite = Animator.getBlockSprite(Block.BREAKABLE_ANIM2);
-        } else if (animationTimer < 30) {
+        } else if (animationCounter < 30) {
             setLocation(x, y + UP_SPEED * 2);
             currentSprite = Animator.getBlockSprite(Block.BREAKABLE_ANIM3);
         } else {
             deactivateBlock();
             broken = false;
         }
-        animationTimer++;
+        animationCounter++;
     }
 
     private void upAnimation(){
-        if (animationTimer < 8) {
+        if (animationCounter < 8) {
             setLocation(x, y - UP_SPEED);
-        } else if (animationTimer < 16) {
+        } else if (animationCounter < 16) {
             setLocation(x, y + UP_SPEED);
         } else{
             animating = false;
         }
-        animationTimer++;
+        animationCounter++;
     }
 
     public boolean shouldCollide() {

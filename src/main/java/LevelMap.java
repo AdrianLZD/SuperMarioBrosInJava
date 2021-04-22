@@ -42,7 +42,7 @@ public class LevelMap {
     }
 
     private BufferedReader openLevelLayoutFile() throws FileNotFoundException {
-        String mapFilePath = "res/levels/lvl" + mapId + ".map";
+        String mapFilePath = "res/levels/lvl" + mapId + ".ly";
         File mapFile = new File(mapFilePath);
         FileReader mapFileReader = new FileReader(mapFile);
         BufferedReader br = new BufferedReader(mapFileReader);
@@ -118,33 +118,36 @@ public class LevelMap {
     }
 
     public void paintPickUps(Graphics g){
-        for (PickUp p : pickUps) {
-            try {
+        try {
+            for (PickUp p : pickUps) {
                 p.paintPickUp(g);
-            } catch (ConcurrentModificationException ex) {
-                // The enemy is already deleted, but swing thread is behind.
             }
+        } catch (ConcurrentModificationException ex) {
+            // The pickUp list was modified, but swing thread is behind.
         }
+        
     }
 
     public void paintEnemies(Graphics g){
-        for(Enemy e : enemies){
-            try {
+        try {
+            for (Enemy e : enemies) {
                 e.paintEnemy(g);
-            } catch (ConcurrentModificationException ex) {
-                // The enemy is already deleted, but swing thread is behind.
             }
+        } catch (ConcurrentModificationException ex) {
+            // The enemy list was modified, but swing thread is behind.
         }
+        
     }
 
     public void paintFireballs(Graphics g){
-        for(Fireball f : fireballs){
-            try{
+        try {
+            for (Fireball f : fireballs) {
                 f.paintFireball(g);
-            }catch(ConcurrentModificationException ex){
-                //The ball is already deleted, but swing thread is behind.
             }
+        } catch (ConcurrentModificationException ex) {
+            // The fireball list was modified, but swing thread is behind.
         }
+        
     }
 
     public void tickInteractableBlocks(){
@@ -191,6 +194,8 @@ public class LevelMap {
                 enemies.add((Enemy)auxObject);
             } else if (auxObject instanceof Fireball) {
                 fireballs.add((Fireball)auxObject);
+            } else if(auxObject instanceof PickUp){
+                pickUps.add((PickUp) auxObject);
             }
         }
     }

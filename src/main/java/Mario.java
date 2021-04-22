@@ -46,9 +46,7 @@ public class Mario extends PhysicObject {
         convertSmall();
         updateSize();
         setLocation(position);
-    }
-
-    
+    }    
 
     private void convertSmall(){
         state = MarioState.SMALL;
@@ -290,16 +288,20 @@ public class Mario extends PhysicObject {
     }
 
     private void checkFinishState(){
+        int offset = (state.getSize() == MarioState.BIG.getSize()) ? Block.SIZE : 0;
+
         //Wait until flag and mario reach the ground
         if (finishFlag.y < 10 * Block.SIZE) {
             finishFlag.setLocation(finishFlag.x, finishFlag.y + 3);
-            if (y < 10 * Block.SIZE) {
+            if (y  + offset < 10 * Block.SIZE) {
                 setLocation(x, y + 3);
             }
-            if (state.getSize() == MarioState.BIG.getSize()) {
+            if (state == MarioState.BIG) {
                 currentSprite = Animator.M_BIG_RIGHT_FLAG;
-            } else {
+            } else if (state == MarioState.SMALL){
                 currentSprite = Animator.M_SMALL_RIGHT_FLAG;
+            }else{
+                currentSprite = Animator.M_FIRE_RIGHT_FLAG;
             }
             currentAnimSpeed = 8;
             animationCounter = 0;
@@ -307,20 +309,31 @@ public class Mario extends PhysicObject {
         }
 
         //Jump from the pole
-
-        
         if(x < finishFlag.x + 1.5 * Block.SIZE){
             setLocation(x + Math.abs(controller.walkSpeed), y);
-            if (y + Block.SIZE > finishFlag.y) {
+            if (y + Block.SIZE > finishFlag.y - offset) {
                 setLocation(x, y - controller.jumpSpeed);
             }
-            currentSprite = M_SMALL_RIGHT_JUMP;
+            if (state == MarioState.BIG) {
+                currentSprite = Animator.M_BIG_RIGHT_JUMP;
+            } else if (state == MarioState.SMALL) {
+                currentSprite = Animator.M_SMALL_RIGHT_JUMP;
+            } else {
+                currentSprite = Animator.M_FIRE_RIGHT_JUMP;
+            }
+            return;
         }else if(x < finishFlag.x + 3 * Block.SIZE){
             setLocation(x + Math.abs(controller.walkSpeed), y);
-            if (y < finishFlag.y +Block.SIZE) {
+            if (y < finishFlag.y +Block.SIZE - offset) {
                 setLocation(x, y + controller.jumpSpeed);
             }
-            currentSprite = M_SMALL_RIGHT_JUMP;
+            if (state == MarioState.BIG) {
+                currentSprite = Animator.M_BIG_RIGHT_JUMP;
+            } else if (state == MarioState.SMALL) {
+                currentSprite = Animator.M_SMALL_RIGHT_JUMP;
+            } else {
+                currentSprite = Animator.M_FIRE_RIGHT_JUMP;
+            }
             return;
         }
 

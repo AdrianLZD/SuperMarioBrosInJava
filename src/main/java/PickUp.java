@@ -142,6 +142,7 @@ public class PickUp extends PhysicObject {
             scoreManager.addToCoins(1);
             scoreManager.addToPoints(100);
             active = false;
+            LevelMap.deleteObject(this);
         }
         
         return true;
@@ -188,6 +189,7 @@ public class PickUp extends PhysicObject {
             }
            
             active = false;
+            LevelMap.deleteObject(this);
         }
     }
 

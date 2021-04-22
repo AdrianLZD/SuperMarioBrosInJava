@@ -28,6 +28,16 @@ public abstract class GameState {
         loadImages();
         scoreManager = Score.getInstance();
         gameRunner = GameRunner.instance;
+    }
+
+    public void initDefaultBehavior(boolean checkpointReached){
+        infoScreen = true;
+        nextLevelRequest = 0;
+        scoreManager.setTimer(360);
+        setCameraPosition(checkpointReached);
+        spawnMario();
+        createLevelMap(lvlId);
+        definePanelSize(SpriteAssets.getBackground("lvl" + lvlId).getWidth(), WindowManager.WINDOW_HEIGHT);
 
     }
 
@@ -39,7 +49,29 @@ public abstract class GameState {
 
     protected abstract void keyReleased(int k);
 
-    protected abstract void tick();
+    protected void tick(){
+        mario.tick();
+
+        if (levelFinished) {
+            return;
+        }
+
+        lvlMap.tickInteractableBlocks();
+        lvlMap.tickPickUps();
+        lvlMap.tickEnemies();
+        lvlMap.tickFireballs();
+        lvlMap.removeUsedObjects();
+        lvlMap.addNewObjects();
+
+        if (mario.y >= YPOSITION_KILL_LIMIT) {
+            mario.killMario();
+        }
+
+        scoreManager.tick();
+        if (scoreManager.getTimer() <= 0) {
+            mario.killMario();
+        }
+    }
 
     public abstract void requestNextLevel();
 
@@ -57,6 +89,11 @@ public abstract class GameState {
 
     protected void paintElements(Graphics g){
         paintBackground(g);
+        lvlMap.paintPickUps(g);
+        lvlMap.paintEnemies(g);
+        lvlMap.paintBlocks(g, mario.x);
+        mario.paintMario(g);
+        lvlMap.paintFireballs(g);
     }
 
     protected void paintBackground(Graphics g){

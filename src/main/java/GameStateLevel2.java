@@ -5,39 +5,42 @@ import java.awt.Point;
 
 import main.java.Mario.MarioState;
 
-public class GameStateLevel1 extends GameState {
+public class GameStateLevel2 extends GameState{
 
-    private static boolean checkpointReached = true;
+    private static boolean checkpointReached;
 
-    public GameStateLevel1(){
+    public GameStateLevel2(){
         super();
         lvlId = 1;
-        checkpointPosition = 195 * Block.SIZE; // 84
+        checkpointPosition = 10 * Block.SIZE;
         initDefaultBehavior(checkpointReached);
     }
 
-    public GameStateLevel1(MarioState marioState){
+    public GameStateLevel2(MarioState marioState){
         this();
         mario.returnToState(marioState);
     }
 
+
     @Override
     protected void spawnMario() {
-        if(checkpointReached){
+        if (checkpointReached) {
             mario = new Mario(new Point(checkpointPosition, 600));
-        }else{
-            mario = new Mario(new Point(150,600));
+        } else {
+            mario = new Mario(new Point(150, 600));
         }
+        
     }
 
     @Override
     protected void loadImages() {
-        getBackground("lvl1");
+        getBackground("lvl2");
+        
     }
 
     @Override
     protected void paintElements(Graphics g) {
-        if(infoScreen){
+        if (infoScreen) {
             paintInfoScreen(g);
             return;
         }
@@ -56,26 +59,28 @@ public class GameStateLevel1 extends GameState {
 
     @Override
     protected void tick() {
-        if(infoScreen){
+        if (infoScreen) {
             tickScoreScreen();
             return;
         }
-        
+
         super.tick();
 
         if (mario.x >= checkpointPosition) {
             checkpointReached = true;
         }
+        
     }
 
     @Override
     public void requestNextLevel() {
         nextLevelRequest++;
-        if(nextLevelRequest == 1){
+        if (nextLevelRequest == 1) {
             checkpointReached = false;
-            GameState newGameState = new GameStateLevel2(mario.state);
+            GameState newGameState = new GameStateLevel2();
             gameRunner.setCurrentGameState(newGameState);
         }
+        
     }
     
 }

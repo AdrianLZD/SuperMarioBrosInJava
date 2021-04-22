@@ -27,7 +27,7 @@ public class GameStateMenu extends GameState {
 
     @Override
     protected void paintElements(Graphics g) {
-        super.paintElements(g);
+        paintBackground(g);
         paintLogo(g);
         paintMenuOptions(g);
 

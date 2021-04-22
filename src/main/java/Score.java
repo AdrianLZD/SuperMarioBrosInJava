@@ -12,7 +12,6 @@ public class Score {
     private Font textFont;
 
     private long prevSecond;
-    private long currentSecond;
     private int points;
     private int coins;
     private int time;
@@ -79,10 +78,9 @@ public class Score {
     }
 
     public void tick(){
-        currentSecond = System.currentTimeMillis();
-        if(currentSecond >= prevSecond + 1000){
+        if(System.currentTimeMillis() >= prevSecond + 1000){
             time--;
-            prevSecond = currentSecond;
+            prevSecond = System.currentTimeMillis();
         }
     }
 
