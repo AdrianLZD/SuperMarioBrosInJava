@@ -17,10 +17,12 @@ public class Mario extends PhysicObject {
 
     private Hashtable<String, Integer> movingSprites;
     private Hashtable<String, Integer> transitionSprites;
+    private PickUp finishFlag;
+
     private int currentSprite;
     private int previousSprite;
     private int currentAnimSpeed;
-    private int animationTimer;
+    private int animationCounter;
     private int transitionCounter;
     private int invincibleCounter;
     private int deadCounter;
@@ -29,6 +31,8 @@ public class Mario extends PhysicObject {
     private boolean transitioning;
     private boolean invincible;
     private boolean alive;
+    private boolean levelFinished;
+    private boolean freezed;
 
     public Mario(Point position) {
         movingSprites = new Hashtable<>(16);
@@ -43,6 +47,8 @@ public class Mario extends PhysicObject {
         updateSize();
         setLocation(position);
     }
+
+    
 
     private void convertSmall(){
         state = MarioState.SMALL;
@@ -124,7 +130,38 @@ public class Mario extends PhysicObject {
         setColliderSize(Animator.getMarioSprite(marioSpriteId));
     }
 
+    public void returnToState(MarioState state) {
+        switch (state) {
+        case SMALL:
+            convertSmall();
+            updateSize();
+            break;
+        case BIG:
+            y -= Block.SIZE;
+            convertBig();
+            updateSize();
+            break;
+        case FIRE:
+            y -= Block.SIZE;
+            convertFire();
+            updateSize();
+            break;
+        default:
+            convertSmall();
+            updateSize();
+        }
+    }
+    
     public void tick() { 
+        if(freezed){
+            return;
+        }
+
+        if(levelFinished){
+            checkFinishState();
+            return;
+        }
+        
         if(alive){
             if (canMove) {
                 controller.tick();
@@ -175,7 +212,7 @@ public class Mario extends PhysicObject {
     }
 
     private void animSprite() {
-        if (animationTimer > currentAnimSpeed) {
+        if (animationCounter > currentAnimSpeed) {
             if(!alive){
                 currentSprite = M_DEAD;
             }else if(transitioning){
@@ -183,9 +220,9 @@ public class Mario extends PhysicObject {
             }else{
                 updateAnimSprite();
             }
-            animationTimer = 0;
+            animationCounter = 0;
         }
-        animationTimer++;
+        animationCounter++;
     }
 
     private void updateAnimSprite(){
@@ -252,6 +289,54 @@ public class Mario extends PhysicObject {
         }
     }
 
+    private void checkFinishState(){
+        //Wait until flag and mario reach the ground
+        if (finishFlag.y < 10 * Block.SIZE) {
+            finishFlag.setLocation(finishFlag.x, finishFlag.y + 3);
+            if (y < 10 * Block.SIZE) {
+                setLocation(x, y + 3);
+            }
+            if (state.getSize() == MarioState.BIG.getSize()) {
+                currentSprite = Animator.M_BIG_RIGHT_FLAG;
+            } else {
+                currentSprite = Animator.M_SMALL_RIGHT_FLAG;
+            }
+            currentAnimSpeed = 8;
+            animationCounter = 0;
+            return;
+        }
+
+        //Jump from the pole
+
+        
+        if(x < finishFlag.x + 1.5 * Block.SIZE){
+            setLocation(x + Math.abs(controller.walkSpeed), y);
+            if (y + Block.SIZE > finishFlag.y) {
+                setLocation(x, y - controller.jumpSpeed);
+            }
+            currentSprite = M_SMALL_RIGHT_JUMP;
+        }else if(x < finishFlag.x + 3 * Block.SIZE){
+            setLocation(x + Math.abs(controller.walkSpeed), y);
+            if (y < finishFlag.y +Block.SIZE) {
+                setLocation(x, y + controller.jumpSpeed);
+            }
+            currentSprite = M_SMALL_RIGHT_JUMP;
+            return;
+        }
+
+        //Walk towards end. It will reach a finish block        
+        setLocation(x + controller.walkSpeed/2, y);
+        if (animationCounter > currentAnimSpeed){
+            if (currentSprite == movingSprites.get("walk1_r")) {
+                currentSprite = movingSprites.get("walk2_r");
+            } else {
+                currentSprite = movingSprites.get("walk1_r");
+            }
+            animationCounter = 0;
+        }     
+        animationCounter++;   
+    }
+
     private void startInvincibility(){
         invincibleCounter = 0;
         invincible = true;
@@ -264,6 +349,9 @@ public class Mario extends PhysicObject {
     }
     
     public void paintMario(Graphics g) {
+        if(freezed){
+            return;
+        }
         super.paint(g);
         // g.setColor(Color.GREEN);
         // g.drawRect(x, y, width, height);
@@ -318,12 +406,23 @@ public class Mario extends PhysicObject {
         canMove = false;
         transitioning = true;
         transitionCounter = 0;
-        animationTimer = 0;
+        animationCounter = 0;
         currentAnimSpeed = (int) (ANIMATION_SPEED * 1.75);
+    }
+
+    public void startEndAnimation(PickUp flag){
+        levelFinished = true;
+        finishFlag = flag;
+        animationCounter = -1;
+        setLocation(x + Block.SIZE / 2, y);
     }
 
     public void activateMiniJump(){
         controller.activateMiniJump();
+    }
+
+    public void freeze(){
+        freezed = true;
     }
 
     public void keyPressed(int k) {
@@ -343,6 +442,7 @@ public class Mario extends PhysicObject {
     public static MarioState getCurrentState(){
         return instance.state;
     }
+
 
     public boolean isTransitioning(){
         return transitioning;

@@ -24,7 +24,9 @@ public class Block extends Rectangle {
     public static final int BREAKABLE_ANIM2 = 14;
     public static final int BREAKABLE_ANIM3 = 15;
 
-    public static final int BLOCK_COUNT = 16;
+    public static final int GOAL = 16;
+
+    public static final int BLOCK_COUNT = 17;
 
     public static final int SIZE = WindowManager.WINDOW_HEIGHT / 14;
 

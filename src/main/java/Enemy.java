@@ -22,7 +22,7 @@ public class Enemy extends PhysicObject {
     private static final int SHELL_VEL = 6;
 
     private static Score scoreManager;
-    private static Mario mario;
+    private Mario mario;
     private static int cameraOffset = GameRunner.instance.cameraOffset * 2;
 
     private Hashtable<String, Integer> tableSprites;
@@ -285,6 +285,7 @@ public class Enemy extends PhysicObject {
                     mario.activateMiniJump();
                     horizontalVelocity = 0;
                 } else {
+                    mario.activateMiniJump();
                     kill();
                 }
             } else {
@@ -297,6 +298,7 @@ public class Enemy extends PhysicObject {
                     horizontalVelocity = SHELL_VEL * direction;
                     x+=horizontalVelocity*2;
                 } else {
+                    System.out.println("hola");
                     mario.applyDamage();
                 }
             }

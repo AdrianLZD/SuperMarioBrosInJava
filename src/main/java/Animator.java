@@ -45,13 +45,14 @@ public class Animator {
 
     public static final int MARIO_SPRITE_COUNT = 34;
 
-    public static final int P_START = 101;
-    public static final int P_COIN = 101;
-    public static final int P_MOOSHROOM = 102;
-    public static final int P_FLOWER = 103;
-    public static final int P_LIFE = 104;
-    public static final int P_STAR = 105;
-    public static final int PICKUP_COUNT = 5;
+    public static final int P_START = 51;
+    public static final int P_COIN = 51;
+    public static final int P_MOOSHROOM = 52;
+    public static final int P_FLOWER = 53;
+    public static final int P_LIFE = 54;
+    public static final int P_STAR = 55;
+    public static final int P_FLAG = 56;
+    public static final int PICKUP_COUNT = 6;
 
     public static final int ENEMY_START = 101;
     public static final int G_RIGHT = 101;

@@ -10,8 +10,8 @@ public class MarioController {
     public static final boolean LEFT = false;
 
     private final int maxJumpTime = 34;
-    private final int walkSpeed = 5;
-    private final int jumpSpeed = 7;
+    public final int walkSpeed = 5;
+    public final int jumpSpeed = 7;
     private final int gravity = PhysicObject.getGravity();
     
 

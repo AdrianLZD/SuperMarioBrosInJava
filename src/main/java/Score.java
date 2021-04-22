@@ -10,6 +10,9 @@ public class Score {
     private static BufferedImage miniCoin;
     private static BufferedImage marioSprite;
     private Font textFont;
+
+    private long prevSecond;
+    private long currentSecond;
     private int points;
     private int coins;
     private int time;
@@ -17,6 +20,7 @@ public class Score {
     private int level;
     private int lives;
     private int middleScreen;
+
     
     public Score(){
         instance = this;
@@ -39,6 +43,11 @@ public class Score {
 
     public void addToCoins(int toAdd) {
         coins += toAdd;
+        if(coins >= 100){
+            increaseLives();
+            coins = 0;
+            //TODO add sound
+        }
     }
 
     public void increaseLives(){
@@ -49,7 +58,15 @@ public class Score {
         lives--;
     }
 
-    public void restartTime() {
+    public void setTimer(int time){
+        this.time = time;
+    }
+
+    public int getTimer(){
+        return time;
+    }
+
+    public void restartTimer() {
         time = 0;
     }
 
@@ -59,6 +76,14 @@ public class Score {
 
     public void setLevel(int l){
         level = l;
+    }
+
+    public void tick(){
+        currentSecond = System.currentTimeMillis();
+        if(currentSecond >= prevSecond + 1000){
+            time--;
+            prevSecond = currentSecond;
+        }
     }
 
     public void paint(Graphics g, int offset){

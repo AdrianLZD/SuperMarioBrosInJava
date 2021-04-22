@@ -83,6 +83,8 @@ public class SpriteAssets {
         blockSprites[Block.BREAKABLE_ANIM2] = ImageIO.read(new File("res/blocks/bBroken2.png"));
         blockSprites[Block.BREAKABLE_ANIM3] = ImageIO.read(new File("res/blocks/bBroken3.png"));
 
+        blockSprites[Block.GOAL] = ImageIO.read(new File("res/blocks/bBroken1.png"));
+
         rescaleSprites(blockSprites, Block.SIZE, Block.SIZE);
     }
 
@@ -134,6 +136,7 @@ public class SpriteAssets {
         pickUps[P_FLOWER-P_START] = ImageIO.read(new File("res/objects/oFlower.png"));
         pickUps[P_LIFE-P_START] = ImageIO.read(new File("res/objects/oShroomLife.png"));
         pickUps[P_STAR-P_START] = ImageIO.read(new File("res/objects/oStar.png"));
+        pickUps[P_FLAG - P_START] = ImageIO.read(new File("res/objects/oFlag.png"));
 
         rescaleSprites(pickUps);
     }

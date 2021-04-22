@@ -21,26 +21,33 @@ public class BlockInteractable extends Block {
 
     public BlockInteractable(Point position, int id, PickUp.Type pType){
         this(position, id);
-        this.pickUp = new PickUp(pType);
+        this.pickUp = new PickUp(pType, position);
     }
 
     @Override
     public void activateBlock() {
         if(used)
             return;
-        
-        if (getId() == Block.BREAKABLE){
+
+        switch(getId()){
+        case Block.BREAKABLE:
             if(Mario.getCurrentState().getSize() == MarioState.BIG.getSize()){
                 collision = false;
                 broken = true;
             }
-        }else{
+            break;
+        case Block.MISTERY:
             dropPickUp();
             deactivateBlock();
             used = true;
+            break;
+        case Block.FLAG_POST:
+            GameRunner.instance.endCurrentLevel();
+            return;
         }
+
         animating = true;
-        animationTimer = 0;
+        animationTimer = 0;        
     }
 
     private void dropPickUp(){
@@ -101,7 +108,7 @@ public class BlockInteractable extends Block {
     }
 
     public static boolean mustBeInteractable(int id) {
-        return id == Block.BREAKABLE || id == Block.MISTERY;
+        return id == Block.BREAKABLE || id == Block.MISTERY || id == Block.FLAG_POST;
     }
 
     public static PickUp getPickUp(BlockInteractable block){

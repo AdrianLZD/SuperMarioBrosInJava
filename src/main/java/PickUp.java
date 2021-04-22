@@ -14,7 +14,8 @@ public class PickUp extends PhysicObject {
     public static final int FLOWER = 2;
     public static final int LIFE = 3;
     public static final int STAR = 4;
-    public static final int PICKUP_COUNT = 5;
+    public static final int FLAG = 5;
+    public static final int GOAL = 6;
 
     private static Score scoreManager;
     private static Mario mario;
@@ -27,10 +28,10 @@ public class PickUp extends PhysicObject {
     
     private boolean active;
 
-    public PickUp(Type type){
+    public PickUp(Type type, Point position){
         this.type = type;
         isBlockActivator = false;
-        defineTypeProperties();
+        defineTypeProperties(position);
         setScoreManager();
         mario = Mario.getCurrentInstance();
     }
@@ -41,7 +42,7 @@ public class PickUp extends PhysicObject {
         }
     }
 
-    private void defineTypeProperties(){
+    private void defineTypeProperties(Point position){
         switch (type.id) {
             case 1:
                 tickMethod = () -> coinTick();
@@ -69,6 +70,23 @@ public class PickUp extends PhysicObject {
                 hCollisionOffset = horizontalVelocity;
                 vCollisionOffset = verticalVelocity * 2;
                 setColliderSize(SpriteAssets.getPickUpSprite(LIFE));
+                break;
+            case 5:
+                tickMethod = () -> flagTick();
+                id = FLAG;
+                sprite = Animator.P_FLAG;
+                x = position.x - Block.SIZE/2;
+                y = position.y;
+                active = true;
+                break;
+            case 6:
+                tickMethod = () -> goalTick();
+                id = GOAL;
+                x = position.x;
+                y = position.y;
+                sprite = Animator.P_FLOWER;
+                active = true;
+                setColliderSize(SpriteAssets.getPickUpSprite(FLOWER));
                 break;
             default:
                 break;
@@ -144,11 +162,23 @@ public class PickUp extends PhysicObject {
         return true;
     }
 
+    private boolean flagTick(){
+        return true;
+    }
+
+    private boolean goalTick(){
+        if(mario.x > x + width/2){
+            mario.freeze();
+            GameRunner.instance.requestNextLevel();
+        }
+        return true;
+    }
+
     private void checkMarioCollision(){
         if(!mario.isAlive()){
             return;
         }
-        if(intersects(mario.getBounds())){
+        if(intersects(mario)){
             if(id == MOOSHROOM){
                 mario.applyMooshroom();
                 scoreManager.addToPoints(1000);
@@ -161,8 +191,12 @@ public class PickUp extends PhysicObject {
         }
     }
 
+    public int getId(){
+        return id;
+    }
+
     public enum Type {
-        COIN(1), COIN_MULTIPLE(2), POWER(3), LIFE(4);
+        COIN(1), COIN_MULTIPLE(2), POWER(3), LIFE(4), FLAG(5), GOAL(6);
 
         private int id;
 

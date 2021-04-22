@@ -56,11 +56,13 @@ public class PhysicObject extends Rectangle {
                 if (rCollider.intersects(block)) {
                     setLocation(block.x - (int) getWidth() - collisionOffset, y);
                     rCollision = true;
+                    if (isBlockActivator && block.getId() == Block.FLAG_POST) {
+                        block.activateBlock();
+                    }
                 }
 
                 if (bCollider.intersects(block)) {
                     setLocation(x, block.y - (int) getHeight() - collisionOffset);
-
                     bCollision = true;
                 }
 

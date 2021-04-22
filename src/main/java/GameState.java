@@ -9,25 +9,26 @@ public abstract class GameState {
     private static final int BACKGROUND_OFFSET = -31;
     private static final int INFO_SCREEN_TICKS = 100;
     protected static final int YPOSITION_KILL_LIMIT = WindowManager.WINDOW_HEIGHT + Block.SIZE;
-    private static Score scoreInstance;
+    protected static Score scoreManager;
 
     protected BufferedImage background;
     protected GameRunner gameRunner;
     protected LevelMap lvlMap;
     protected Mario mario;
+    protected int nextLevelRequest;
     protected int lvlId;
     protected int checkpointPosition;
     protected boolean imagesLoaded;
     protected boolean infoScreen;
+    protected boolean levelFinished;
 
     private int infoScreenCounter;
     
-
-
     public GameState() {
         loadImages();
-        scoreInstance = Score.getInstance();
+        scoreManager = Score.getInstance();
         gameRunner = GameRunner.instance;
+
     }
 
     protected abstract void spawnMario();
@@ -39,6 +40,8 @@ public abstract class GameState {
     protected abstract void keyReleased(int k);
 
     protected abstract void tick();
+
+    public abstract void requestNextLevel();
 
     protected void setCameraPosition(boolean checkpointReached){
         if (checkpointReached) {
@@ -61,7 +64,7 @@ public abstract class GameState {
     }
 
     protected void paintInfoScreen(Graphics g){
-        scoreInstance.paintFullDetails(g, lvlId);
+        scoreManager.paintFullDetails(g, lvlId);
     }
 
     protected void definePanelSize(int width, int height){
@@ -88,4 +91,18 @@ public abstract class GameState {
         }
         infoScreenCounter++;
     }
+
+    protected void endLevel(){
+        if(levelFinished){
+            return;
+        }
+
+        if (this instanceof GameStateMenu) {
+            MyLogger.logInfoMessage("Ending the menu is not allowed. Aborting task.");
+            return;
+        }
+        mario.startEndAnimation(lvlMap.getFlag());
+    }
+
+    
 }

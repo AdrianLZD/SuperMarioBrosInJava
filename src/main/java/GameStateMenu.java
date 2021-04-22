@@ -81,8 +81,7 @@ public class GameStateMenu extends GameState {
     private void applySelectedOption() {
         switch (currentOption) {
             case 0:
-                GameState newGameState = new GameStateLevel1();
-                gameRunner.setCurrentGameState(newGameState);
+                requestNextLevel();
                 break;
             case 1:
                 break;
@@ -106,4 +105,10 @@ public class GameStateMenu extends GameState {
     protected void spawnMario() {
         // No need to spawn mario
     }
+
+    @Override
+    public void requestNextLevel() {
+        GameState newGameState = new GameStateLevel1();
+        gameRunner.setCurrentGameState(newGameState);
+     }
 }

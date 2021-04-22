@@ -76,8 +76,14 @@ public class LevelMap {
                 if(BlockInteractable.mustBeInteractable(newBlockId)){
                     if(currentToken.length > 1){
                         pickUpType = Integer.parseInt(currentToken[1]);
-                        blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId, PickUp.Type.typeById(pickUpType));
-                        pickUps.add(BlockInteractable.getPickUp((BlockInteractable)blocks[i][j]));
+                        if(pickUpType == PickUp.GOAL){
+                            pickUps.add(new PickUp(PickUp.Type.typeById(pickUpType), newBlockPosition));
+                            blocks[i][j] = new Block(newBlockPosition, 0);
+                            continue;
+                        }else{
+                            blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId,PickUp.Type.typeById(pickUpType));
+                            pickUps.add(BlockInteractable.getPickUp((BlockInteractable) blocks[i][j]));
+                        }
                     }else{
                         blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId);
                     }
@@ -100,11 +106,11 @@ public class LevelMap {
         }
     }
 
-    public void paintBlocks(Graphics g, int xPos){
+    public void paintBlocks(Graphics g, int marioXPos){
         for(Block[] arrayB: blocks){
             for(Block b : arrayB){
-                if(b.x > xPos-Block.SIZE - WindowManager.windowWidth/3 &&
-                   b.x < xPos+Block.SIZE + WindowManager.windowWidth){
+                if(b.x > marioXPos-Block.SIZE - WindowManager.windowWidth &&
+                   b.x < marioXPos+Block.SIZE + WindowManager.windowWidth){
                     b.paintBlock(g);
                 }
             }
@@ -113,19 +119,31 @@ public class LevelMap {
 
     public void paintPickUps(Graphics g){
         for (PickUp p : pickUps) {
-            p.paintPickUp(g);
+            try {
+                p.paintPickUp(g);
+            } catch (ConcurrentModificationException ex) {
+                // The enemy is already deleted, but swing thread is behind.
+            }
         }
     }
 
     public void paintEnemies(Graphics g){
         for(Enemy e : enemies){
-            e.paintEnemy(g);
+            try {
+                e.paintEnemy(g);
+            } catch (ConcurrentModificationException ex) {
+                // The enemy is already deleted, but swing thread is behind.
+            }
         }
     }
 
     public void paintFireballs(Graphics g){
         for(Fireball f : fireballs){
-            f.paintFireball(g);
+            try{
+                f.paintFireball(g);
+            }catch(ConcurrentModificationException ex){
+                //The ball is already deleted, but swing thread is behind.
+            }
         }
     }
 
@@ -175,6 +193,15 @@ public class LevelMap {
                 fireballs.add((Fireball)auxObject);
             }
         }
+    }
+
+    public PickUp getFlag() throws NoSuchElementException{
+        for(PickUp p : pickUps){
+            if(p.getId() == PickUp.FLAG){
+                return p;
+            }
+        }
+        throw new NoSuchElementException();
     }
 
     public Block[][] getBlocks(){
