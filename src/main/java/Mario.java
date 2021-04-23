@@ -19,6 +19,7 @@ public class Mario extends PhysicObject {
     private Hashtable<String, Integer> transitionSprites;
     private PickUp finishFlag;
 
+    private int lastPipeYPosition;
     private int currentSprite;
     private int previousSprite;
     private int currentAnimSpeed;
@@ -28,11 +29,13 @@ public class Mario extends PhysicObject {
     private int deadCounter;
     
     private boolean canMove;
+    private boolean walking;
     private boolean transitioning;
     private boolean invincible;
     private boolean alive;
     private boolean levelFinished;
     private boolean freezed;
+    private boolean leavingPipe;
 
     public Mario(Point position) {
         movingSprites = new Hashtable<>(16);
@@ -170,6 +173,16 @@ public class Mario extends PhysicObject {
             if (invincible && !transitioning) {
                 checkIfStillInvincible();
             }
+
+            if(walking){
+                walkEndlessly();
+                return;
+            }
+
+            if(leavingPipe){
+                moveUntilPipe();
+            }
+
             controller.moveCamera();
         }else{
             killProcess();
@@ -207,6 +220,31 @@ public class Mario extends PhysicObject {
         }
 
         setLocation(x, y + verticalVelocity);
+    }
+
+    private void walkEndlessly(){
+        if (animationCounter > currentAnimSpeed){
+            if (currentSprite == movingSprites.get("walk1_r")) {
+                currentSprite = movingSprites.get("walk2_r");
+            } else {
+                currentSprite = movingSprites.get("walk1_r");
+            }
+            animationCounter = 0;
+        }
+        animationCounter++;
+        
+        setLocation(x + controller.walkSpeed/2, y);
+    }
+
+    private void moveUntilPipe(){
+        if(y + height > lastPipeYPosition){
+            int speed = (state.getSize() == MarioState.BIG.getSize()) ? 2 : 1;
+            setLocation(x, y - speed);
+            return;
+        }
+
+        leavingPipe = false;
+        resetControls();
     }
 
     private void animSprite() {
@@ -355,7 +393,9 @@ public class Mario extends PhysicObject {
         invincible = true;
     }
 
-    private void resetControls(){
+    public void resetControls(){
+        freezed = false;
+        walking = false;
         transitioning = false;
         canMove = true;
         currentAnimSpeed = ANIMATION_SPEED;
@@ -430,6 +470,18 @@ public class Mario extends PhysicObject {
         setLocation(x + Block.SIZE / 2, y);
     }
 
+    public void startWalkAnimation(){
+        canMove = false;
+        walking = true;
+        animationCounter = 0;
+    }
+
+    public void exitPipe(int pipeYPosition){
+        walking = false;
+        leavingPipe = true;
+        lastPipeYPosition = pipeYPosition;
+    }
+
     public void activateMiniJump(){
         controller.activateMiniJump();
     }
@@ -463,6 +515,10 @@ public class Mario extends PhysicObject {
     
     public boolean isAlive(){
         return alive;
+    }
+
+    public boolean hasFinishLevel(){
+        return levelFinished;
     }
 
     public enum MarioState {

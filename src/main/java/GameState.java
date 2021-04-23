@@ -21,6 +21,7 @@ public abstract class GameState {
     protected boolean imagesLoaded;
     protected boolean infoScreen;
     protected boolean levelFinished;
+    protected boolean timerEnabled;
 
     private int infoScreenCounter;
     
@@ -31,9 +32,12 @@ public abstract class GameState {
     }
 
     public void initDefaultBehavior(boolean checkpointReached){
+        timerEnabled = true;
         infoScreen = true;
         nextLevelRequest = 0;
+        scoreManager.stopAddingTimeToPoints();
         scoreManager.setTimer(360);
+        scoreManager.setLevel(lvlId);
         setCameraPosition(checkpointReached);
         spawnMario();
         createLevelMap(lvlId);
@@ -48,6 +52,8 @@ public abstract class GameState {
     protected abstract void keyPressed(int k);
 
     protected abstract void keyReleased(int k);
+
+    public abstract void requestNextLevel();
 
     protected void tick(){
         mario.tick();
@@ -66,14 +72,16 @@ public abstract class GameState {
         if (mario.y >= YPOSITION_KILL_LIMIT) {
             mario.killMario();
         }
-
-        scoreManager.tick();
+        if(timerEnabled){
+            scoreManager.tick();
+        }
+        
         if (scoreManager.getTimer() <= 0) {
             mario.killMario();
         }
     }
 
-    public abstract void requestNextLevel();
+    
 
     protected void setCameraPosition(boolean checkpointReached){
         if (checkpointReached) {
@@ -91,8 +99,8 @@ public abstract class GameState {
         paintBackground(g);
         lvlMap.paintPickUps(g);
         lvlMap.paintEnemies(g);
-        lvlMap.paintBlocks(g, mario.x);
         mario.paintMario(g);
+        lvlMap.paintBlocks(g, mario.x);
         lvlMap.paintFireballs(g);
     }
 
@@ -139,6 +147,7 @@ public abstract class GameState {
             return;
         }
         mario.startEndAnimation(lvlMap.getFlag());
+        scoreManager.addTimeToPoints();
     }
 
     

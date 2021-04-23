@@ -80,6 +80,10 @@ public class LevelMap {
                             pickUps.add(new PickUp(PickUp.Type.typeById(pickUpType), newBlockPosition));
                             blocks[i][j] = new Block(newBlockPosition, 0);
                             continue;
+                        }else if(pickUpType == PickUp.COIN_STATIC){
+                            pickUps.add(new PickUp(PickUp.Type.typeById(pickUpType), newBlockPosition));
+                            blocks[i][j] = new Block(newBlockPosition, 0);
+                            continue;
                         }else{
                             blocks[i][j] = new BlockInteractable(newBlockPosition, newBlockId,PickUp.Type.typeById(pickUpType));
                             pickUps.add(BlockInteractable.getPickUp((BlockInteractable) blocks[i][j]));
@@ -96,7 +100,24 @@ public class LevelMap {
         }
     }
 
+    public void turnOnDarkMode(){
+        for(Block[] array : blocks){
+            for(Block b : array){
+                b.darkMode();
+            }
+        }
+    }
+
+    public void turnOffDarkMode(){
+        for (Block[] array : blocks) {
+            for (Block b : array) {
+                b.lightMode();
+            }
+        }
+    }
+
     private void setPhysicsBlocks(){
+        PhysicObject.cleanMapBlocks();
         for(Block[] blockArray : blocks){
             for(Block block : blockArray){
                 if(block.getId()!=0){

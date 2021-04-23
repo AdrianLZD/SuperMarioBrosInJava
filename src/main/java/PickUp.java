@@ -16,12 +16,13 @@ public class PickUp extends PhysicObject {
     public static final int STAR = 4;
     public static final int FLAG = 5;
     public static final int GOAL = 6;
+    public static final int COIN_STATIC = 7;
 
     private static Score scoreManager;
     private static Mario mario;
 
-    private Type type;
     private Supplier<Boolean> tickMethod;
+    private Type type;
     private int stateCounter;
     private int id;
     private int sprite;
@@ -43,51 +44,60 @@ public class PickUp extends PhysicObject {
     }
 
     private void defineTypeProperties(Point position){
-        switch (type.id) {
-            case 1:
+        switch (type) {
+            case COIN:
                 tickMethod = () -> coinTick();
                 verticalVelocity = 5;
                 id = COIN;
                 sprite = Animator.P_COIN;
                 break;
-            case 2:
+            case COIN_MULTIPLE:
                 tickMethod = () -> coinTick();
                 id = COIN;
                 verticalVelocity = 5;
                 sprite = Animator.P_COIN;
                 break;
-            case 3:
+            case POWER:
                 //Type of powerup will change depending on Mario state
                 tickMethod = () -> powerTick();
                 id = -1;
                 break;
-            case 4:
-                tickMethod = () -> powerTick();
+            case LIFE:
+                tickMethod = () -> lifeTick();
                 id = LIFE;
                 verticalVelocity = PhysicObject.getGravity();
                 horizontalVelocity = 3;
                 sprite = Animator.P_LIFE;
                 hCollisionOffset = horizontalVelocity;
                 vCollisionOffset = verticalVelocity * 2;
-                setColliderSize(SpriteAssets.getPickUpSprite(LIFE));
+                setColliderSize(Animator.getPickUpSprite(Animator.P_LIFE));
                 break;
-            case 5:
+            case FLAG:
                 tickMethod = () -> flagTick();
                 id = FLAG;
                 sprite = Animator.P_FLAG;
                 x = position.x - Block.SIZE/2;
                 y = position.y;
                 active = true;
+                setColliderSize(Animator.getPickUpSprite(Animator.P_FLAG));
                 break;
-            case 6:
+            case GOAL:
                 tickMethod = () -> goalTick();
                 id = GOAL;
                 x = position.x;
                 y = position.y;
                 sprite = Animator.P_FLOWER;
                 active = true;
-                setColliderSize(SpriteAssets.getPickUpSprite(FLOWER));
+                setColliderSize(Animator.getPickUpSprite(Animator.P_FLOWER));
                 break;
+            case COIN_STATIC:
+                tickMethod = () -> coinStaticTick();
+                x = position.x;
+                y = position.y;
+                id = COIN_STATIC;
+                sprite = Animator.P_COIN;
+                active = true;
+                setColliderSize(Animator.getPickUpSprite(Animator.P_COIN));
             default:
                 break;
         }
@@ -129,6 +139,11 @@ public class PickUp extends PhysicObject {
     }
 
     public void tick(){
+
+        if (mario.isTransitioning() || !mario.isAlive()) {
+            return;
+        }
+
         if(active){
             tickMethod.get();
         }
@@ -163,31 +178,59 @@ public class PickUp extends PhysicObject {
         return true;
     }
 
+    private boolean lifeTick(){
+        powerTick();
+        return true;
+    }
+    
     private boolean flagTick(){
+        if(stateCounter == 0){
+            if(intersects(mario) && !mario.hasFinishLevel()){
+                scoreManager.increaseLives();
+                stateCounter = 1;
+                //TODO add sound
+            }
+        }
         return true;
     }
 
     private boolean goalTick(){
-        if(mario.x > x + width/2){
+        if(stateCounter == 0 && mario.x > x + width/2){
             mario.freeze();
+            stateCounter = 1;
             GameRunner.instance.requestNextLevel();
         }
         return true;
     }
 
+    private boolean coinStaticTick(){
+        checkMarioCollision();
+        return true;
+    }
+    
     private void checkMarioCollision(){
         if(!mario.isAlive()){
             return;
         }
         if(intersects(mario)){
-            if(id == MOOSHROOM){
-                mario.applyMooshroom();
-                scoreManager.addToPoints(1000);
-            }else if(id == FLOWER){
-                mario.applyFire();
-                scoreManager.addToPoints(1000);
+            //TODO add sound
+            switch(id){
+                case MOOSHROOM:
+                    mario.applyMooshroom();
+                    scoreManager.addToPoints(1000);
+                    break;
+                case FLOWER:
+                    mario.applyFire();
+                    scoreManager.addToPoints(1000);
+                    break;
+                case LIFE:
+                    scoreManager.increaseLives();
+                    break;
+                case COIN_STATIC:
+                    scoreManager.addToCoins(1);
+                    scoreManager.addToPoints(100);
+                    break;
             }
-           
             active = false;
             LevelMap.deleteObject(this);
         }
@@ -198,7 +241,7 @@ public class PickUp extends PhysicObject {
     }
 
     public enum Type {
-        COIN(1), COIN_MULTIPLE(2), POWER(3), LIFE(4), FLAG(5), GOAL(6);
+        COIN(1), COIN_MULTIPLE(2), POWER(3), LIFE(4), FLAG(5), GOAL(6), COIN_STATIC(7);
 
         private int id;
 

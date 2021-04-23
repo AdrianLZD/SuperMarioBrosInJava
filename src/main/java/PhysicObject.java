@@ -45,6 +45,10 @@ public class PhysicObject extends Rectangle {
 
         for (Block block : mapBlocks) {
             if (block.isActive()) {
+                if(block.getId() == Block.ENEMY_AI && this instanceof Mario){
+                    continue;
+                }
+
                 if (!isFalling && tCollider.intersects(block)) {
                     setLocation(x, block.y + Block.SIZE + collisionOffset);
                     tCollision = true;
@@ -147,6 +151,10 @@ public class PhysicObject extends Rectangle {
         setLeftCollider();
         g.drawRect(lCollider.x, lCollider.y, lCollider.width, lCollider.height);
 
+    }
+
+    public static void cleanMapBlocks(){
+        mapBlocks = new ArrayList<>();
     }
 
     public static void addMapBlock(Block block) {

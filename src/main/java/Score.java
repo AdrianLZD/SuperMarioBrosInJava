@@ -20,6 +20,7 @@ public class Score {
     private int lives;
     private int middleScreen;
 
+    private boolean addingPoints;
     
     public Score(){
         instance = this;
@@ -36,48 +37,17 @@ public class Score {
         }
     }
 
-    public void addToPoints(int toAdd){
-        points += toAdd;
-    }
-
-    public void addToCoins(int toAdd) {
-        coins += toAdd;
-        if(coins >= 100){
-            increaseLives();
-            coins = 0;
-            //TODO add sound
-        }
-    }
-
-    public void increaseLives(){
-        lives++;
-    }
-
-    public void decreaseLives(){
-        lives--;
-    }
-
-    public void setTimer(int time){
-        this.time = time;
-    }
-
-    public int getTimer(){
-        return time;
-    }
-
-    public void restartTimer() {
-        time = 0;
-    }
-
-    public void setWorld(int w){
-        world = w;
-    }
-
-    public void setLevel(int l){
-        level = l;
-    }
 
     public void tick(){
+        if(addingPoints){
+            if(time > 0){
+                points+=30;
+                time--;
+            }else{
+                GameRunner.instance.requestNextLevel();
+            }
+            return;
+        }
         if(System.currentTimeMillis() >= prevSecond + 1000){
             time--;
             prevSecond = System.currentTimeMillis();
@@ -108,7 +78,56 @@ public class Score {
         g.drawString(String.format("x  %d", lives), middleScreen-10, 405);    
     }
 
+    public void addTimeToPoints(){
+        addingPoints = true;
+    }
+
+    public void stopAddingTimeToPoints(){
+        addingPoints = false;
+    }
+
     public static Score getInstance(){
         return instance;
+    }
+
+    public void addToPoints(int toAdd) {
+        points += toAdd;
+    }
+
+    public void addToCoins(int toAdd) {
+        coins += toAdd;
+        if (coins >= 100) {
+            increaseLives();
+            coins = 0;
+            // TODO add sound
+        }
+    }
+
+    public void increaseLives() {
+        lives++;
+    }
+
+    public void decreaseLives() {
+        lives--;
+    }
+
+    public void setTimer(int time) {
+        this.time = time;
+    }
+
+    public int getTimer() {
+        return time;
+    }
+
+    public void restartTimer() {
+        time = 0;
+    }
+
+    public void setWorld(int w) {
+        world = w;
+    }
+
+    public void setLevel(int l) {
+        level = l;
     }
 }

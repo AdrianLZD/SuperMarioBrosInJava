@@ -7,8 +7,6 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JPanel;
 
-import main.java.Mario.MarioState;
-
 public class GameRunner extends JPanel implements KeyListener {
 
     private static final long serialVersionUID = 001L;
@@ -85,8 +83,18 @@ public class GameRunner extends JPanel implements KeyListener {
 
     public void restartCurrentLevel(){
         scoreManager.restartTimer();
-        if(currentGameState.lvlId == 1){
-            currentGameState = new GameStateLevel1(MarioState.FIRE);
+        switch(currentGameState.lvlId){
+            case 1:
+                currentGameState = new GameStateLevel1();
+                break;
+            case 2:
+                currentGameState = new GameStateLevel2();
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+
         }
         System.gc();
     }

@@ -54,11 +54,19 @@ public class BlockInteractable extends Block {
                 break;
             }
 
+            dropPickUp();
+            
+            if(pickUp != null){
+                currentSprite = SpriteAssets.getBlockSprite(Block.USED);
+                used = true;
+                break;
+            }
+
             if(Mario.getCurrentState().getSize() == MarioState.BIG.getSize()){
                 collision = false;
                 broken = true;
             }
-            dropPickUp();
+            
             break;
         case Block.MISTERY:
             dropPickUp();
@@ -66,6 +74,9 @@ public class BlockInteractable extends Block {
             used = true;
             break;
         case Block.FLAG_POST:
+            if(Mario.getCurrentInstance().y + height > Block.SIZE* 11){
+                return;
+            }
             GameRunner.instance.endCurrentLevel();
             return;
         }

@@ -71,7 +71,7 @@ public class Enemy extends PhysicObject {
             horizontalVelocity = -KOOPA_VEL;
             verticalVelocity = PhysicObject.getGravity();
             hCollisionOffset = -horizontalVelocity;
-            vCollisionOffset = verticalVelocity * 2;
+            vCollisionOffset = verticalVelocity;
             tableSprites.put("right1", Animator.K_NORMAL_RIGHT_WALK1);
             tableSprites.put("right2", Animator.K_NORMAL_RIGHT_WALK2);
             tableSprites.put("left1", Animator.K_NORMAL_LEFT_WALK1);
@@ -156,10 +156,8 @@ public class Enemy extends PhysicObject {
         }
 
         if(alive){
+            checkEnemiesCollisions(enemies);
             tickMethod.get();
-            if(id != SHELL){
-                checkEnemiesCollisions(enemies);
-            }
         }else{
             destroy();
         }
@@ -298,7 +296,6 @@ public class Enemy extends PhysicObject {
                     horizontalVelocity = SHELL_VEL * direction;
                     x+=horizontalVelocity*2;
                 } else {
-                    System.out.println("hola");
                     mario.applyDamage();
                 }
             }
@@ -309,14 +306,25 @@ public class Enemy extends PhysicObject {
         for(Enemy e : enemies){
             if(e.isInteractable() && intersects(e) && e!=this){
                 if(e.id == SHELL && e.horizontalVelocity != 0){
+                    if(id == SHELL && horizontalVelocity != 0){
+                        e.killFlip();
+                    }
                     killFlip();
                 }else{
+                    if(id == SHELL && horizontalVelocity!=0){
+                        return;
+                    }
                     int direction = 1;
+                    int offset = e.width;
                     if (e.x > x + width / 2) {
+                        offset = - width;
                         direction = -1;
                     }
+                    x = e.x + offset;
                     e.horizontalVelocity *= direction;
                     horizontalVelocity *= direction;
+                    changeSpriteDirection();
+                    e.changeSpriteDirection();
                 }
                 
             }

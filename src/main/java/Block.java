@@ -23,8 +23,17 @@ public class Block extends Rectangle {
     public static final int BREAKABLE_ANIM1 = 13;
     public static final int BREAKABLE_ANIM2 = 14;
     public static final int BREAKABLE_ANIM3 = 15;
+    public static final int BREAKABLE_DARK = 16;
+    public static final int GROUND_DARK = 17;
+    public static final int SOLID_DARK = 18;
 
-    public static final int BLOCK_COUNT = 16;
+    public static final int ENEMY_AI = 19;
+    public static final int PIPEH_B_LEFT = 20;
+    public static final int PIPEH_B_RIGHT = 21;
+    public static final int PIPEH_T_LEFT = 22;
+    public static final int PIPEH_T_RIGHT = 23;
+
+    public static final int BLOCK_COUNT = 24;
 
     public static final int SIZE = WindowManager.WINDOW_HEIGHT / 14;
 
@@ -38,6 +47,34 @@ public class Block extends Rectangle {
         collision = true;
         currentSprite = SpriteAssets.getBlockSprite(id);
         setBounds(position.x, position.y, SIZE, SIZE);
+    }
+
+    public void darkMode(){
+        switch(id){
+        case BREAKABLE:
+            currentSprite = SpriteAssets.getBlockSprite(BREAKABLE_DARK);
+            break;
+        case GROUND:
+            currentSprite = SpriteAssets.getBlockSprite(GROUND_DARK);
+            break;
+        case SOLID:
+            currentSprite = SpriteAssets.getBlockSprite(SOLID_DARK);
+            break;
+        }
+    }
+
+    public void lightMode() {
+        switch (id) {
+        case BREAKABLE:
+            currentSprite = SpriteAssets.getBlockSprite(BREAKABLE);
+            break;
+        case GROUND:
+            currentSprite = SpriteAssets.getBlockSprite(GROUND);
+            break;
+        case SOLID:
+            currentSprite = SpriteAssets.getBlockSprite(SOLID);
+            break;
+        }
     }
 
     public void paintBlock(Graphics g) {

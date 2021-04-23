@@ -83,6 +83,17 @@ public class SpriteAssets {
         blockSprites[Block.BREAKABLE_ANIM2] = ImageIO.read(new File("res/blocks/bBroken2.png"));
         blockSprites[Block.BREAKABLE_ANIM3] = ImageIO.read(new File("res/blocks/bBroken3.png"));
 
+        blockSprites[Block.BREAKABLE_DARK] = ImageIO.read(new File("res/blocks/bBreakableDark.png"));
+        blockSprites[Block.GROUND_DARK] = ImageIO.read(new File("res/blocks/bGroundDark.png"));
+        blockSprites[Block.SOLID_DARK] = ImageIO.read(new File("res/blocks/bSolidDark.png"));
+
+        blockSprites[Block.ENEMY_AI] = blockSprites[Block.EMPTY];
+
+        blockSprites[Block.PIPEH_B_LEFT] = ImageIO.read(new File("res/blocks/bPipeHBottomLeft.png"));
+        blockSprites[Block.PIPEH_B_RIGHT] = ImageIO.read(new File("res/blocks/bPipeHBottomRight.png"));
+        blockSprites[Block.PIPEH_T_LEFT] = ImageIO.read(new File("res/blocks/bPipeHTopLeft.png"));
+        blockSprites[Block.PIPEH_T_RIGHT] = ImageIO.read(new File("res/blocks/bPipeHTopRight.png"));
+
         rescaleSprites(blockSprites, Block.SIZE, Block.SIZE);
     }
 

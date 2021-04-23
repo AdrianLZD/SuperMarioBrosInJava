@@ -71,7 +71,8 @@ public class GameStateLevel1 extends GameState {
     @Override
     public void requestNextLevel() {
         nextLevelRequest++;
-        if(nextLevelRequest == 1){
+        System.out.println("request");
+        if(nextLevelRequest == 2){
             checkpointReached = false;
             GameState newGameState = new GameStateLevel2(mario.state);
             gameRunner.setCurrentGameState(newGameState);
