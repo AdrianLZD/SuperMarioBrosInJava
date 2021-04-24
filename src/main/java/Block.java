@@ -28,12 +28,18 @@ public class Block extends Rectangle {
     public static final int SOLID_DARK = 18;
 
     public static final int ENEMY_AI = 19;
+
     public static final int PIPEH_B_LEFT = 20;
     public static final int PIPEH_B_RIGHT = 21;
     public static final int PIPEH_T_LEFT = 22;
     public static final int PIPEH_T_RIGHT = 23;
 
-    public static final int BLOCK_COUNT = 24;
+    public static final int GRASS_LEFT = 24;
+    public static final int GRASS_CENTER = 25;
+    public static final int GRASS_RIGHT = 26;
+    public static final int GRASS_SUPPORT = 27;
+
+    public static final int BLOCK_COUNT = 28;
 
     public static final int SIZE = WindowManager.WINDOW_HEIGHT / 14;
 
@@ -44,7 +50,11 @@ public class Block extends Rectangle {
 
     public Block(Point position, int id) {
         this.id = (byte) id;
-        collision = true;
+        if(this.id == GRASS_SUPPORT){
+            collision = false;
+        }else{
+            collision = true;
+        }
         currentSprite = SpriteAssets.getBlockSprite(id);
         setBounds(position.x, position.y, SIZE, SIZE);
     }

@@ -84,9 +84,9 @@ public class Enemy extends PhysicObject {
         case KOOPA_FLYING:
             sprite = Animator.K_FLY_LEFT_WALK1;
             tickMethod = () -> flyingKoopaTick();
-            horizontalVelocity = -KOOPA_FLYING_VEL;
+            horizontalVelocity = 0;
             verticalVelocity = -KOOPA_FLYING_VEL;
-            hCollisionOffset = -horizontalVelocity;
+            hCollisionOffset = 2;
             vCollisionOffset = -verticalVelocity;
             tableSprites.put("right1", Animator.K_FLY_RIGHT_WALK1);
             tableSprites.put("right2", Animator.K_FLY_RIGHT_WALK2);
@@ -95,7 +95,7 @@ public class Enemy extends PhysicObject {
             tableSprites.put("dead", Animator.K_NORMAL_RIGHT_WALK1);
             tableSprites.put("flip", Animator.K_NORMAL_FLIP);
             setColliderSize(Animator.getEnemySprite(Animator.K_FLY_RIGHT_WALK1));
-            setLocation(position.x, position.y - Block.SIZE / 4);
+            setLocation(position.x, position.y + Block.SIZE);
             break;
         case PIRANHA:
             sprite = Animator.PI_CLOSE;
@@ -193,26 +193,14 @@ public class Enemy extends PhysicObject {
     }
 
     private void flyingKoopaApplyVelocities(){
-        if (behaviorCounter == 48) {
+        if (behaviorCounter <= 80) {
+            verticalVelocity = -KOOPA_FLYING_VEL;
+        }else if(behaviorCounter <= 159){
             verticalVelocity = KOOPA_FLYING_VEL;
-        }else if(behaviorCounter > 48){
+        }else {
             behaviorCounter = 0;
         }
         behaviorCounter++;
-
-        if(collisions[PhysicObject.COLLISION_BOTTOM]){
-            verticalVelocity = -KOOPA_FLYING_VEL;
-            behaviorCounter = 0;
-        }
-
-        if (collisions[PhysicObject.COLLISION_TOP]) {
-            verticalVelocity = KOOPA_FLYING_VEL;
-            behaviorCounter = 0;
-        }
-
-        if (collisions[PhysicObject.COLLISION_RIGHT] || collisions[PhysicObject.COLLISION_LEFT]) {
-            horizontalVelocity *= -1;
-        }
 
         setLocation(x + horizontalVelocity, y + verticalVelocity);
         
@@ -245,7 +233,7 @@ public class Enemy extends PhysicObject {
     }
 
     private void changeSpriteDirection(){
-        if(horizontalVelocity<0){
+        if(horizontalVelocity<=0){
             if(animCounter > Animator.ANIMATION_SPEED*2){
                 if(sprite == tableSprites.get("left1")){
                     sprite = tableSprites.get("left2");
@@ -382,6 +370,14 @@ public class Enemy extends PhysicObject {
 
     public static boolean mustSpawnEnemy(String[] token){
         return !(token.length < 2 || token[0].charAt(0)!='0');
+    }
+
+    public static boolean isShell(PhysicObject object){
+        try{
+            return ((Enemy)object).id == SHELL;
+        }catch(ClassCastException e){
+            return false;
+        }
     }
     
 }

@@ -7,7 +7,7 @@ import main.java.Mario.MarioState;
 
 public class GameStateLevel1 extends GameState {
 
-    private static boolean checkpointReached = true;
+    private static boolean checkpointReached;
 
     public GameStateLevel1(){
         super();
@@ -23,10 +23,10 @@ public class GameStateLevel1 extends GameState {
 
     @Override
     protected void spawnMario() {
-        if(checkpointReached){
-            mario = new Mario(new Point(checkpointPosition, 600));
-        }else{
-            mario = new Mario(new Point(150,600));
+        if (checkpointReached) {
+            mario = new Mario(new Point(checkpointPosition, Block.SIZE * 11));
+        } else {
+            mario = new Mario(new Point(Block.SIZE * 3, Block.SIZE * 11));
         }
     }
 

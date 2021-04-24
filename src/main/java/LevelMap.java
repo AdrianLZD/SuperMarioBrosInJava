@@ -130,6 +130,9 @@ public class LevelMap {
     public void paintBlocks(Graphics g, int marioXPos){
         for(Block[] arrayB: blocks){
             for(Block b : arrayB){
+                if(b.getId() == Block.GRASS_SUPPORT){ //This blocks need to be painted behind everything.
+                    continue;
+                }
                 if(b.x > marioXPos-Block.SIZE - WindowManager.windowWidth &&
                    b.x < marioXPos+Block.SIZE + WindowManager.windowWidth){
                     b.paintBlock(g);

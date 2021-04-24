@@ -45,7 +45,7 @@ public class PhysicObject extends Rectangle {
 
         for (Block block : mapBlocks) {
             if (block.isActive()) {
-                if(block.getId() == Block.ENEMY_AI && this instanceof Mario){
+                if(block.getId() == Block.ENEMY_AI && (this instanceof Mario || Enemy.isShell(this))){
                     continue;
                 }
 

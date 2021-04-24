@@ -108,7 +108,7 @@ public class GameStateMenu extends GameState {
 
     @Override
     public void requestNextLevel() {
-        GameState newGameState = new GameStateLevel1();
+        GameState newGameState = new GameStateLevel3();
         gameRunner.setCurrentGameState(newGameState);
      }
 }

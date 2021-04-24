@@ -94,6 +94,11 @@ public class SpriteAssets {
         blockSprites[Block.PIPEH_T_LEFT] = ImageIO.read(new File("res/blocks/bPipeHTopLeft.png"));
         blockSprites[Block.PIPEH_T_RIGHT] = ImageIO.read(new File("res/blocks/bPipeHTopRight.png"));
 
+        blockSprites[Block.GRASS_LEFT] = ImageIO.read(new File("res/blocks/bGrassLeft.png"));
+        blockSprites[Block.GRASS_CENTER] = ImageIO.read(new File("res/blocks/bGrassMiddle.png"));
+        blockSprites[Block.GRASS_RIGHT] = ImageIO.read(new File("res/blocks/bGrassRight.png"));
+        blockSprites[Block.GRASS_SUPPORT] = ImageIO.read(new File("res/blocks/bGrassSupport.png"));
+
         rescaleSprites(blockSprites, Block.SIZE, Block.SIZE);
     }
 

@@ -1,35 +1,39 @@
 package main.java;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import main.java.Mario.MarioState;
 
-public class GameStateLevel2 extends GameState{
+public class GameStateLevel3 extends GameState {
 
     private static boolean checkpointReached;
+    private ArrayList<Block> grassSupportBlocks;
 
-    private Rectangle tpPosition;
-    private boolean marioCanTp;
-    private boolean marioHasTp;
-    
-    public GameStateLevel2(){
+    public GameStateLevel3() {
         super();
-        lvlId = 2;
-        checkpointPosition = 88 * Block.SIZE;// 88
+        lvlId = 3;
+        checkpointPosition = 60 * Block.SIZE; // 84
         initDefaultBehavior(checkpointReached);
-        lvlMap.turnOnDarkMode();
-        tpPosition = new Rectangle(167 * Block.SIZE - Block.SIZE / 10, Block.SIZE * 6, Block.SIZE, Block.SIZE * 2);
+        findGrassSupportBlocks();
     }
 
-    public GameStateLevel2(MarioState marioState){
+    public GameStateLevel3(MarioState marioState) {
         this();
         mario.returnToState(marioState);
     }
 
+    private void findGrassSupportBlocks(){
+        grassSupportBlocks = new ArrayList<>();
+        for (Block[] arrayB : lvlMap.getBlocks()) {
+            for (Block b : arrayB) {
+                if(b.getId()== Block.GRASS_SUPPORT){
+                    grassSupportBlocks.add(b);
+                }
+            }
+        }
+    }
 
     @Override
     protected void spawnMario() {
@@ -42,7 +46,7 @@ public class GameStateLevel2 extends GameState{
 
     @Override
     protected void loadImages() {
-        getBackground("lvl2");
+        getBackground("lvl3");
     }
 
     @Override
@@ -51,19 +55,25 @@ public class GameStateLevel2 extends GameState{
             paintInfoScreen(g);
             return;
         }
-        super.paintElements(g);
-        g.setColor(Color.RED);
+        //Can not use super due to grass support blocks order
+        paintBackground(g);
+        paintGrassSupportBlocks(g);
+        lvlMap.paintPickUps(g);
+        lvlMap.paintEnemies(g);
+        mario.paintMario(g);
+        lvlMap.paintBlocks(g, mario.x);
+        lvlMap.paintFireballs(g);
+    }
+
+    private void paintGrassSupportBlocks(Graphics g){
+        for (Block b : grassSupportBlocks) {
+            b.paintBlock(g);
+        }
     }
 
     @Override
     protected void keyPressed(int k) {
         mario.keyPressed(k);
-        if(!marioHasTp && marioCanTp){
-            if(k == KeyEvent.VK_RIGHT){
-                timerEnabled = false;
-                mario.startWalkAnimation();
-            }
-        }
     }
 
     @Override
@@ -83,29 +93,16 @@ public class GameStateLevel2 extends GameState{
         if (mario.x >= checkpointPosition) {
             checkpointReached = true;
         }
-
-        if(!marioHasTp){
-            marioCanTp = (mario.isFalling) ? false : tpPosition.intersects(mario);
-            if (mario.x > tpPosition.x) {
-                marioHasTp = true;
-                timerEnabled = true;
-                mario.setLocation(mario.x + Block.SIZE * 29 - mario.width/2, Block.SIZE * 10);
-                mario.exitPipe(Block.SIZE * 10);
-                lvlMap.turnOffDarkMode();
-            }
-        }
-
     }
 
     @Override
     public void requestNextLevel() {
         nextLevelRequest++;
-        if (nextLevelRequest == 2) {
+        System.out.println("request");
+        if(nextLevelRequest == 2){
             checkpointReached = false;
-            GameState newGameState = new GameStateLevel2();
+            GameState newGameState = new GameStateLevel3(mario.state);
             gameRunner.setCurrentGameState(newGameState);
         }
-        
     }
-    
 }
