@@ -9,14 +9,15 @@ import main.java.Mario.MarioState;
 public class PickUp extends PhysicObject {
     private static final long serialVersionUID = 1L;
 
-    public static final int COIN = 0;
-    public static final int MOOSHROOM = 1;
-    public static final int FLOWER = 2;
-    public static final int LIFE = 3;
-    public static final int STAR = 4;
-    public static final int FLAG = 5;
-    public static final int GOAL = 6;
-    public static final int COIN_STATIC = 7;
+    private static final int COIN = 0;
+    private static final int MOOSHROOM = 1;
+    private static final int FLOWER = 2;
+    private static final int LIFE = 3;
+    //private static final int STAR = 4;
+    private static final int FLAG = 5;
+    private static final int GOAL = 6;
+    private static final int COIN_STATIC = 7;
+    private static final int HAMMER = 8;
 
     private static Score scoreManager;
     private static Mario mario;
@@ -84,20 +85,25 @@ public class PickUp extends PhysicObject {
             case GOAL:
                 tickMethod = () -> goalTick();
                 id = GOAL;
-                x = position.x;
-                y = position.y;
+                setLocation(position);
                 sprite = Animator.P_FLOWER;
                 active = true;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_FLOWER));
                 break;
             case COIN_STATIC:
                 tickMethod = () -> coinStaticTick();
-                x = position.x;
-                y = position.y;
                 id = COIN_STATIC;
+                setLocation(position);
                 sprite = Animator.P_COIN;
                 active = true;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_COIN));
+            case HAMMER:
+                tickMethod = () -> hammerTick();
+                id = HAMMER;
+                setLocation(position);
+                sprite = Animator.P_HAMMER;
+                active = true;
+                setColliderSize(Animator.getPickUpSprite(Animator.P_HAMMER));
             default:
                 break;
         }
@@ -196,7 +202,7 @@ public class PickUp extends PhysicObject {
 
     private boolean goalTick(){
         if(stateCounter == 0 && mario.x > x + width/2){
-            mario.freeze();
+            mario.hide();
             stateCounter = 1;
             GameRunner.instance.requestNextLevel();
         }
@@ -208,6 +214,11 @@ public class PickUp extends PhysicObject {
         return true;
     }
     
+    private boolean hammerTick(){
+        checkMarioCollision();
+        return true;
+    }
+
     private void checkMarioCollision(){
         if(!mario.isAlive()){
             return;
@@ -230,6 +241,9 @@ public class PickUp extends PhysicObject {
                     scoreManager.addToCoins(1);
                     scoreManager.addToPoints(100);
                     break;
+                case HAMMER:
+                    GameRunner.instance.requestNextLevel();
+                    break;
             }
             active = false;
             LevelMap.deleteObject(this);
@@ -240,8 +254,16 @@ public class PickUp extends PhysicObject {
         return id;
     }
 
+    public static int getFlagId(){
+        return FLAG;
+    }
+
+    public static boolean mustReplaceBlock(int id){
+        return id == Type.GOAL.id || id == Type.COIN_STATIC.id || id == Type.HAMMER.id;
+    }
+
     public enum Type {
-        COIN(1), COIN_MULTIPLE(2), POWER(3), LIFE(4), FLAG(5), GOAL(6), COIN_STATIC(7);
+        COIN(1), COIN_MULTIPLE(2), POWER(3), LIFE(4), FLAG(5), GOAL(6), COIN_STATIC(7), HAMMER(8);
 
         private int id;
 

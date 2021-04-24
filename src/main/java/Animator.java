@@ -52,7 +52,8 @@ public class Animator {
     public static final int P_LIFE = 54;
     public static final int P_STAR = 55;
     public static final int P_FLAG = 56;
-    public static final int PICKUP_COUNT = 6;
+    public static final int P_HAMMER = 57;
+    public static final int PICKUP_COUNT = 7;
 
     public static final int ENEMY_START = 101;
     public static final int G_RIGHT = 101;
@@ -72,8 +73,12 @@ public class Animator {
     public static final int K_SHELL_FLIP = 115;
     public static final int PI_OPEN = 116;
     public static final int PI_CLOSE = 117;
+    public static final int BOWSER1 = 118;
+    public static final int BOWSER2 = 119;
+    public static final int BOWSER3 = 120;
+    public static final int BOWSER4 = 121;
 
-    public static final int ENEMY_COUNT = 17;
+    public static final int ENEMY_COUNT = 21;
 
     public static final int FIREBALL_START = 201;
     public static final int FIREBALL_1 = 201;

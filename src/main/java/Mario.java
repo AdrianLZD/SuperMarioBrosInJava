@@ -34,7 +34,7 @@ public class Mario extends PhysicObject {
     private boolean invincible;
     private boolean alive;
     private boolean levelFinished;
-    private boolean freezed;
+    private boolean hidden;
     private boolean leavingPipe;
 
     public Mario(Point position) {
@@ -154,7 +154,7 @@ public class Mario extends PhysicObject {
     }
     
     public void tick() { 
-        if(freezed){
+        if(hidden){
             return;
         }
 
@@ -176,6 +176,7 @@ public class Mario extends PhysicObject {
 
             if(walking){
                 walkEndlessly();
+                checkCollisions();
                 return;
             }
 
@@ -223,6 +224,7 @@ public class Mario extends PhysicObject {
     }
 
     private void walkEndlessly(){
+        controller.walkEndlessly();
         if (animationCounter > currentAnimSpeed){
             if (currentSprite == movingSprites.get("walk1_r")) {
                 currentSprite = movingSprites.get("walk2_r");
@@ -232,8 +234,6 @@ public class Mario extends PhysicObject {
             animationCounter = 0;
         }
         animationCounter++;
-        
-        setLocation(x + controller.walkSpeed/2, y);
     }
 
     private void moveUntilPipe(){
@@ -394,7 +394,7 @@ public class Mario extends PhysicObject {
     }
 
     public void resetControls(){
-        freezed = false;
+        hidden = false;
         walking = false;
         transitioning = false;
         canMove = true;
@@ -402,7 +402,7 @@ public class Mario extends PhysicObject {
     }
     
     public void paintMario(Graphics g) {
-        if(freezed){
+        if(hidden){
             return;
         }
         super.paint(g);
@@ -486,8 +486,12 @@ public class Mario extends PhysicObject {
         controller.activateMiniJump();
     }
 
-    public void freeze(){
-        freezed = true;
+    public void hide(){
+        hidden = true;
+    }
+
+    public void showAsIdle(){
+        currentSprite = movingSprites.get("idle_r");
     }
 
     public void keyPressed(int k) {

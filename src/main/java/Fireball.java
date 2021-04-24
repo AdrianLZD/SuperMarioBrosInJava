@@ -14,7 +14,7 @@ public class Fireball extends PhysicObject{
     public static final int ENEMY_FIRE = Enemy.FIRE;
 
     private static final int MARIO_FIRE_SPEED = 7;
-    private static final int ENEMY_FIRE_SPEED = 4;
+    private static final int ENEMY_FIRE_SPEED = 5;
     private static final int CAMERA_OFFSET = GameRunner.instance.cameraOffset * 2;
     
     protected Supplier<Boolean> tickMethod;

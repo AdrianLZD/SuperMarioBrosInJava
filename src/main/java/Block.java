@@ -117,6 +117,10 @@ public class Block extends Rectangle {
         return collision;
     }
 
+    public void hideBlock(){
+        id = EMPTY;
+    }
+
     public void activateBlock(){}
 
 

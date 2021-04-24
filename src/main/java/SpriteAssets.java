@@ -154,6 +154,7 @@ public class SpriteAssets {
         pickUps[P_LIFE-P_START] = ImageIO.read(new File("res/objects/oShroomLife.png"));
         pickUps[P_STAR-P_START] = ImageIO.read(new File("res/objects/oStar.png"));
         pickUps[P_FLAG - P_START] = ImageIO.read(new File("res/objects/oFlag.png"));
+        pickUps[P_HAMMER - P_START] = ImageIO.read(new File("res/objects/oHammer.png"));
 
         rescaleSprites(pickUps);
     }
@@ -179,6 +180,11 @@ public class SpriteAssets {
 
         enemies[PI_OPEN - ENEMY_START] = ImageIO.read(new File("res/enemies/ePiranhaOpen.png"));
         enemies[PI_CLOSE - ENEMY_START] = ImageIO.read(new File("res/enemies/ePiranhaClose.png"));
+
+        enemies[BOWSER1 - ENEMY_START] = ImageIO.read(new File("res/enemies/eBowser1.png"));
+        enemies[BOWSER2 - ENEMY_START] = ImageIO.read(new File("res/enemies/eBowser2.png"));
+        enemies[BOWSER3 - ENEMY_START] = ImageIO.read(new File("res/enemies/eBowser3.png"));
+        enemies[BOWSER4 - ENEMY_START] = ImageIO.read(new File("res/enemies/eBowser4.png"));
         
         rescaleSprites(enemies);
     }

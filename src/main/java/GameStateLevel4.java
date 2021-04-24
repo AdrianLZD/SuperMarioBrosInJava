@@ -1,29 +1,38 @@
 package main.java;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 import main.java.Mario.MarioState;
 
 public class GameStateLevel4 extends GameState {
 
-    private int bowserBattleStart;
-    private boolean battleStarted;
-    private boolean battleFinished;
-
-    private Rectangle finishWallCollider;
+    private ArrayList<Block> bridge;
     private Block[] battleWall;
     private Block[] finishWall;
+    private Rectangle finishWallCollider;
+    private Enemy bowser;
+    private Font textFont;
+
+    private int bowserBattleStart;
+    private int endSequenceCounter;
+    private int bridgeCounter;
+    private boolean battleStarted;
+    private boolean battleFinished;
 
     public GameStateLevel4() {
         super();
         lvlId = 4;
         bowserBattleStart = 127 * Block.SIZE;
+        textFont = TextFont.getFont().deriveFont(Font.BOLD, 30);
         initDefaultBehavior(false);
         createBattleWalls();
-        
+        findBridge();
+        bowser = lvlMap.getBowser();
     }
 
     public GameStateLevel4(MarioState marioState) {
@@ -53,9 +62,20 @@ public class GameStateLevel4 extends GameState {
         finishWallCollider = new Rectangle(bowserBattleStart + 18* Block.SIZE, 6*Block.SIZE, Block.SIZE, 3 * Block.SIZE);
     }
 
+    private void findBridge(){
+        bridge = new ArrayList<>();
+        for(Block[] array : lvlMap.getBlocks()){
+            for(Block b : array){
+                if(b.getId() == Block.CASTLE_BRIDGE){
+                    bridge.add(b);
+                }
+            }
+        }
+    }
+
     @Override
     protected void spawnMario() {
-        mario = new Mario(new Point(Block.SIZE * 100, Block.SIZE * 6));
+        mario = new Mario(new Point(Block.SIZE * 130, Block.SIZE * 6));
     }
 
     @Override
@@ -78,6 +98,9 @@ public class GameStateLevel4 extends GameState {
         lvlMap.paintFireballs(g);
 
         paintWalls(g);
+        if(endSequenceCounter>999){
+            paintEndText(g);
+        }
         
     }
 
@@ -93,8 +116,19 @@ public class GameStateLevel4 extends GameState {
                 b.paintBlock(g);
             }
         }
-        g.setColor(Color.RED);
-        g.drawRect(finishWallCollider.x, finishWallCollider.y, finishWallCollider.width, finishWallCollider.height);
+    }
+
+    private void paintEndText(Graphics g){
+        g.setColor(Color.WHITE);
+        g.setFont(textFont);
+        g.drawString("THANK YOU MARIO!", finishWallCollider.x + 12 * Block.SIZE, 5 * Block.SIZE);
+        g.drawString("THIS IS THE END OF THE GAME", finishWallCollider.x + 9 * Block.SIZE, 6 * Block.SIZE);
+        g.drawString(" IF YOU FOUND THIS PROJECT INTERESTING ", finishWallCollider.x + 6 * Block.SIZE, 7 * Block.SIZE);
+        g.drawString(" OR WANT TO WORK ON IT DO NOT HESITATE ON", finishWallCollider.x + 5 * Block.SIZE, 8 * Block.SIZE);
+        g.drawString("CONTACTING GITHUB.COM/ADRIANLZD", finishWallCollider.x + 8 * Block.SIZE, 9 * Block.SIZE);
+        g.drawString("SEE YOU SOON!", finishWallCollider.x + 13 * Block.SIZE, 10 * Block.SIZE);
+        g.setFont(textFont.deriveFont(Font.BOLD, 20));
+        g.drawString("PRESS ENTER TO EXIT", finishWallCollider.x + 13 * Block.SIZE, 11 * Block.SIZE);
     }
 
     @Override
@@ -114,13 +148,17 @@ public class GameStateLevel4 extends GameState {
             return;
         }
 
+        if(battleFinished){
+            endSequence();
+            return;
+        }
         super.tick();
         if(!battleStarted){
             checkIfMarioIsInBattle();
         }
-
-        marioFinishWallCollision();
-
+        if(!battleFinished){
+            marioFinishWallCollision();
+        }
     }
 
     private void checkIfMarioIsInBattle(){
@@ -138,13 +176,44 @@ public class GameStateLevel4 extends GameState {
         }
     }
 
+    private void endSequence(){
+        if(endSequenceCounter<100){
+            hideBridge();
+        }else if(endSequenceCounter==100){
+            bowser.y += PhysicObject.getGravity();
+            if(bowser.y > 15 * Block.SIZE){
+                endSequenceCounter = 101;
+            }
+        }else if(endSequenceCounter == 101){
+            mario.startWalkAnimation();
+            endSequenceCounter = 102;
+        }else if(mario.x < finishWallCollider.x + 15 * Block.SIZE){
+            if(mario.x < finishWallCollider.x + 12 * Block.SIZE){
+                GameRunner.instance.moveHorizontalScroll(mario.x);
+            }
+            mario.tick();
+        }else{
+            mario.showAsIdle();
+            endSequenceCounter = 1000;
+        }
+    }
+
+    private void hideBridge(){
+        if(endSequenceCounter > 4){
+            bridge.get(bridgeCounter--).hideBlock();
+            endSequenceCounter = 0;
+        }
+        endSequenceCounter++;
+
+        if(bridgeCounter < 0){
+            endSequenceCounter = 100;
+        }
+    }
+
     @Override
     public void requestNextLevel() {
-        nextLevelRequest++;
-        System.out.println("request");
-        if (nextLevelRequest == 2) {
-            GameState newGameState = new GameStateLevel4(mario.state);
-            gameRunner.setCurrentGameState(newGameState);
-        }
+        battleFinished = true;
+        endSequenceCounter = 0;
+        bridgeCounter = bridge.size()-1;       
     }
 }

@@ -74,7 +74,7 @@ public class LevelMap {
 
                 if(Enemy.mustSpawnEnemy(currentToken)){
                     enemyType = Integer.parseInt(currentToken[1]);
-                    if(enemyType == Enemy.FIRE){
+                    if(enemyType == Enemy.getFireId()){
                         fireballs.add(new Fireball(newBlockPosition, LEFT, Fireball.ENEMY_FIRE));
                     }else{
                         enemies.add(new Enemy(newBlockPosition, enemyType));
@@ -92,11 +92,7 @@ public class LevelMap {
                 if(BlockInteractable.mustBeInteractable(newBlockId)){
                     if(currentToken.length > 1){
                         pickUpType = Integer.parseInt(currentToken[1]);
-                        if(pickUpType == PickUp.GOAL){
-                            pickUps.add(new PickUp(PickUp.Type.typeById(pickUpType), newBlockPosition));
-                            blocks[i][j] = new Block(newBlockPosition, 0);
-                            continue;
-                        }else if(pickUpType == PickUp.COIN_STATIC){
+                        if(PickUp.mustReplaceBlock(pickUpType)){
                             pickUps.add(new PickUp(PickUp.Type.typeById(pickUpType), newBlockPosition));
                             blocks[i][j] = new Block(newBlockPosition, 0);
                             continue;
@@ -242,8 +238,17 @@ public class LevelMap {
 
     public PickUp getFlag() throws NoSuchElementException{
         for(PickUp p : pickUps){
-            if(p.getId() == PickUp.FLAG){
+            if(p.getId() == PickUp.getFlagId()){
                 return p;
+            }
+        }
+        throw new NoSuchElementException();
+    }
+
+    public Enemy getBowser() throws NoSuchElementException{
+        for(Enemy e : enemies){
+            if(e.getId() == Enemy.getBowserId()){
+                return e;
             }
         }
         throw new NoSuchElementException();

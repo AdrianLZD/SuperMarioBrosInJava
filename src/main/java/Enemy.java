@@ -1,5 +1,7 @@
 package main.java;
 
+import static main.java.MarioController.LEFT;
+
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -15,12 +17,14 @@ public class Enemy extends PhysicObject {
     private static final int PIRANHA = 4;
     private static final int SHELL = 5;
     public static final int FIRE = 6; //Fireball.java needs reference this value
+    private static final int BOWSER = 7;
 
     private static final int GOOMBA_VEL = 2;
     private static final int KOOPA_VEL = 2;
     private static final int KOOPA_FLYING_VEL = 2;
     private static final int PIRANHA_VEL = 1;
     private static final int SHELL_VEL = 6;
+    private static final int BOWSER_VEL = 2;
 
     private static Score scoreManager;
     private Mario mario;
@@ -33,6 +37,7 @@ public class Enemy extends PhysicObject {
     private int destroyCounter;
     private int animCounter;
     private int behaviorCounter;
+    private int jumpCounter;
     private int destroyTime;
     private boolean alive;
     private boolean active;
@@ -127,6 +132,22 @@ public class Enemy extends PhysicObject {
             tableSprites.put("flip", Animator.K_SHELL_FLIP);
             setColliderSize(Animator.getEnemySprite(Animator.K_SHELL_NORMAL));
             setLocation(position.x, position.y);
+            break;
+        case BOWSER:
+            sprite = Animator.BOWSER1;
+            tickMethod = () -> bowserTick();
+            horizontalVelocity = -BOWSER_VEL;
+            verticalVelocity = BOWSER_VEL * 2;
+            hCollisionOffset = BOWSER_VEL;
+            vCollisionOffset = verticalVelocity;
+            tableSprites.put("right1", Animator.BOWSER1);
+            tableSprites.put("right2", Animator.BOWSER2);
+            tableSprites.put("left1", Animator.BOWSER3);
+            tableSprites.put("left2", Animator.BOWSER4);
+            tableSprites.put("dead", Animator.BOWSER1);
+            tableSprites.put("flip", Animator.BOWSER1);
+            setColliderSize(Animator.getEnemySprite(Animator.BOWSER1));
+            setLocation(position.x, position.y-Block.SIZE);
             break;
         default:
             break;
@@ -233,6 +254,68 @@ public class Enemy extends PhysicObject {
         return true;
     }
 
+    private boolean bowserTick(){
+        checkCollisions();
+        bowserMovement();
+        changeBowserSprite();
+
+        if(intersects(mario)){
+            mario.applyDamage();
+        }
+        return true;
+    }
+
+    private void bowserMovement(){
+        //Move horizontally
+        if(behaviorCounter > 150){
+            horizontalVelocity *= -1;
+            behaviorCounter = 0;
+        }
+        
+
+        //Check for jumptime
+        if (jumpCounter == 40) {
+            verticalVelocity = Math.abs(verticalVelocity);
+        } else if (jumpCounter >= 40) {
+            jumpCounter = 0;
+        }
+        
+
+        //Activate jump (if possible)
+        if(behaviorCounter == 50){
+            if (collisions[PhysicObject.COLLISION_BOTTOM]) {
+                verticalVelocity = -Math.abs(verticalVelocity);
+                jumpCounter = 0;
+            }
+        }
+
+        //Throw fire
+        if(behaviorCounter % 110 == 0){
+            Fireball ball = new Fireball(new Point(x - Block.SIZE,y+Block.SIZE /4 ),LEFT, Fireball.ENEMY_FIRE);
+            LevelMap.addObject(ball);
+        }
+        
+        behaviorCounter++;
+        jumpCounter++;
+        setLocation(x + horizontalVelocity, y + verticalVelocity);
+    }
+
+    private void changeBowserSprite(){
+        if (animCounter < Animator.ANIMATION_SPEED) {
+            sprite = tableSprites.get("right1");
+        }else if(animCounter < Animator.ANIMATION_SPEED * 2){
+            sprite = tableSprites.get("right2");
+        }else if(animCounter < Animator.ANIMATION_SPEED * 3){
+            sprite = tableSprites.get("left1");
+        }else if(animCounter < Animator.ANIMATION_SPEED * 4){
+            sprite = tableSprites.get("left2");
+        }else{
+            animCounter = 0;
+        }
+        animCounter ++;
+
+    }
+    
     private void changeSpriteDirection(){
         if(horizontalVelocity<=0){
             if(animCounter > Animator.ANIMATION_SPEED*2){
@@ -365,8 +448,20 @@ public class Enemy extends PhysicObject {
         destroyCounter++;
     }
 
+    public int getId(){
+        return id;
+    }
+
     public boolean isInteractable(){
         return alive && active;
+    }
+
+    public static int getFireId(){
+        return FIRE;
+    }
+
+    public static int getBowserId(){
+        return BOWSER;
     }
 
     public static boolean mustSpawnEnemy(String[] token){

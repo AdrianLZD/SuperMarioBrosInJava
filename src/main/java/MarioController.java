@@ -157,6 +157,12 @@ public class MarioController {
         mario.setLocation(mario.x + mario.horizontalVelocity, mario.y + mario.verticalVelocity);
     }
 
+    public void walkEndlessly(){
+        findCurrentAction();
+        mario.horizontalVelocity = walkSpeed;
+        mario.setLocation(mario.x + mario.horizontalVelocity, mario.y + mario.verticalVelocity);
+    }
+
     public void moveCamera(){
         gameRunner.moveHorizontalScroll(mario.x);
     }
@@ -179,6 +185,10 @@ public class MarioController {
 
     public boolean getLastDirection(){
         return lastDirection;
+    }
+
+    public static int getWalkSpeed(){
+        return 5;
     }
 
     public void setCollisions(boolean[] collisions){
