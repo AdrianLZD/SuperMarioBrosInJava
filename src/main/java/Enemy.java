@@ -14,6 +14,7 @@ public class Enemy extends PhysicObject {
     private static final int KOOPA_FLYING = 3;
     private static final int PIRANHA = 4;
     private static final int SHELL = 5;
+    public static final int FIRE = 6; //Fireball.java needs reference this value
 
     private static final int GOOMBA_VEL = 2;
     private static final int KOOPA_VEL = 2;

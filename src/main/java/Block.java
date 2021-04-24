@@ -39,7 +39,10 @@ public class Block extends Rectangle {
     public static final int GRASS_RIGHT = 26;
     public static final int GRASS_SUPPORT = 27;
 
-    public static final int BLOCK_COUNT = 28;
+    public static final int CASTLE_GROUND = 28;
+    public static final int CASTLE_BRIDGE = 29;
+
+    public static final int BLOCK_COUNT = 30;
 
     public static final int SIZE = WindowManager.WINDOW_HEIGHT / 14;
 

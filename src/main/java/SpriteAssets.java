@@ -99,6 +99,9 @@ public class SpriteAssets {
         blockSprites[Block.GRASS_RIGHT] = ImageIO.read(new File("res/blocks/bGrassRight.png"));
         blockSprites[Block.GRASS_SUPPORT] = ImageIO.read(new File("res/blocks/bGrassSupport.png"));
 
+        blockSprites[Block.CASTLE_GROUND] = ImageIO.read(new File("res/blocks/bGroundCastle.png"));
+        blockSprites[Block.CASTLE_BRIDGE] = ImageIO.read(new File("res/blocks/bBridge.png"));
+
         rescaleSprites(blockSprites, Block.SIZE, Block.SIZE);
     }
 
@@ -189,6 +192,9 @@ public class SpriteAssets {
         fireball[FIREBALL_E1 - FIREBALL_START] = ImageIO.read(new File("res/objects/oExplosion1.png"));
         fireball[FIREBALL_E2 - FIREBALL_START] = ImageIO.read(new File("res/objects/oExplosion2.png"));
         fireball[FIREBALL_E3 - FIREBALL_START] = ImageIO.read(new File("res/objects/oExplosion3.png"));
+        fireball[FIREBALL_STRIP - FIREBALL_START] = ImageIO.read(new File("res/objects/oFireStrip.png"));
+        fireball[FIREBALL_ENEMY1 - FIREBALL_START] = ImageIO.read(new File("res/objects/oFire1.png"));
+        fireball[FIREBALL_ENEMY2 - FIREBALL_START] = ImageIO.read(new File("res/objects/oFire2.png"));
 
         rescaleSprites(fireball);
     }

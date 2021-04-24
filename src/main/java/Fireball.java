@@ -10,23 +10,34 @@ import java.util.function.Supplier;
 
 public class Fireball extends PhysicObject{
     public static final int MARIO_FIRE = 0;
-    public static final int ENEMY_FIRE = 1;
+    public static final int STRIP_FIRE = 2;
+    public static final int ENEMY_FIRE = Enemy.FIRE;
 
-    private Supplier<Boolean> velocitiesMethod;
-    private Hashtable<String, Integer> movingSprites;
-    private Hashtable<String, Integer> explosionSprites;
+    private static final int MARIO_FIRE_SPEED = 7;
+    private static final int ENEMY_FIRE_SPEED = 4;
+    private static final int CAMERA_OFFSET = GameRunner.instance.cameraOffset * 2;
+    
+    protected Supplier<Boolean> tickMethod;
+    protected Hashtable<String, Integer> movingSprites;
+    protected Hashtable<String, Integer> explosionSprites;
 
-    private int id;
-    private int direction;
-    private int currentSprite;
-    private int spriteCounter;
-    private int behaviorCounter;
-    private boolean exploting;
+    protected static Mario mario;
+
+    protected int id;
+    protected int direction;
+    protected int currentSprite;
+    protected int spriteCounter;
+    protected int behaviorCounter;
+    protected boolean active;
+    protected boolean exploting;
+
+    public Fireball(){}
 
     public Fireball(Point position, boolean direction, int id){
         this.id = id;
         this.direction = (direction==RIGHT) ? 1 : -1; 
         spriteCounter = 0;
+        mario = Mario.getCurrentInstance();
         setLocation(position);
         defineTypeProperties();
     }
@@ -39,31 +50,35 @@ public class Fireball extends PhysicObject{
         explosionSprites.put("exp3", Animator.FIREBALL_E3);
         switch(id){
             case MARIO_FIRE:
-                velocitiesMethod = () -> marioFireVelocities();
+                tickMethod = () -> marioFire();
                 currentSprite = Animator.FIREBALL_1;
                 movingSprites.put("move1", Animator.FIREBALL_1);
                 movingSprites.put("move2", Animator.FIREBALL_2);
                 movingSprites.put("move3", Animator.FIREBALL_3);
                 movingSprites.put("move4", Animator.FIREBALL_4);
-                horizontalVelocity = 7 * direction;
+                horizontalVelocity = MARIO_FIRE_SPEED * direction;
                 verticalVelocity = 5;
                 hCollisionOffset = Math.abs(horizontalVelocity);
                 vCollisionOffset = verticalVelocity;
+                active = true;
                 setColliderSize(Animator.getFireballSprite(currentSprite));
                 break;
             case ENEMY_FIRE:
-                velocitiesMethod = () -> enemyFireVelocities();
-                currentSprite = Animator.FIREBALL_1;
-                movingSprites.put("move1", Animator.FIREBALL_1);
-                movingSprites.put("move2", Animator.FIREBALL_2);
-                movingSprites.put("move3", Animator.FIREBALL_3);
-                movingSprites.put("move4", Animator.FIREBALL_4);
-                horizontalVelocity = 6 * direction;
-                verticalVelocity = PhysicObject.getGravity();
+                tickMethod = () -> enemyFire();
+                currentSprite = Animator.FIREBALL_ENEMY1;
+                movingSprites.put("move1", Animator.FIREBALL_ENEMY1);
+                movingSprites.put("move2", Animator.FIREBALL_ENEMY2);
+                movingSprites.put("move3", Animator.FIREBALL_ENEMY1);
+                movingSprites.put("move4", Animator.FIREBALL_ENEMY2);
+                horizontalVelocity = ENEMY_FIRE_SPEED * direction;
+                verticalVelocity = 0;
                 hCollisionOffset = Math.abs(horizontalVelocity);
-                vCollisionOffset = verticalVelocity;
-                
+                vCollisionOffset = 1;
+                active = false;
                 setColliderSize(Animator.getFireballSprite(currentSprite));
+                break;
+            case STRIP_FIRE:
+                active = false;
                 break;
             default:
                 break;
@@ -76,14 +91,30 @@ public class Fireball extends PhysicObject{
     }
 
     public void tick(ArrayList<Enemy> enemies){
+        if (mario.isTransitioning() || !mario.isAlive()) {
+            return;
+        }
+
+        if(!active){
+            checkForActivation();
+            return;
+        }
+
         if(!exploting){
             checkCollisions();
-            velocitiesMethod.get();
+            tickMethod.get();
             updateSprite();
             enemiesCollisions(enemies);
             return;
         }
         updateExplosion();       
+    }
+
+    protected void checkForActivation(){
+        // Check if is visible
+        if (x - CAMERA_OFFSET <= mario.x || x <= WindowManager.windowWidth) {
+            active = true;
+        }
     }
 
     private void updateSprite(){
@@ -120,6 +151,10 @@ public class Fireball extends PhysicObject{
     }
     
     private void enemiesCollisions(ArrayList<Enemy> enemies){
+        if(id != MARIO_FIRE){
+            return;
+        }
+
         for(Enemy e : enemies){
             if(e.isInteractable()){
                 if(intersects(e)){
@@ -130,8 +165,7 @@ public class Fireball extends PhysicObject{
         }
     }
 
-    private boolean marioFireVelocities(){
-        
+    private boolean marioFire(){
         if(behaviorCounter == 15){
             verticalVelocity = 5;
         }else if(behaviorCounter >= 15){
@@ -157,9 +191,20 @@ public class Fireball extends PhysicObject{
         return true;
     }
 
-    private boolean enemyFireVelocities() {
-        // TODO
+    private boolean enemyFire() {
+        checkMarioCollisions();
+
+        if (collisions[PhysicObject.COLLISION_RIGHT] || collisions[PhysicObject.COLLISION_LEFT]) {
+            startExplosion();
+        }
+        setLocation(x + horizontalVelocity, y);
         return true;
+    }
+
+    protected void checkMarioCollisions(){
+        if(intersects(mario)){
+            mario.applyDamage();
+        }
     }
 
     private void startExplosion(){

@@ -94,8 +94,8 @@ public class GameRunner extends JPanel implements KeyListener {
                 currentGameState = new GameStateLevel3();
                 break;
             case 4:
+                currentGameState = new GameStateLevel4();
                 break;
-
         }
         System.gc();
     }

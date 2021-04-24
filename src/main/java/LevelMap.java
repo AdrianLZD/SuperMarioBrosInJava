@@ -1,5 +1,8 @@
 package main.java;
 
+import static main.java.MarioController.LEFT;
+
+
 import java.awt.*;
 import java.io.*;
 import java.util.*;
@@ -68,9 +71,22 @@ public class LevelMap {
                 newBlockPosition = new Point(j*Block.SIZE,i*Block.SIZE);
                 currentToken = stringTokenizer.nextToken().split("\\.");
                 newBlockId = Integer.parseInt(currentToken[0]);
+
                 if(Enemy.mustSpawnEnemy(currentToken)){
                     enemyType = Integer.parseInt(currentToken[1]);
-                    enemies.add(new Enemy(newBlockPosition, enemyType));
+                    if(enemyType == Enemy.FIRE){
+                        fireballs.add(new Fireball(newBlockPosition, LEFT, Fireball.ENEMY_FIRE));
+                    }else{
+                        enemies.add(new Enemy(newBlockPosition, enemyType));
+                    }
+                    blocks[i][j] = new Block(newBlockPosition, newBlockId);
+                    continue;
+                }
+
+                if(Firestrip.mustSpawnFireStrip(currentToken)){
+                    fireballs.add(new Firestrip(newBlockPosition));
+                    blocks[i][j] = new Block(newBlockPosition, newBlockId);
+                    continue;
                 }
 
                 if(BlockInteractable.mustBeInteractable(newBlockId)){
