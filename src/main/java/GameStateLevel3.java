@@ -90,7 +90,7 @@ public class GameStateLevel3 extends GameState {
 
         super.tick();
 
-        if (mario.x >= checkpointPosition) {
+        if (!checkpointReached && mario.x >= checkpointPosition) {
             checkpointReached = true;
         }
     }
@@ -98,11 +98,13 @@ public class GameStateLevel3 extends GameState {
     @Override
     public void requestNextLevel() {
         nextLevelRequest++;
-        System.out.println("request");
         if(nextLevelRequest == 2){
-            checkpointReached = false;
             GameState newGameState = new GameStateLevel4(mario.state);
             gameRunner.setCurrentGameState(newGameState);
         }
+    }
+
+    public static void resetCheckpoint() {
+        checkpointReached = false;
     }
 }

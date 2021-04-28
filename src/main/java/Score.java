@@ -69,13 +69,19 @@ public class Score {
     }
 
     public void paintFullDetails(Graphics g, int lvlId){
+        
         g.setColor(Color.BLACK);
         g.fillRect(middleScreen-WindowManager.windowWidth/2, 0, WindowManager.windowWidth, WindowManager.WINDOW_HEIGHT);
         g.setFont(textFont);
         g.setColor(Color.WHITE);
         g.drawString(String.format("WORLD  %d-%d", world, level), middleScreen - 130, 300);
-        g.drawImage(marioSprite, middleScreen - 100, 350, GameRunner.instance);
-        g.drawString(String.format("x  %d", lives), middleScreen-10, 405);    
+        if(lives>0){
+            g.drawImage(marioSprite, middleScreen - 100, 350, GameRunner.instance);
+            g.drawString(String.format("x  %d", lives), middleScreen - 10, 405);
+        }else{
+            g.drawString("GAME OVER", middleScreen - 150, 405);
+        }
+            
     }
 
     public void addTimeToPoints(){
@@ -109,6 +115,10 @@ public class Score {
 
     public void decreaseLives() {
         lives--;
+    }
+
+    public int getLives(){
+        return lives;
     }
 
     public void setTimer(int time) {

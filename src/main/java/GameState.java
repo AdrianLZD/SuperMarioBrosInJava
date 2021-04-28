@@ -58,10 +58,6 @@ public abstract class GameState {
     protected void tick(){
         mario.tick();
 
-        if (levelFinished) {
-            return;
-        }
-
         lvlMap.tickInteractableBlocks();
         lvlMap.tickPickUps();
         lvlMap.tickEnemies();
@@ -133,6 +129,10 @@ public abstract class GameState {
     protected void tickScoreScreen(){
         if(infoScreenCounter > INFO_SCREEN_TICKS){
             infoScreen = false;
+
+            if(scoreManager.getLives() <=0){
+                GameRunner.instance.restartGame();
+            }
         }
         infoScreenCounter++;
     }

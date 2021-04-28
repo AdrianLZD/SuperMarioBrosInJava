@@ -30,7 +30,7 @@ public class PhysicObject extends Rectangle {
     protected int verticalVelocity;
 
     protected boolean isFalling;
-    protected boolean isBlockActivator;
+    protected boolean canActivateBlocks;
 
     protected void checkCollisions() {
         setTopCollider();
@@ -45,14 +45,14 @@ public class PhysicObject extends Rectangle {
 
         for (Block block : mapBlocks) {
             if (block.isActive()) {
-                if(block.getId() == Block.ENEMY_AI && (this instanceof Mario || Enemy.isShell(this))){
+                if(block.getId() == Block.ENEMY_AI && ( this instanceof Mario || Enemy.isShell(this) || this instanceof Fireball)){
                     continue;
                 }
 
                 if (!isFalling && tCollider.intersects(block)) {
                     setLocation(x, block.y + Block.SIZE + collisionOffset);
                     tCollision = true;
-                    if (isBlockActivator && block instanceof BlockInteractable) {
+                    if (canActivateBlocks && block instanceof BlockInteractable) {
                         block.activateBlock();
                     }
                 }
@@ -60,7 +60,7 @@ public class PhysicObject extends Rectangle {
                 if (rCollider.intersects(block)) {
                     setLocation(block.x - (int) getWidth() - collisionOffset, y);
                     rCollision = true;
-                    if (isBlockActivator && block.getId() == Block.FLAG_POST) {
+                    if (block.getId() == Block.FLAG_POST && this instanceof Mario) {
                         block.activateBlock();
                     }
                 }

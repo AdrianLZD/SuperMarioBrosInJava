@@ -28,6 +28,7 @@ public class Mario extends PhysicObject {
     private int invincibleCounter;
     private int deadCounter;
     
+    private boolean walkingCollisions;
     private boolean canMove;
     private boolean walking;
     private boolean transitioning;
@@ -43,7 +44,6 @@ public class Mario extends PhysicObject {
         controller = new MarioController(this);
         instance = this;
         canMove = true;
-        isBlockActivator = true;
         alive = true;
         currentAnimSpeed = ANIMATION_SPEED;
         convertSmall();
@@ -176,7 +176,9 @@ public class Mario extends PhysicObject {
 
             if(walking){
                 walkEndlessly();
-                checkCollisions();
+                if(walkingCollisions){
+                    checkCollisions();
+                }
                 return;
             }
 
@@ -235,6 +237,7 @@ public class Mario extends PhysicObject {
         }
         animationCounter++;
     }
+
 
     private void moveUntilPipe(){
         if(y + height > lastPipeYPosition){
@@ -473,6 +476,14 @@ public class Mario extends PhysicObject {
     public void startWalkAnimation(){
         canMove = false;
         walking = true;
+        walkingCollisions = true;
+        animationCounter = 0;
+    }
+
+    public void startWalkAnimationNoCollisions() {
+        canMove = false;
+        walking = true;
+        walkingCollisions = false;
         animationCounter = 0;
     }
 
@@ -511,7 +522,6 @@ public class Mario extends PhysicObject {
     public static MarioState getCurrentState(){
         return instance.state;
     }
-
 
     public boolean isTransitioning(){
         return transitioning;

@@ -56,6 +56,7 @@ public class MarioController {
     private void activateJump(){
         jumpTime = 0;
         jumping = true;
+        mario.canActivateBlocks = true;
         mario.setLocation(mario.x, mario.y-jumpSpeed);
     }
 
@@ -95,6 +96,7 @@ public class MarioController {
 
     private void upKeyReleased() {
         deactivateJump();
+        mario.canActivateBlocks = false;
     }
 
     private void deactivateJump() {
@@ -110,16 +112,17 @@ public class MarioController {
     }
 
     public void tick(){
+        findCurrentAction();
         if(jumping)
             jump();
-
-        findCurrentAction();
+        
         applyVelocities();
     }
 
     public void jump(){
         if(jumpTime > maxJumpTime){
             deactivateJump();
+            mario.canActivateBlocks = false;
         }
         jumpTime++;
     }
@@ -127,6 +130,7 @@ public class MarioController {
     public void activateMiniJump(){
         jumpTime = maxJumpTime/2;
         jumping = true;
+        mario.canActivateBlocks = true;
         mario.setLocation(mario.x, mario.y - jumpSpeed);
     }
 

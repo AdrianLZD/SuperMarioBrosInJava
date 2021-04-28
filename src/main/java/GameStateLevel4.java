@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import main.java.Mario.MarioState;
@@ -23,6 +24,7 @@ public class GameStateLevel4 extends GameState {
     private int bridgeCounter;
     private boolean battleStarted;
     private boolean battleFinished;
+    private boolean canGoToMenu;
 
     public GameStateLevel4() {
         super();
@@ -75,7 +77,7 @@ public class GameStateLevel4 extends GameState {
 
     @Override
     protected void spawnMario() {
-        mario = new Mario(new Point(Block.SIZE * 130, Block.SIZE * 6));
+        mario = new Mario(new Point(Block.SIZE * 2, Block.SIZE * 6));
     }
 
     @Override
@@ -98,7 +100,7 @@ public class GameStateLevel4 extends GameState {
         lvlMap.paintFireballs(g);
 
         paintWalls(g);
-        if(endSequenceCounter>999){
+        if(canGoToMenu){
             paintEndText(g);
         }
         
@@ -134,6 +136,12 @@ public class GameStateLevel4 extends GameState {
     @Override
     protected void keyPressed(int k) {
         mario.keyPressed(k);
+        if(true){
+            if(k == KeyEvent.VK_ENTER){
+                GameRunner.instance.restartGame();
+            }
+        }
+
     }
 
     @Override
@@ -193,6 +201,7 @@ public class GameStateLevel4 extends GameState {
             }
             mario.tick();
         }else{
+            canGoToMenu = true;
             mario.showAsIdle();
             endSequenceCounter = 1000;
         }

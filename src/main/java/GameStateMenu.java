@@ -12,11 +12,19 @@ public class GameStateMenu extends GameState {
     private Font textFont;
     private Color textColor;
     private int currentOption;
+    private boolean showingCredits;
 
     public GameStateMenu() {
         super();
         textFont = TextFont.getFont();
         definePanelSize(WindowManager.windowWidth, WindowManager.WINDOW_HEIGHT);
+        resetAllCheckpoints();
+    }
+
+    private void resetAllCheckpoints(){
+        GameStateLevel1.resetCheckpoint();
+        GameStateLevel2.resetCheckpoint();
+        GameStateLevel3.resetCheckpoint();
     }
 
     @Override
@@ -30,6 +38,9 @@ public class GameStateMenu extends GameState {
         paintBackground(g);
         paintLogo(g);
         paintMenuOptions(g);
+        if(showingCredits){
+            paintCredits(g);
+        }
 
     }
 
@@ -45,6 +56,15 @@ public class GameStateMenu extends GameState {
             g.setColor(textColor);
             g.drawString(options[i], WindowManager.windowWidth / 2 - 100, 470 + i * 60);
         }
+    }
+
+    private void paintCredits(Graphics g){
+        g.setFont(textFont.deriveFont(Font.PLAIN, 15));
+        g.setColor(Color.WHITE);
+        g.drawString("THIS PROJECT WAS DONE BY", 150, 500);
+        g.drawString("GITHUB.COM/ADRIANLZD", 180, 530);
+        g.drawString("THE PURPOSE IS ONLY EDUCATIONAL.", 90, 560);
+
     }
 
     private void getSelectedOption(int iterator) {
@@ -84,8 +104,10 @@ public class GameStateMenu extends GameState {
                 requestNextLevel();
                 break;
             case 1:
+                showingCredits = !showingCredits;
                 break;
             case 2:
+                System.exit(0);
                 break;
             default:
                 break;
@@ -108,7 +130,7 @@ public class GameStateMenu extends GameState {
 
     @Override
     public void requestNextLevel() {
-        GameState newGameState = new GameStateLevel4();
+        GameState newGameState = new GameStateLevel1();
         gameRunner.setCurrentGameState(newGameState);
      }
 }

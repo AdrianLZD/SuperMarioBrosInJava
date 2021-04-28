@@ -32,7 +32,7 @@ public class PickUp extends PhysicObject {
 
     public PickUp(Type type, Point position){
         this.type = type;
-        isBlockActivator = false;
+        canActivateBlocks = false;
         defineTypeProperties(position);
         setScoreManager();
         mario = Mario.getCurrentInstance();
@@ -85,8 +85,8 @@ public class PickUp extends PhysicObject {
             case GOAL:
                 tickMethod = () -> goalTick();
                 id = GOAL;
+                sprite = Animator.P_EMPTY;
                 setLocation(position);
-                sprite = Animator.P_FLOWER;
                 active = true;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_FLOWER));
                 break;
@@ -97,6 +97,7 @@ public class PickUp extends PhysicObject {
                 sprite = Animator.P_COIN;
                 active = true;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_COIN));
+                break;
             case HAMMER:
                 tickMethod = () -> hammerTick();
                 id = HAMMER;
@@ -104,6 +105,7 @@ public class PickUp extends PhysicObject {
                 sprite = Animator.P_HAMMER;
                 active = true;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_HAMMER));
+                break;
             default:
                 break;
         }
@@ -145,7 +147,6 @@ public class PickUp extends PhysicObject {
     }
 
     public void tick(){
-
         if (mario.isTransitioning() || !mario.isAlive()) {
             return;
         }
@@ -201,9 +202,9 @@ public class PickUp extends PhysicObject {
     }
 
     private boolean goalTick(){
-        if(stateCounter == 0 && mario.x > x + width/2){
+        if(mario.x > x + width/2){
             mario.hide();
-            stateCounter = 1;
+            active = false;
             GameRunner.instance.requestNextLevel();
         }
         return true;

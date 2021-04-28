@@ -156,7 +156,7 @@ public class Fireball extends PhysicObject{
         }
 
         for(Enemy e : enemies){
-            if(e.isInteractable()){
+            if(e.isInteractable() && e.getId() != Enemy.getBowserId()){
                 if(intersects(e)){
                     e.killFlip();
                     startExplosion();

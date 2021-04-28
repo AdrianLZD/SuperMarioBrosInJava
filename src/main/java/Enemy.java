@@ -46,7 +46,7 @@ public class Enemy extends PhysicObject {
     public Enemy(Point position, int id){
         this.id = id;
         tableSprites = new Hashtable<>(12);
-        isBlockActivator = false;
+        canActivateBlocks = false;
         alive = true;
         setEnemyProperties(position);
         setScoreManager();

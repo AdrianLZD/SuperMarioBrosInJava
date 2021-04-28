@@ -12,7 +12,7 @@ public class GameStateLevel1 extends GameState {
     public GameStateLevel1(){
         super();
         lvlId = 1;
-        checkpointPosition = 195 * Block.SIZE; // 84
+        checkpointPosition = 84 * Block.SIZE; // 84
         initDefaultBehavior(checkpointReached);
     }
 
@@ -62,8 +62,8 @@ public class GameStateLevel1 extends GameState {
         }
         
         super.tick();
-
-        if (mario.x >= checkpointPosition) {
+        
+        if (!checkpointReached && mario.x >= checkpointPosition) {
             checkpointReached = true;
         }
     }
@@ -71,12 +71,14 @@ public class GameStateLevel1 extends GameState {
     @Override
     public void requestNextLevel() {
         nextLevelRequest++;
-        System.out.println("request");
-        if(nextLevelRequest == 2){
-            checkpointReached = false;
+        if(nextLevelRequest >= 2){
             GameState newGameState = new GameStateLevel2(mario.state);
             gameRunner.setCurrentGameState(newGameState);
         }
+    }
+
+    public static void resetCheckpoint(){
+        checkpointReached = false;
     }
     
 }

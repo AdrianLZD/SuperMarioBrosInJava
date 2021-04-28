@@ -148,6 +148,7 @@ public class SpriteAssets {
 
     private static void loadPickUpSprites() throws IOException{
         pickUps = new BufferedImage[PICKUP_COUNT];
+        pickUps[P_EMPTY - P_START] = null;
         pickUps[P_COIN-P_START] = ImageIO.read(new File("res/objects/oCoin.png"));
         pickUps[P_MOOSHROOM-P_START] = ImageIO.read(new File("res/objects/oShroom.png"));
         pickUps[P_FLOWER-P_START] = ImageIO.read(new File("res/objects/oFlower.png"));

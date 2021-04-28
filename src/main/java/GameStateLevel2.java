@@ -61,8 +61,12 @@ public class GameStateLevel2 extends GameState{
         if(!marioHasTp && marioCanTp){
             if(k == KeyEvent.VK_RIGHT){
                 timerEnabled = false;
-                mario.startWalkAnimation();
+                mario.startWalkAnimationNoCollisions();
             }
+        }
+
+        if(k==KeyEvent.VK_ENTER){
+            GameRunner.instance.restartGame();
         }
     }
 
@@ -80,13 +84,13 @@ public class GameStateLevel2 extends GameState{
 
         super.tick();
 
-        if (mario.x >= checkpointPosition) {
+        if (!checkpointReached && mario.x >= checkpointPosition) {
             checkpointReached = true;
         }
 
         if(!marioHasTp){
             marioCanTp = (mario.isFalling) ? false : tpPosition.intersects(mario);
-            if (mario.x > tpPosition.x) {
+            if (marioCanTp && mario.x > tpPosition.x) {
                 marioHasTp = true;
                 timerEnabled = true;
                 mario.setLocation(mario.x + Block.SIZE * 29 - mario.width/2, Block.SIZE * 10);
@@ -100,12 +104,15 @@ public class GameStateLevel2 extends GameState{
     @Override
     public void requestNextLevel() {
         nextLevelRequest++;
-        if (nextLevelRequest == 2) {
-            checkpointReached = false;
-            GameState newGameState = new GameStateLevel2();
+        if (nextLevelRequest >= 2) {
+            GameState newGameState = new GameStateLevel3(mario.state);
             gameRunner.setCurrentGameState(newGameState);
+            checkpointReached = false;
         }
-        
+    }
+
+    public static void resetCheckpoint() {
+        checkpointReached = false;
     }
     
 }

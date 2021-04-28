@@ -29,7 +29,7 @@ public class GameRunner extends JPanel implements KeyListener {
     }
 
     public void initializeGameRunner(WindowManager wManager) {
-        setCurrentGameState(new GameStateMenu());
+        currentGameState = new GameStateMenu();
         attachRunnerToMainThread();
         scoreManager = new Score();
         window = wManager;
@@ -98,6 +98,12 @@ public class GameRunner extends JPanel implements KeyListener {
                 break;
         }
         System.gc();
+    }
+
+    public void restartGame(){
+        cameraX = 0;
+        currentGameState = new GameStateMenu();
+        scoreManager = new Score();
     }
 
     public void endCurrentLevel(){
