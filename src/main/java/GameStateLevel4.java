@@ -77,7 +77,7 @@ public class GameStateLevel4 extends GameState {
 
     @Override
     protected void spawnMario() {
-        mario = new Mario(new Point(Block.SIZE * 2, Block.SIZE * 6));
+        mario = new Mario(new Point(Block.SIZE * 2, Block.SIZE * 7));
     }
 
     @Override
@@ -138,6 +138,7 @@ public class GameStateLevel4 extends GameState {
         mario.keyPressed(k);
         if(true){
             if(k == KeyEvent.VK_ENTER){
+                Sound.stopAllSounds();
                 GameRunner.instance.restartGame();
             }
         }
@@ -221,8 +222,11 @@ public class GameStateLevel4 extends GameState {
 
     @Override
     public void requestNextLevel() {
+        Sound.stopAllSounds();
+        Sound.makeSound(Sound.WORLD_CLEAR);
         battleFinished = true;
         endSequenceCounter = 0;
-        bridgeCounter = bridge.size()-1;       
+        bridgeCounter = bridge.size()-1;
+
     }
 }

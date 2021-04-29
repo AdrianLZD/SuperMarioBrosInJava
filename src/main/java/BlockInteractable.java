@@ -65,13 +65,16 @@ public class BlockInteractable extends Block {
             if(Mario.getCurrentState().getSize() == MarioState.BIG.getSize()){
                 collision = false;
                 broken = true;
+                Sound.makeSound(Sound.BLOCK_BREAK);
+                break;
             }
-            
+            Sound.makeSound(Sound.BLOCK_HIT);
             break;
         case Block.MISTERY:
             dropPickUp();
             deactivateBlock();
             used = true;
+            Sound.makeSound(Sound.BLOCK_HIT);
             break;
         case Block.FLAG_POST:
             if(Mario.getCurrentInstance().y + height > Block.SIZE* 11){
@@ -81,7 +84,6 @@ public class BlockInteractable extends Block {
             return;
         }
         checkForAnimation();
-              
     }
 
     private void checkForAnimation(){

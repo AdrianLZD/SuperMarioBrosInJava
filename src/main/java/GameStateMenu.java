@@ -19,6 +19,7 @@ public class GameStateMenu extends GameState {
         textFont = TextFont.getFont();
         definePanelSize(WindowManager.windowWidth, WindowManager.WINDOW_HEIGHT);
         resetAllCheckpoints();
+        Sound.stopAllSounds();
     }
 
     private void resetAllCheckpoints(){
@@ -63,7 +64,7 @@ public class GameStateMenu extends GameState {
         g.setColor(Color.WHITE);
         g.drawString("THIS PROJECT WAS DONE BY", 150, 500);
         g.drawString("GITHUB.COM/ADRIANLZD", 180, 530);
-        g.drawString("THE PURPOSE IS ONLY EDUCATIONAL.", 90, 560);
+        g.drawString("ITS PURPOSE IS ONLY EDUCATIONAL.", 90, 560);
 
     }
 
@@ -130,7 +131,7 @@ public class GameStateMenu extends GameState {
 
     @Override
     public void requestNextLevel() {
-        GameState newGameState = new GameStateLevel1();
+        GameState newGameState = new GameStateLevel4(Mario.MarioState.BIG);
         gameRunner.setCurrentGameState(newGameState);
      }
 }

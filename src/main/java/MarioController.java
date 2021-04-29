@@ -20,6 +20,7 @@ public class MarioController {
     
     private boolean[] collisions;
     private int jumpTime;
+    private int fireballCooldown;
     private boolean moveRight;
     private boolean moveLeft;
     private boolean jumping;
@@ -54,6 +55,7 @@ public class MarioController {
     }
 
     private void activateJump(){
+        Sound.makeSound(Sound.JUMP);
         jumpTime = 0;
         jumping = true;
         mario.canActivateBlocks = true;
@@ -71,13 +73,14 @@ public class MarioController {
     }
 
     private void powerKeyPressed(){
-        if(mario.state != MarioState.FIRE){
+        if(mario.state != MarioState.FIRE || fireballCooldown != 0){
             return;
         }
         spawnFireball();
     }
 
     private void spawnFireball(){
+        fireballCooldown = 10;
         Point firePosition = mario.getLocation();
         firePosition.y += Block.SIZE;
         firePosition.x += mario.getWidth()/2;
@@ -117,6 +120,9 @@ public class MarioController {
             jump();
         
         applyVelocities();
+        if(fireballCooldown > 0){
+            fireballCooldown--;
+        }
     }
 
     public void jump(){

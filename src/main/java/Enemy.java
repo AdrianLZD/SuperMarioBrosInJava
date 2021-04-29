@@ -250,6 +250,9 @@ public class Enemy extends PhysicObject {
         isFalling = verticalVelocity > 0;
         applyVelocities();
         checkCollisions();
+        if (collisions[PhysicObject.COLLISION_RIGHT] || collisions[PhysicObject.COLLISION_LEFT]) {
+            Sound.makeSound(Sound.KICK);
+        }
         checkMarioCollisions();
         return true;
     }
@@ -358,6 +361,7 @@ public class Enemy extends PhysicObject {
                     mario.activateMiniJump();
                     kill();
                 }
+                Sound.makeSound(Sound.STOMP);
             } else {
                 //Shell not moving will not kill mario
                 if (id == SHELL && horizontalVelocity == 0) {
@@ -367,6 +371,7 @@ public class Enemy extends PhysicObject {
                     }
                     horizontalVelocity = SHELL_VEL * direction;
                     x+=horizontalVelocity*2;
+                    Sound.makeSound(Sound.KICK);
                 } else {
                     mario.applyDamage();
                 }
@@ -382,6 +387,7 @@ public class Enemy extends PhysicObject {
                         e.killFlip();
                     }
                     killFlip();
+                    Sound.makeSound(Sound.STOMP);
                 }else{
                     if(id == SHELL && horizontalVelocity!=0){
                         return;

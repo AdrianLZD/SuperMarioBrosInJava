@@ -9,7 +9,7 @@ public class Mario extends PhysicObject {
     private static final long serialVersionUID = 1L;
 
     private static final int INVINCIBLE_TICKS = 150;
-    private static final int DEAD_TICKS = 120;
+    private static final int DEAD_TICKS = 320;
     private static Mario instance;
 
     protected MarioState state;
@@ -212,11 +212,11 @@ public class Mario extends PhysicObject {
     }
 
     private void killAnimation(){
-        if(deadCounter < DEAD_TICKS/4){
+        if(deadCounter < 120/4){
             verticalVelocity = -PhysicObject.getGravity();
-        }else if(deadCounter < DEAD_TICKS/2){
+        }else if(deadCounter < 120/2){
             verticalVelocity = -PhysicObject.getGravity()/2;
-        }else if(deadCounter < DEAD_TICKS/4 * 2){
+        }else if(deadCounter < 120/4 * 2){
             verticalVelocity = PhysicObject.getGravity()/2;
         }else{
             verticalVelocity = PhysicObject.getGravity();
@@ -335,7 +335,7 @@ public class Mario extends PhysicObject {
         if (finishFlag.y < 10 * Block.SIZE) {
             finishFlag.setLocation(finishFlag.x, finishFlag.y + 3);
             if (y  + offset < 10 * Block.SIZE) {
-                setLocation(x, y + 3);
+                setLocation(finishFlag.x + Block.SIZE - width, y + 3);
             }
             if (state == MarioState.BIG) {
                 currentSprite = Animator.M_BIG_RIGHT_FLAG;
@@ -419,12 +419,14 @@ public class Mario extends PhysicObject {
     }
 
     public void applyMooshroom(){
+        Sound.makeSound(Sound.POWER_UP);
         startChangeStateAnimation();
         convertBig();
         updateSize();
     }
 
     public void applyFire(){
+        Sound.makeSound(Sound.POWER_UP);
         startChangeStateAnimation();
         convertFire();
         updateSize();
@@ -438,6 +440,7 @@ public class Mario extends PhysicObject {
         if(state == MarioState.SMALL){
             killMario();
         }else if(state == MarioState.BIG || state == MarioState.FIRE){
+            Sound.makeSound(Sound.POWER_DOWN);
             startChangeStateAnimation();
             // Override the startChangeStateAnimation currentAnimSpeed
             currentAnimSpeed = (int) (ANIMATION_SPEED * 1.5);
@@ -451,10 +454,18 @@ public class Mario extends PhysicObject {
         if(!alive){
             return;
         }
+
+        if(levelFinished){
+            return;
+        }
+
         canMove = false;
         invincible = false;
         alive = false;
         deadCounter = 0;
+        Sound.stopAllSounds();
+        Sound.makeSound(Sound.MARIO_DIE);
+        GameRunner.instance.stopTimer();
         
     }
 
@@ -470,7 +481,6 @@ public class Mario extends PhysicObject {
         levelFinished = true;
         finishFlag = flag;
         animationCounter = -1;
-        setLocation(x + Block.SIZE / 2, y);
     }
 
     public void startWalkAnimation(){

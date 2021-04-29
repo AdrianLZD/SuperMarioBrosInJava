@@ -26,7 +26,8 @@ public class PickUp extends PhysicObject {
     private Type type;
     private int stateCounter;
     private int id;
-    private int sprite;
+    private int sprite=Animator.P_EMPTY;
+    private int sound;
     
     private boolean active;
 
@@ -51,17 +52,20 @@ public class PickUp extends PhysicObject {
                 verticalVelocity = 5;
                 id = COIN;
                 sprite = Animator.P_COIN;
+                sound = -1;
                 break;
             case COIN_MULTIPLE:
                 tickMethod = () -> coinTick();
                 id = COIN;
                 verticalVelocity = 5;
                 sprite = Animator.P_COIN;
+                sound = -1;
                 break;
             case POWER:
                 //Type of powerup will change depending on Mario state
                 tickMethod = () -> powerTick();
                 id = -1;
+                sound = Sound.POWER_APPEAR;
                 break;
             case LIFE:
                 tickMethod = () -> lifeTick();
@@ -72,6 +76,7 @@ public class PickUp extends PhysicObject {
                 hCollisionOffset = horizontalVelocity;
                 vCollisionOffset = verticalVelocity * 2;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_LIFE));
+                sound = Sound.POWER_APPEAR;
                 break;
             case FLAG:
                 tickMethod = () -> flagTick();
@@ -81,6 +86,7 @@ public class PickUp extends PhysicObject {
                 y = position.y;
                 active = true;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_FLAG));
+                sound = -1;
                 break;
             case GOAL:
                 tickMethod = () -> goalTick();
@@ -89,6 +95,7 @@ public class PickUp extends PhysicObject {
                 setLocation(position);
                 active = true;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_FLOWER));
+                sound = -1;
                 break;
             case COIN_STATIC:
                 tickMethod = () -> coinStaticTick();
@@ -97,6 +104,7 @@ public class PickUp extends PhysicObject {
                 sprite = Animator.P_COIN;
                 active = true;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_COIN));
+                sound = -1;
                 break;
             case HAMMER:
                 tickMethod = () -> hammerTick();
@@ -105,6 +113,7 @@ public class PickUp extends PhysicObject {
                 sprite = Animator.P_HAMMER;
                 active = true;
                 setColliderSize(Animator.getPickUpSprite(Animator.P_HAMMER));
+                sound = -1;
                 break;
             default:
                 break;
@@ -112,10 +121,11 @@ public class PickUp extends PhysicObject {
     }
     
     public void spawnPickUp(Point p) {
+        
         x = p.x;
         y = p.y + Block.SIZE/2;
         active = true;
-
+        Sound.makeSound(sound);
         if(type == Type.POWER){
             definePowerBehavoir();
         }
@@ -142,6 +152,9 @@ public class PickUp extends PhysicObject {
     public void paintPickUp(Graphics g){
         if (active) {    
             super.paint(g);
+            if(sprite == -50){
+                System.out.println(type);
+            }
             g.drawImage(Animator.getPickUpSprite(sprite), x, y, GameRunner.instance);
         }
     }
@@ -195,7 +208,6 @@ public class PickUp extends PhysicObject {
             if(intersects(mario) && !mario.hasFinishLevel()){
                 scoreManager.increaseLives();
                 stateCounter = 1;
-                //TODO add sound
             }
         }
         return true;
@@ -225,7 +237,6 @@ public class PickUp extends PhysicObject {
             return;
         }
         if(intersects(mario)){
-            //TODO add sound
             switch(id){
                 case MOOSHROOM:
                     mario.applyMooshroom();

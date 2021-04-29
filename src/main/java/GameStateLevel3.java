@@ -14,7 +14,7 @@ public class GameStateLevel3 extends GameState {
     public GameStateLevel3() {
         super();
         lvlId = 3;
-        checkpointPosition = 60 * Block.SIZE; // 84
+        checkpointPosition = 60 * Block.SIZE; // 60 84
         initDefaultBehavior(checkpointReached);
         findGrassSupportBlocks();
     }
@@ -98,9 +98,11 @@ public class GameStateLevel3 extends GameState {
     @Override
     public void requestNextLevel() {
         nextLevelRequest++;
-        if(nextLevelRequest == 2){
+        if(nextLevelRequest >= 2){
+            Sound.stopAllSounds();
             GameState newGameState = new GameStateLevel4(mario.state);
             gameRunner.setCurrentGameState(newGameState);
+            checkpointReached = false;
         }
     }
 

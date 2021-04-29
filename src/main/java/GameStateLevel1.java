@@ -2,6 +2,7 @@ package main.java;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 
 import main.java.Mario.MarioState;
 
@@ -15,6 +16,7 @@ public class GameStateLevel1 extends GameState {
         checkpointPosition = 84 * Block.SIZE; // 84
         initDefaultBehavior(checkpointReached);
     }
+
 
     public GameStateLevel1(MarioState marioState){
         this();
@@ -47,6 +49,9 @@ public class GameStateLevel1 extends GameState {
     @Override
     protected void keyPressed(int k) {
         mario.keyPressed(k);
+        if(k == KeyEvent.VK_ENTER){
+            GameRunner.instance.restartGame();
+        }
     }
 
     @Override
@@ -72,8 +77,10 @@ public class GameStateLevel1 extends GameState {
     public void requestNextLevel() {
         nextLevelRequest++;
         if(nextLevelRequest >= 2){
+            Sound.stopAllSounds();
             GameState newGameState = new GameStateLevel2(mario.state);
             gameRunner.setCurrentGameState(newGameState);
+            checkpointReached = false;
         }
     }
 

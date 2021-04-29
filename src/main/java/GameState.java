@@ -7,9 +7,9 @@ import java.awt.image.BufferedImage;
 public abstract class GameState {
 
     private static final int BACKGROUND_OFFSET = -31;
-    private static final int INFO_SCREEN_TICKS = 100;
     protected static final int YPOSITION_KILL_LIMIT = WindowManager.WINDOW_HEIGHT + Block.SIZE;
     protected static Score scoreManager;
+    private static int info_screen_ticks;
 
     protected BufferedImage background;
     protected GameRunner gameRunner;
@@ -32,6 +32,7 @@ public abstract class GameState {
     }
 
     public void initDefaultBehavior(boolean checkpointReached){
+        info_screen_ticks = 100;
         timerEnabled = true;
         infoScreen = true;
         nextLevelRequest = 0;
@@ -70,11 +71,28 @@ public abstract class GameState {
         }
         if(timerEnabled){
             scoreManager.tick();
+            if (scoreManager.getTimer() <= 0 && !levelFinished) {
+                System.out.println("kill");
+                mario.killMario();
+            }
+        }        
+    }
+
+    protected void tickScoreScreen() {
+        if (infoScreenCounter == 1 && scoreManager.getLives() <= 0){
+            Sound.makeSound(Sound.GAME_OVER);
+            info_screen_ticks *=3;
         }
-        
-        if (scoreManager.getTimer() <= 0) {
-            mario.killMario();
+            
+        if (infoScreenCounter > info_screen_ticks) {
+            playLevelSong();
+            infoScreen = false;
+
+            if (scoreManager.getLives() <= 0) {
+                GameRunner.instance.restartGame();
+            }
         }
+        infoScreenCounter++;
     }
 
     
@@ -126,28 +144,49 @@ public abstract class GameState {
         infoScreenCounter = 0;
     }
 
-    protected void tickScoreScreen(){
-        if(infoScreenCounter > INFO_SCREEN_TICKS){
-            infoScreen = false;
-
-            if(scoreManager.getLives() <=0){
-                GameRunner.instance.restartGame();
-            }
+    protected void playLevelSong(){
+        switch(lvlId){
+            case 1:
+                Sound.loopSound(Sound.LVL1);
+                break;
+            case 2:
+                Sound.loopSound(Sound.LVL2);
+                break;
+            case 3:
+                Sound.loopSound(Sound.LVL3);
+                break;
+            case 4:
+                Sound.loopSound(Sound.LVL4);
+                break;
         }
-        infoScreenCounter++;
+        
     }
 
     protected void endLevel(){
         if(levelFinished){
             return;
         }
-
+        
         if (this instanceof GameStateMenu) {
             MyLogger.logInfoMessage("Ending the menu is not allowed. Aborting task.");
             return;
         }
+
+        Sound.stopAllSounds();
+        if(lvlId != 4){
+            Sound.makeSound(Sound.LEVEL_CLEAR);
+        }else{
+            Sound.makeSound(Sound.WORLD_CLEAR);
+        }
+        
         mario.startEndAnimation(lvlMap.getFlag());
         scoreManager.addTimeToPoints();
+        levelFinished = true;
+    }
+
+
+    public void stopTimer(){
+        timerEnabled = false;
     }
 
     

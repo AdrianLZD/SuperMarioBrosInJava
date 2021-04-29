@@ -21,6 +21,7 @@ public class Score {
     private int middleScreen;
 
     private boolean addingPoints;
+    private boolean gameOverSoundPlayed;
     
     public Score(){
         instance = this;
@@ -41,9 +42,11 @@ public class Score {
     public void tick(){
         if(addingPoints){
             if(time > 0){
-                points+=30;
+                points+=20;
                 time--;
-            }else{
+                Sound.makeSound(Sound.COIN);
+            }else if (time==0){
+                time = -1;
                 GameRunner.instance.requestNextLevel();
             }
             return;
@@ -51,6 +54,9 @@ public class Score {
         if(System.currentTimeMillis() >= prevSecond + 1000){
             time--;
             prevSecond = System.currentTimeMillis();
+            if(time == 45){
+                Sound.makeSound(Sound.TIME_WARNING);
+            }
         }
     }
 
@@ -65,11 +71,15 @@ public class Score {
         g.drawString("WORLD", middleScreen + 30, 40);
         g.drawString(String.format("%d-%d", world, level), middleScreen + 53, 65);
         g.drawString("TIME", middleScreen + 205, 40);
-        g.drawString(String.format("%03d", time), middleScreen + 230, 65);
+        if(time >= 0){
+            g.drawString(String.format("%03d", time), middleScreen + 230, 65);
+        }else{
+            g.drawString(String.format("%03d", time), middleScreen + 230, 65);
+        }
+        
     }
 
     public void paintFullDetails(Graphics g, int lvlId){
-        
         g.setColor(Color.BLACK);
         g.fillRect(middleScreen-WindowManager.windowWidth/2, 0, WindowManager.windowWidth, WindowManager.WINDOW_HEIGHT);
         g.setFont(textFont);
@@ -79,7 +89,7 @@ public class Score {
             g.drawImage(marioSprite, middleScreen - 100, 350, GameRunner.instance);
             g.drawString(String.format("x  %d", lives), middleScreen - 10, 405);
         }else{
-            g.drawString("GAME OVER", middleScreen - 150, 405);
+            g.drawString("GAME OVER", middleScreen - 115, 405);
         }
             
     }
@@ -105,11 +115,13 @@ public class Score {
         if (coins >= 100) {
             increaseLives();
             coins = 0;
-            // TODO add sound
+        }else{
+            Sound.makeSound(Sound.COIN);
         }
     }
 
     public void increaseLives() {
+        Sound.makeSound(Sound.LIVE_UP);
         lives++;
     }
 
@@ -122,15 +134,14 @@ public class Score {
     }
 
     public void setTimer(int time) {
+        if(time > 0){
+            addingPoints = false;
+        }
         this.time = time;
     }
 
     public int getTimer() {
         return time;
-    }
-
-    public void restartTimer() {
-        time = 0;
     }
 
     public void setWorld(int w) {

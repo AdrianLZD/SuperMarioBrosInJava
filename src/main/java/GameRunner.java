@@ -82,7 +82,6 @@ public class GameRunner extends JPanel implements KeyListener {
     }
 
     public void restartCurrentLevel(){
-        scoreManager.restartTimer();
         switch(currentGameState.lvlId){
             case 1:
                 currentGameState = new GameStateLevel1();
@@ -97,11 +96,19 @@ public class GameRunner extends JPanel implements KeyListener {
                 currentGameState = new GameStateLevel4();
                 break;
         }
+        Sound.stopAllSounds();
         System.gc();
+    }
+
+
+    public void stopTimer(){
+        currentGameState.stopTimer();
     }
 
     public void restartGame(){
         cameraX = 0;
+        Sound.stopAllSounds();
+        moveAbsoluteHorizontalScroll(0);
         currentGameState = new GameStateMenu();
         scoreManager = new Score();
     }

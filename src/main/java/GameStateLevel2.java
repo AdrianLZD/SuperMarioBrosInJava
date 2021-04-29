@@ -62,11 +62,9 @@ public class GameStateLevel2 extends GameState{
             if(k == KeyEvent.VK_RIGHT){
                 timerEnabled = false;
                 mario.startWalkAnimationNoCollisions();
+                Sound.stopAllSounds();
+                Sound.makeSound(Sound.PIPE);
             }
-        }
-
-        if(k==KeyEvent.VK_ENTER){
-            GameRunner.instance.restartGame();
         }
     }
 
@@ -96,6 +94,7 @@ public class GameStateLevel2 extends GameState{
                 mario.setLocation(mario.x + Block.SIZE * 29 - mario.width/2, Block.SIZE * 10);
                 mario.exitPipe(Block.SIZE * 10);
                 lvlMap.turnOffDarkMode();
+                Sound.loopSound(Sound.LVL1);
             }
         }
 
@@ -105,6 +104,7 @@ public class GameStateLevel2 extends GameState{
     public void requestNextLevel() {
         nextLevelRequest++;
         if (nextLevelRequest >= 2) {
+            Sound.stopAllSounds();
             GameState newGameState = new GameStateLevel3(mario.state);
             gameRunner.setCurrentGameState(newGameState);
             checkpointReached = false;

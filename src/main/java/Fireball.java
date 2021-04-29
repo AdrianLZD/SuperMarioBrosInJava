@@ -13,7 +13,7 @@ public class Fireball extends PhysicObject{
     public static final int STRIP_FIRE = 2;
     public static final int ENEMY_FIRE = Enemy.FIRE;
 
-    private static final int MARIO_FIRE_SPEED = 7;
+    private static final int MARIO_FIRE_SPEED = 9;
     private static final int ENEMY_FIRE_SPEED = 5;
     private static final int CAMERA_OFFSET = GameRunner.instance.cameraOffset * 2;
     
@@ -61,6 +61,7 @@ public class Fireball extends PhysicObject{
                 hCollisionOffset = Math.abs(horizontalVelocity);
                 vCollisionOffset = verticalVelocity;
                 active = true;
+                Sound.makeSound(Sound.FIREBALL);
                 setColliderSize(Animator.getFireballSprite(currentSprite));
                 break;
             case ENEMY_FIRE:
@@ -113,6 +114,9 @@ public class Fireball extends PhysicObject{
     protected void checkForActivation(){
         // Check if is visible
         if (x - CAMERA_OFFSET <= mario.x || x <= WindowManager.windowWidth) {
+            if(id != STRIP_FIRE){
+                Sound.makeSound(Sound.BOWSER_FIRE);
+            }
             active = true;
         }
     }
@@ -208,6 +212,7 @@ public class Fireball extends PhysicObject{
     }
 
     private void startExplosion(){
+        Sound.makeSound(Sound.BLOCK_HIT);
         spriteCounter = 0;
         exploting = true;
     }
