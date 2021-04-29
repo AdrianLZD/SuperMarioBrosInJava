@@ -21,7 +21,6 @@ public class Score {
     private int middleScreen;
 
     private boolean addingPoints;
-    private boolean gameOverSoundPlayed;
     
     public Score(){
         instance = this;
