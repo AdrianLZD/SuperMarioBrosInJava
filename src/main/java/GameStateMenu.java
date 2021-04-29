@@ -131,7 +131,7 @@ public class GameStateMenu extends GameState {
 
     @Override
     public void requestNextLevel() {
-        GameState newGameState = new GameStateLevel4(Mario.MarioState.BIG);
+        GameState newGameState = new GameStateLevel1();
         gameRunner.setCurrentGameState(newGameState);
      }
 }
