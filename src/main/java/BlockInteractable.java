@@ -77,7 +77,7 @@ public class BlockInteractable extends Block {
             Sound.makeSound(Sound.BLOCK_HIT);
             break;
         case Block.FLAG_POST:
-            if(Mario.getCurrentInstance().y + height > Block.SIZE* 11){
+            if(Mario.getCurrentInstance().y + Mario.getCurrentInstance().height >= Block.SIZE* 11){
                 return;
             }
             GameRunner.instance.endCurrentLevel();

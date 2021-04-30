@@ -2,7 +2,6 @@ package main.java;
 
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 
 import main.java.Mario.MarioState;
 
@@ -49,9 +48,6 @@ public class GameStateLevel1 extends GameState {
     @Override
     protected void keyPressed(int k) {
         mario.keyPressed(k);
-        if(k == KeyEvent.VK_ENTER){
-            GameRunner.instance.restartGame();
-        }
     }
 
     @Override

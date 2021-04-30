@@ -8,6 +8,7 @@ public class WindowManager extends JFrame {
     private static final long serialVersionUID = 001L;
 
     public static final int WINDOW_HEIGHT = 800;
+    public static final int MAX_WIDTH = 1536;
     public static final String APP_NAME = "Super Mario Bros In Java";
     public static int windowWidth;
 
@@ -21,6 +22,9 @@ public class WindowManager extends JFrame {
     private void findWindowSize() {
         Dimension screenDimension = findCurrentScreenDimension();
         windowWidth = (int) screenDimension.getWidth();
+        if(windowWidth>=MAX_WIDTH){
+            windowWidth = MAX_WIDTH;
+        }
     }
 
     private void startGameRunner() {

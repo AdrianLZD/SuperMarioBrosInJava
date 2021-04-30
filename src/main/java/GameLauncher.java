@@ -1,6 +1,6 @@
 package main.java;
 
-public class AppLauncher {
+public class GameLauncher {
 
     @SuppressWarnings("unused")
     public static void main(String[] args) {

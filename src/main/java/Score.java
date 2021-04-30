@@ -73,7 +73,7 @@ public class Score {
         if(time >= 0){
             g.drawString(String.format("%03d", time), middleScreen + 230, 65);
         }else{
-            g.drawString(String.format("%03d", time), middleScreen + 230, 65);
+            g.drawString(String.format("%03d", 0), middleScreen + 230, 65);
         }
         
     }
