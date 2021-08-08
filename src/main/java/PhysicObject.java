@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import main.java.Enemies.Enemy;
+
 public class PhysicObject extends Rectangle {
 
     public static final int COLLISION_TOP = 0;
@@ -24,13 +26,13 @@ public class PhysicObject extends Rectangle {
     private Rectangle bCollider;
     private Rectangle lCollider;
 
-    protected int hCollisionOffset;
-    protected int vCollisionOffset;
-    protected int horizontalVelocity;
-    protected int verticalVelocity;
+    public int hCollisionOffset;
+    public int vCollisionOffset;
+    public int horizontalVelocity;
+    public int verticalVelocity;
 
-    protected boolean isFalling;
-    protected boolean canActivateBlocks;
+    public boolean isFalling;
+    public boolean canActivateBlocks;
 
     protected void checkCollisions() {
         setTopCollider();

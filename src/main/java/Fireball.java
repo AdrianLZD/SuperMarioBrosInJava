@@ -2,6 +2,8 @@ package main.java;
 
 import static main.java.MarioController.RIGHT;
 
+import main.java.Enemies.Enemy;
+
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;

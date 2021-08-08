@@ -2,10 +2,13 @@ package main.java;
 
 import static main.java.MarioController.LEFT;
 
+import main.java.Enemies.Enemy;
 
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+
+
 
 public class LevelMap {
 
@@ -77,7 +80,7 @@ public class LevelMap {
                     if(enemyType == Enemy.getFireId()){
                         fireballs.add(new Fireball(newBlockPosition, LEFT, Fireball.ENEMY_FIRE));
                     }else{
-                        enemies.add(new Enemy(newBlockPosition, enemyType));
+                        enemies.add(Enemy.create(newBlockPosition, enemyType));
                     }
                     blocks[i][j] = new Block(newBlockPosition, newBlockId);
                     continue;

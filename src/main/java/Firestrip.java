@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
+import main.java.Enemies.Enemy;
+
 public class Firestrip extends Fireball{
 
     private static final int SPIN_SPEED = 8;

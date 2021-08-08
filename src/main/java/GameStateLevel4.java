@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import main.java.Enemies.Enemy;
 import main.java.Mario.MarioState;
 
 public class GameStateLevel4 extends GameState {
